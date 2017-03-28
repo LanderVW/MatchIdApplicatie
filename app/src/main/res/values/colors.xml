@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="primary_text_holo_light">#de2a00</color>
+    <color name="holo_light_primary_dark">#cc2700</color>
+    <color name="background_material_dark">#111111</color>
+    <color name="matchid_zeerlichtrood">#ffe8e6</color>
+    <color name="matchid_rood">#DE2A00</color>
+    <color name="matchid_donkerrood">#800b00</color>
+</resources>

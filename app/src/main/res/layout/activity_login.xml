@@ -1,0 +1,80 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:tools = "http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height = "match_parent" android:paddingLeft= "@dimen/activity_horizontal_margin"
+    android:paddingRight = "@dimen/activity_horizontal_margin"
+    android:paddingTop = "@dimen/activity_vertical_margin"
+    android:paddingBottom = "@dimen/activity_vertical_margin" tools:context = ".MainActivity">
+
+    <TextView
+        android:id = "@+id/matchid_logo"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:text = "@string/matchid_name"
+        android:layout_centerHorizontal = "true"
+        android:textColor = "#DE2A00"
+        android:textSize = "75dp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id = "@+id/matchid_subtekst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/matchid_subtekst"
+
+        android:textColor="#696969"
+        android:textSize="20dp"
+        android:layout_alignLeft="@+id/matchid_logo"
+        android:layout_below="@id/matchid_logo" />
+    <TextView
+        android:id="@+id/error_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <EditText
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:id = "@+id/username"
+        android:hint = "@string/enter_username"
+        android:focusable = "true"
+        android:textColorHighlight = "#DE2A00"
+        android:textColorHint = "#DE2A00"
+        android:layout_marginTop = "46dp"
+        android:layout_below = "@id/matchid_logo"
+        android:layout_alignParentLeft = "true"
+        android:layout_alignParentStart = "true"
+        android:layout_alignParentRight = "true"
+        android:layout_alignParentEnd = "true" />
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/password"
+        android:layout_below="@+id/username"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/username"
+        android:layout_alignEnd="@+id/username"
+        android:textColorHint="#DE2A00"
+        android:hint="@string/enter_password" />
+
+    <Button
+        android:id="@+id/btn_signin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="login"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/password"
+         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/btn_cancel"
+        android:layout_below="@id/password"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/btn_signin" />
+
+</RelativeLayout>
