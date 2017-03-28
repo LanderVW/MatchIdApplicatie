@@ -24,11 +24,17 @@
         android:textColor="#696969"
         android:textSize="20dp"
         android:layout_alignLeft="@+id/matchid_logo"
-        android:layout_below="@id/matchid_logo" />
+        android:layout_below="@id/matchid_logo"/>
     <TextView
         android:id="@+id/error_message"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/matchid_subtekst"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/matchid_rood"
+        />
     <EditText
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
@@ -76,5 +82,11 @@
         android:layout_below="@id/password"
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@id/btn_signin" />
+    <ProgressBar
+        android:id="@+id/progressLogin"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -21,7 +21,6 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import static android.graphics.Typeface.BOLD;
@@ -74,6 +73,7 @@ public class LoginActivity extends Activity {
     public void login() throws UnknownHostException{
         RequestQueue mRequestQueue;
 
+
         // Instantiate the cache
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
 
@@ -85,11 +85,10 @@ public class LoginActivity extends Activity {
 
         // Start the queue
         mRequestQueue.start();
-        String test = InetAddress.getLocalHost().toString();
-        test = test.substring(test.indexOf("/")+1);
 
-        //ip adres aanpassen
-        String url ="http://"+test+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
+
+        //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
+        String url ="http://10.108.16.180:8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
 
         // Formulate the request and handle the response.
