@@ -110,6 +110,8 @@ public class LoginActivity extends Activity {
         // Start the queue
         mRequestQueue.start();
 
+        String ip4_adress = Utils.getIPAddress(true);
+        btn_cancel.setText(ip4_adress);
 
         //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
         String url ="http://192.168.0.208:8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
@@ -133,7 +135,9 @@ public class LoginActivity extends Activity {
                         }else{btn_cancel.setText("test");
                             error_message.setText(response);
                             error_message.setVisibility(TextView.VISIBLE);
+                            spinner.setVisibility(View.GONE);
                         }
+
 
                     }
                 },
