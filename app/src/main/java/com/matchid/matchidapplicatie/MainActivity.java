@@ -1,6 +1,8 @@
 package com.matchid.matchidapplicatie;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,15 +18,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import static com.matchid.matchidapplicatie.R.id.btn_camera;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Button btn_add_picture, btn_gallery, btn_results;
     ImageView img;
+    TextView username_nav_header, companyname_nav_header;
     private static final int CAMERA_REQUEST = 123;
     private static final int GALLERY_REQUEST = 124;
 
@@ -47,14 +49,31 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
 
-        btn_add_picture = (Button) findViewById(btn_camera);//initialitie knop (zet de naam zelf bovenaan de klasse zodat je er overal aankan)
+        username_nav_header = (TextView) headerView.findViewById(R.id.user);
+        username_nav_header.setText(getIntent().getStringExtra("username"));
+        btn_add_picture = (Button) findViewById(R.id.btn_camera);//initialitie knop (zet de naam zelf bovenaan de klasse zodat je er overal aankan)
         btn_gallery =(Button) findViewById(R.id.btn_gallery);
         btn_results = (Button) findViewById(R.id.btn_results);
+
+
+
+        //setNavHeader();
 
         btn_add_picture.setOnClickListener(openCamera);
         img = (ImageView) findViewById(R.id.img);
 
+
+
+    }
+
+    public void setNavHeader(){
+        SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
+
+        String username = userinfo.getString(LoginActivity.KEY_PRIVATE,"fout");
+
+        username_nav_header.setText(username);
     }
 
     View.OnClickListener openCamera = new View.OnClickListener(){
@@ -135,7 +154,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //bij opstarten van mainActivity
-        Toast.makeText(this, "create options", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "create options", Toast.LENGTH_SHORT).show();
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -151,10 +170,10 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show();
             return true;
         }else if(id ==R.id.logout){
-            Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
             return true;
         }
 

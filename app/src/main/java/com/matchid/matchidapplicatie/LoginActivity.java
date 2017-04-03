@@ -2,13 +2,18 @@ package com.matchid.matchidapplicatie;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Cache;
 import com.android.volley.Network;
@@ -30,6 +35,10 @@ public class LoginActivity extends Activity {
     Button btn_signin, btn_cancel;
     EditText etUsername, etPassword;
     TextView matchid_logo, error_message;
+    private ProgressBar spinner;
+    public static final String KEY_PRIVATE = "USERNAME";
+
+
 
 
     @Override
@@ -49,11 +58,13 @@ public class LoginActivity extends Activity {
 
         error_message=(TextView)findViewById(R.id.error_message);
         error_message.setVisibility(TextView.INVISIBLE);
-
+        spinner = (ProgressBar)findViewById(R.id.progressLogin);
+        spinner.setVisibility(View.GONE);
         btn_signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try{
+                    spinner.setVisibility(View.VISIBLE);
                     login();
                 }catch(Exception e){
 
@@ -70,6 +81,19 @@ public class LoginActivity extends Activity {
     }
 
 
+    public void safeInfo(){
+        SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
+
+        Editor editor = userinfo.edit();
+        editor.putString(KEY_PRIVATE, etUsername.getText().toString());
+        editor.commit();
+    }
+
+    public String getUsername(){
+        SharedPreferences sp = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
+
+        return sp.getString("name", "fout");
+    }
     public void login() throws UnknownHostException{
         RequestQueue mRequestQueue;
 
@@ -88,19 +112,25 @@ public class LoginActivity extends Activity {
 
 
         //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
-        String url ="http://10.108.16.180:8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
+        String url ="http://192.168.0.208:8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
 
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
+
                     @Override
                     public void onResponse(String response) {
                         // Do something with the response
                         if(response.equalsIgnoreCase("ok")){
-                            Intent goHome = new Intent(LoginActivity.this, MainActivity.class);
+                            Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
+                            spinner.setVisibility(View.GONE);
+                            Toast.makeText(LoginActivity.this, "Welcome " + etUsername.getText().toString() , Toast.LENGTH_SHORT).show();
+                            goHome.putExtra("username", etUsername.getText().toString());
+                            //safeInfo();
+
                             startActivity(goHome);
-                        }else{
+                        }else{btn_cancel.setText("test");
                             error_message.setText(response);
                             error_message.setVisibility(TextView.VISIBLE);
                         }
@@ -113,6 +143,7 @@ public class LoginActivity extends Activity {
                         // Handle error
                         error_message.setText(error.toString());
                         error_message.setVisibility(TextView.VISIBLE);
+                        spinner.setVisibility(View.GONE);
                     }
                 });
 
