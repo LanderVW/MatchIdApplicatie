@@ -2,6 +2,7 @@ package com.matchid.matchidapplicatie;
 
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,7 +32,7 @@ import java.net.UnknownHostException;
 import static android.graphics.Typeface.BOLD;
 
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements QuitDialog.Communicator{
     Button btn_signin, btn_cancel;
     EditText etUsername, etPassword;
     TextView matchid_logo, error_message;
@@ -53,7 +54,6 @@ public class LoginActivity extends Activity {
         etUsername = (EditText)findViewById(R.id.username);
         etPassword = (EditText)findViewById(R.id.password);
         btn_signin = (Button)findViewById(R.id.btn_signin);
-
         btn_cancel = (Button)findViewById(R.id.btn_cancel);
 
         error_message=(TextView)findViewById(R.id.error_message);
@@ -75,11 +75,23 @@ public class LoginActivity extends Activity {
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                showDialog(v);
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        showDialog(this.findViewById(R.id.content_main));
+    }
+
+    public void showDialog(View v){
+        FragmentManager manager = getFragmentManager();
+        QuitDialog dialog = new QuitDialog();
+
+        dialog.show(manager,"dialog");
+
+    }
 
     public void safeInfo(){
         SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
@@ -109,12 +121,17 @@ public class LoginActivity extends Activity {
 
         // Start the queue
         mRequestQueue.start();
+/*
+       // String ip4_adress = Utils.getIPAddress(true);
+        WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+        int ip = wifiInfo.getIpAddress();
+        String ip4_adress = Formatter.formatIpAddress(ip);*/
 
-        String ip4_adress = Utils.getIPAddress(true);
-        btn_cancel.setText(ip4_adress);
 
+        final String ipadress = "192.168.0.249";
         //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
-        String url ="http://192.168.0.208:8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
+        String url ="http://"+ipadress+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
 
         // Formulate the request and handle the response.
@@ -128,13 +145,11 @@ public class LoginActivity extends Activity {
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
                             spinner.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this, "Welcome " + etUsername.getText().toString() , Toast.LENGTH_SHORT).show();
-                            goHome.putExtra("username", etUsername.getText().toString());
+                            //goHome.putExtra("username", etUsername.getText().toString());
+                            //goHome.putExtra("ipadres", ipadress);
                             //safeInfo();
 
                             startActivity(goHome);
-                        }else{btn_cancel.setText("test");
-                            error_message.setText(response);
-                            error_message.setVisibility(TextView.VISIBLE);
                             spinner.setVisibility(View.GONE);
                         }
 
@@ -145,7 +160,11 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Handle error
-                        error_message.setText(error.toString());
+                        if(error.toString().contains("TimeoutError")||error.toString().contains("NoConnectionError")){
+                            error_message.setText("Er is iets foutgelopen.\nCheck je connectie en probeer opnieuw.");
+
+                        }else error_message.setText(error.toString());
+
                         error_message.setVisibility(TextView.VISIBLE);
                         spinner.setVisibility(View.GONE);
                     }
@@ -154,4 +173,12 @@ public class LoginActivity extends Activity {
         // Add the request to the RequestQueue.
         mRequestQueue.add(stringRequest);
     }
+
+    @Override
+    public void onDialogMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+
 }
+

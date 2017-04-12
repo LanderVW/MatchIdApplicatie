@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/quit_app"
+        android:layout_margin="16dp"
+        android:textSize="20dp"
+        android:id="@+id/dialog_message"
+        android:layout_centerHorizontal="true"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="@string/leave"
+        android:id="@+id/leave"
+        android:layout_marginLeft="75dp"
+        android:layout_marginStart="75dp"
+        android:layout_alignBaseline="@+id/stay"
+        android:layout_alignBottom="@+id/stay"
+        android:layout_alignLeft="@+id/dialog_message"
+        android:layout_alignStart="@+id/dialog_message" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stay"
+        android:id="@+id/stay"
+        android:layout_marginRight="74dp"
+        android:layout_marginEnd="74dp"
+        android:layout_below="@+id/dialog_message"
+        android:layout_alignRight="@+id/dialog_message"
+        android:layout_alignEnd="@+id/dialog_message" />
+    
+</RelativeLayout>

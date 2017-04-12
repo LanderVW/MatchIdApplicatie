@@ -1,12 +1,13 @@
 package com.matchid.matchidapplicatie;
 
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,9 +25,10 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Button btn_add_picture, btn_gallery, btn_results;
+    Button btn_add_picture, btn_gallery, btn_results, btn_analyse;
     ImageView img;
     TextView username_nav_header, companyname_nav_header;
+    GPSTracker gps;
     private static final int CAMERA_REQUEST = 123;
     private static final int GALLERY_REQUEST = 124;
 
@@ -51,11 +53,12 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
 
-        username_nav_header = (TextView) headerView.findViewById(R.id.user);
-        username_nav_header.setText(getIntent().getStringExtra("username"));
+        //username_nav_header = (TextView) headerView.findViewById(R.id.user);
+        //username_nav_header.setText(getIntent().getStringExtra("username"));
         btn_add_picture = (Button) findViewById(R.id.btn_camera);//initialitie knop (zet de naam zelf bovenaan de klasse zodat je er overal aankan)
         btn_gallery =(Button) findViewById(R.id.btn_gallery);
         btn_results = (Button) findViewById(R.id.btn_results);
+        btn_analyse = (Button) findViewById(R.id.btn_analyse);
 
 
 
@@ -64,17 +67,46 @@ public class MainActivity extends AppCompatActivity
         btn_add_picture.setOnClickListener(openCamera);
         img = (ImageView) findViewById(R.id.img);
 
+        btn_analyse.setOnClickListener(getLocation);
 
 
     }
 
-    public void setNavHeader(){
+
+   /* public void setNavHeader(){
         SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 
         String username = userinfo.getString(LoginActivity.KEY_PRIVATE,"fout");
 
         username_nav_header.setText(username);
-    }
+    }*/
+
+
+    View.OnClickListener getLocation = new View.OnClickListener(){
+
+
+        @Override
+        public void onClick(View arg0) {
+            // create class object
+            gps = new GPSTracker(MainActivity.this);
+
+            // check if GPS enabled
+            if(gps.canGetLocation()){
+
+                double latitude = gps.getLatitude();
+                double longitude = gps.getLongitude();
+
+                // \n is for new line
+                Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            }else{
+                // can't get location
+                // GPS or Network is not enabled
+                // Ask user to enable GPS/network in settings
+                gps.showSettingsAlert();
+            }
+
+        }
+    };
 
     View.OnClickListener openCamera = new View.OnClickListener(){
         public void onClick(View v){
@@ -97,7 +129,6 @@ public class MainActivity extends AppCompatActivity
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
                         startActivityForResult(pickPhoto , GALLERY_REQUEST);//one can be replaced with any action code
-
                     }
 
                     return true;
@@ -147,6 +178,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            finish();
             super.onBackPressed();
         }
     }
@@ -167,17 +199,38 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Fragment fragment = null;
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            //Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show();
+        if (id == R.id.action_user_info) {
+            Toast.makeText(this, "account", Toast.LENGTH_SHORT).show();
+
             return true;
         }else if(id ==R.id.logout){
-            //Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
+            Intent logout = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(logout);
+
+            finish();
             return true;
         }
 
+        if(fragment!=null){
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+            //ft.replace(R.id.content_main, fragment);
+            //ft.commit();
+
+
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void displaySelectedScreen(int id){
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -186,22 +239,14 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if(id==R.id.nav_home){
+            Toast.makeText(this, "home", Toast.LENGTH_SHORT).show();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+
+
+
+        displaySelectedScreen(id);
         return true;
     }
 }
