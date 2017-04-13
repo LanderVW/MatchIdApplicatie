@@ -1,0 +1,81 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_home"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.matchid.matchidapplicatie.HomeFragment"
+    tools:showIn="@layout/app_bar_main">
+
+    <View
+        android:id="@+id/centerShim"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true"/>
+    <!--logo-->
+    <TextView
+        android:id = "@+id/matchid_logo"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:text = "@string/matchid_name"
+        android:layout_centerHorizontal = "true"
+        android:textColor = "#DE2A00"
+        android:textSize = "40dp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id = "@+id/matchid_subtekst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/matchid_subtekst"
+        android:textColor="#696969"
+        android:textSize="20dp"
+        android:layout_below="@id/matchid_logo"
+        android:layout_centerHorizontal="true"/>
+    <!--knoppen-->
+    <Button
+        android:id="@+id/btn_camera"
+        android:layout_width="0dp"
+        android:layout_height="135dp"
+        android:drawableTop="@drawable/ic_camera"
+        android:text="camera"
+        android:layout_alignRight="@id/centerShim"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/matchid_subtekst"
+        />
+    <Button
+        android:id="@+id/btn_gallery"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:drawableTop="@drawable/ic_gallery"
+        android:text="gallery"
+        android:layout_alignLeft="@id/centerShim"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/btn_camera"
+        android:layout_alignTop="@id/btn_camera"
+        android:layout_alignBottom="@id/btn_camera"/>
+    <Button
+        android:id="@+id/btn_results"
+        android:layout_width="wrap_content"
+        android:layout_height="135dp"
+        android:drawableTop="@drawable/ic_manage"
+        android:text="results"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@id/centerShim"
+        android:layout_below="@id/btn_camera"/>
+
+    <Button
+        android:id="@+id/btn_analyse"
+        android:layout_width="wrap_content"
+        android:layout_height="135dp"
+        android:drawableTop="@drawable/ic_analyze_icon"
+        android:text="analyse"
+        android:layout_alignParentRight="true"
+        android:layout_alignLeft="@id/centerShim"
+        android:layout_below="@id/btn_camera"/>
+    <ImageView
+        android:id="@+id/img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

@@ -2,18 +2,17 @@ package com.matchid.matchidapplicatie;
 
 
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,8 +21,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import static android.R.attr.id;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ProjectsFragment.OnFragmentInteractionListener {
 
     Button btn_add_picture, btn_gallery, btn_results, btn_analyse;
     ImageView img;
@@ -36,55 +37,45 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if (savedInstanceState == null) {
+            Fragment fragment = null;
+            Class fragmentClass = null;
+            fragmentClass = HomeFragment.class;
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        }
 
-
+        /*
+        init de drawer
+         */
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
+        /*
+        init hoe die eruit ziet
+         */
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
 
-        //username_nav_header = (TextView) headerView.findViewById(R.id.user);
-        //username_nav_header.setText(getIntent().getStringExtra("username"));
-        btn_add_picture = (Button) findViewById(R.id.btn_camera);//initialitie knop (zet de naam zelf bovenaan de klasse zodat je er overal aankan)
-        btn_gallery =(Button) findViewById(R.id.btn_gallery);
-        btn_results = (Button) findViewById(R.id.btn_results);
-        btn_analyse = (Button) findViewById(R.id.btn_analyse);
-
-
-
-        //setNavHeader();
-
-        btn_add_picture.setOnClickListener(openCamera);
-        img = (ImageView) findViewById(R.id.img);
-
-        btn_analyse.setOnClickListener(getLocation);
-
-
     }
-
-
-   /* public void setNavHeader(){
-        SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
-
-        String username = userinfo.getString(LoginActivity.KEY_PRIVATE,"fout");
-
-        username_nav_header.setText(username);
-    }*/
-
-
+    /*de onclicklistener voor de location
+    * er wordt momenteel gewoon een toast getoond op het scherm
+     */
     View.OnClickListener getLocation = new View.OnClickListener(){
-
-
         @Override
         public void onClick(View arg0) {
             // create class object
@@ -107,8 +98,12 @@ public class MainActivity extends AppCompatActivity
 
         }
     };
-
-    View.OnClickListener openCamera = new View.OnClickListener(){
+/*
+*de onclicklistener voor de camera te gebruiken
+* er verschijnt een dialoogvenster die aangeeft of je een nieuwe
+* foto wil nemen of een van de gallery wil gebruiken
+ */
+    /*View.OnClickListener openCamera = new View.OnClickListener(){
         public void onClick(View v){
             PopupMenu popupMenu = new PopupMenu(MainActivity.this,btn_add_picture);
             popupMenu.getMenuInflater().inflate(R.menu.add_picture,popupMenu.getMenu());
@@ -139,9 +134,12 @@ public class MainActivity extends AppCompatActivity
 
 
         }
-    };
+    };*/
 
-    @Override
+    /*
+     *na het onvangen van de foto wordt die opgeslagen
+     */
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);//kweet nie waarom
@@ -167,8 +165,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:break;
         }
-    }
+    }*/
 
+    /*
+     * methode die aangeeft wat gebeurt als op de terug
+     * knop wordt gedrukt
+     */
     @Override
     public void onBackPressed() {
         //dit is als op de ingebouwde terugknop wordt gedrukt
@@ -198,8 +200,7 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        Fragment fragment = null;
+
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_user_info) {
@@ -214,39 +215,43 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-        if(fragment!=null){
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-
-            //ft.replace(R.id.content_main, fragment);
-            //ft.commit();
-
-
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
-    private void displaySelectedScreen(int id){
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Fragment fragment = null;
+        Class fragmentClass = null;
 
         if(id==R.id.nav_home){
             Toast.makeText(this, "home", Toast.LENGTH_SHORT).show();
+            fragmentClass = HomeFragment.class;
+        }else if(id ==R.id.nav_projects){
+            Toast.makeText(this, "projects", Toast.LENGTH_SHORT).show();
+            fragmentClass = ProjectsFragment.class;
         }
+        try{
+            Log.d("newinstance", "newinstance");
+            fragment = (Fragment) fragmentClass.newInstance();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
 
-
-
-        displaySelectedScreen(id);
         return true;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

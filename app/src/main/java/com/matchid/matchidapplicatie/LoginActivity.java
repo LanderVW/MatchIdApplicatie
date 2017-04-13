@@ -82,7 +82,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
 
     @Override
     public void onBackPressed() {
-        showDialog(this.findViewById(R.id.content_main));
+        showDialog(this.findViewById(R.id.flContent));
     }
 
     public void showDialog(View v){
@@ -133,7 +133,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
         String url ="http://"+ipadress+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
-
+        Toast.makeText(LoginActivity.this, "test", Toast.LENGTH_SHORT).show();
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -142,6 +142,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                     public void onResponse(String response) {
                         // Do something with the response
                         if(response.equalsIgnoreCase("ok")){
+
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
                             spinner.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this, "Welcome " + etUsername.getText().toString() , Toast.LENGTH_SHORT).show();
