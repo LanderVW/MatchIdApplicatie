@@ -16,8 +16,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +48,7 @@ public class ProjectsFragment extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
+
     private TextView tv;
     private View view;
     private ListView lv;
@@ -97,16 +98,10 @@ public class ProjectsFragment extends Fragment{
         tv = (TextView) view.findViewById(R.id.tv);
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
+
         try {
 
-            //InputStream is = getActivity().getAssets().open("user.xml");
-
-
-            URL url = new URL("http://www.androidpeople.com/wp-content/uploads/2010/06/example.xml");
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new InputSource(url.openStream()));
-            doc.getDocumentElement().normalize();
+            InputStream is = getActivity().getAssets().open("user.xml");
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
