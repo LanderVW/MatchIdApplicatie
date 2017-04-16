@@ -3,8 +3,7 @@
     android:id="@+id/content_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.matchid.matchidapplicatie.HomeFragment"
-    tools:showIn="@layout/app_bar_main">
+    tools:context="com.matchid.matchidapplicatie.HomeFragment">
 
     <View
         android:id="@+id/centerShim"
