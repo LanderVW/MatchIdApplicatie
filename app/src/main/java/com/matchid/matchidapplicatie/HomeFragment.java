@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,20 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -124,33 +139,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         mListener = null;
     }
 
-    View.OnClickListener getLocation = new View.OnClickListener(){
-
-        @Override
-        public void onClick(View arg0) {
-            // create class object
-            gps = new GPSTracker(getActivity());
-
-            // check if GPS enabled
-            if(gps.canGetLocation()){
-
-                double latitude = gps.getLatitude();
-                double longitude = gps.getLongitude();
-
-                // \n is for new line
-                Toast.makeText(getActivity(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-            }else{
-                // can't get location
-                // GPS or Network is not enabled
-                // Ask user to enable GPS/network in settings
-                gps.showSettingsAlert();
-            }
-
-        }
-
-
-    };
-
 
 
     View.OnClickListener getPicture = new View.OnClickListener(){
@@ -237,4 +225,91 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         void onFragmentInteraction(Uri uri);
     }
 
+
+
+    View.OnClickListener getLocation = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View arg0) {
+            // create class object
+            Log.d("tag", "probeer http te maken!");
+            gps = new GPSTracker(getActivity());
+
+            // check if GPS enabled
+            if (gps.canGetLocation()) {
+
+                double latitude = gps.getLatitude();
+                double longitude = gps.getLongitude();
+
+                // \n is for new line
+                Toast.makeText(getActivity(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            } else {
+                // can't get location
+                // GPS or Network is not enabled
+                // Ask user to enable GPS/network in settings
+                gps.showSettingsAlert();
+            }
+
+
+            //vanaf hier van Axel voor verbinding met mysql
+            //ip niet vergeten te veranderen!
+            String url = "http://192.168.1.7:8080/MatchIDEnterpriseApp-war/rest/project/";
+
+            Log.d("tag", "start!");
+
+            new XMLTask().execute(url);
+        }
+    };
+
+
+        public static class XMLTask extends AsyncTask<String , String , String>{
+
+        @Override
+        protected String doInBackground(String... urls) {
+            HttpURLConnection connection =null;
+            BufferedReader reader = null;
+
+            try{
+                URL url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream stream = connection.getInputStream();
+
+                reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuffer buffer = new StringBuffer();
+
+                String line = "" ;
+                while((line = reader.readLine())!= null){
+                    buffer.append(line);
+                }
+
+            return buffer.toString();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }finally {
+                if(connection != null){
+                    connection.disconnect();}
+                try {
+                    if(reader != null){
+                        reader.close();}
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String line) {
+            super.onPostExecute(line);
+            //deze onPost wordt uitgevoerd als er iets terug gegeven is
+            Log.d("tag" , line);
+        }
+    }
 }
+
