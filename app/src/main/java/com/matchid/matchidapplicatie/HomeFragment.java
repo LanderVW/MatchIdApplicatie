@@ -19,11 +19,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +26,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -232,7 +226,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         @Override
         public void onClick(View arg0) {
             // create class object
-            Log.d("tag", "probeer http te maken!");
+            Log.d("home fragment", " get location");
             gps = new GPSTracker(getActivity());
 
             // check if GPS enabled
@@ -253,7 +247,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
             //vanaf hier van Axel voor verbinding met mysql
             //ip niet vergeten te veranderen!
-            String url = "http://192.168.1.7:8080/MatchIDEnterpriseApp-war/rest/project/";
+            String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project";
 
             Log.d("tag", "start!");
 

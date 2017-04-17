@@ -35,7 +35,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -58,6 +57,7 @@ public class ProjectsFragment extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
+
     private TextView tv;
     private View view;
     private ListView lv;
@@ -107,44 +107,9 @@ public class ProjectsFragment extends Fragment{
         tv = (TextView) view.findViewById(R.id.tv);
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
-        try {
-            XMLParser xmlparser = new XMLParser();
-
-            InputStream is = xmlparser.loadXML();//getActivity().getAssets().open("user.xml");
-
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(is);
-
-            Element element=doc.getDocumentElement();
-            element.normalize();
-
-            NodeList nList = doc.getElementsByTagName("users");
-            adapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1,strArr);
-            lv.setAdapter(adapter);
-
-            for (int i=0; i<nList.getLength(); i++) {
-                Node node = nList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-
-                    Element element2 = (Element) node;
-                    strArr.add(getValue("username", element2));
-//                    tv.setText("\nName : " + getValue("name", element2)+"\n");
-//                    tv.setText(tv.getText()+"Surname : " + getValue("surname", element2)+"\n");
-//                    tv.setText(tv.getText()+"-----------------------");
-                }
-            }
-            adapter.notifyDataSetChanged();
-
-
-
-        } catch (Exception e) {
-            Log.d("tag","hij doet het niet");
-            e.printStackTrace();}
 
         //haal alle projecten op (nog niet naar id gekekeken)
-        String url = "http://192.168.1.7:8080/MatchIDEnterpriseApp-war/rest/project/";
+        String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project/";
         Log.d("tag", "start!");
         // haal het op, er is nu nog niks mee gebeurd!
         new XMLTask().execute(url);
@@ -244,14 +209,14 @@ public class ProjectsFragment extends Fragment{
         protected String doInBackground(String... urls) {
             HttpURLConnection connection =null;
             BufferedReader reader = null;
-
+    Log.d("try","net voor try");
             try{
                 java.net.URL url = new URL(urls[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
 
                 InputStream stream = connection.getInputStream();
-
+                Log.d("stream", stream.toString());
                 reader = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer buffer = new StringBuffer();
 
