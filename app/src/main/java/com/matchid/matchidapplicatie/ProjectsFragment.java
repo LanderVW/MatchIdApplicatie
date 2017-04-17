@@ -2,6 +2,7 @@ package com.matchid.matchidapplicatie;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,8 +17,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,40 +108,45 @@ public class ProjectsFragment extends Fragment{
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
 
-        try {
+        //haal alle projecten op (nog niet naar id gekekeken)
+        String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project/";
+        Log.d("tag", "start!");
+        // haal het op, er is nu nog niks mee gebeurd!
+        new XMLTask().execute(url);
 
-            InputStream is = getActivity().getAssets().open("user.xml");
-
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(is);
-
-            Element element=doc.getDocumentElement();
-            element.normalize();
-
-            NodeList nList = doc.getElementsByTagName("users");
-            adapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1,strArr);
-            lv.setAdapter(adapter);
-
-            for (int i=0; i<nList.getLength(); i++) {
-                Node node = nList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-
-                    Element element2 = (Element) node;
-                    strArr.add(getValue("username", element2));
-//                    tv.setText("\nName : " + getValue("name", element2)+"\n");
-//                    tv.setText(tv.getText()+"Surname : " + getValue("surname", element2)+"\n");
-//                    tv.setText(tv.getText()+"-----------------------");
-                }
-            }
-            adapter.notifyDataSetChanged();
-
-
-
-        } catch (Exception e) {
-            Log.d("tag","hij doet het niet");
-            e.printStackTrace();}
+//        try {
+//            InputStream is = getActivity().getAssets().open("user.xml");
+//
+//            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+//            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+//            Document doc = dBuilder.parse(is);
+//
+//            Element element=doc.getDocumentElement();
+//            element.normalize();
+//
+//            NodeList nList = doc.getElementsByTagName("users");
+//            adapter = new ArrayAdapter<String>(getActivity(),
+//                    android.R.layout.simple_list_item_1,strArr);
+//            lv.setAdapter(adapter);
+//
+//            for (int i=0; i<nList.getLength(); i++) {
+//                Node node = nList.item(i);
+//                if (node.getNodeType() == Node.ELEMENT_NODE) {
+//
+//                    Element element2 = (Element) node;
+//                    strArr.add(getValue("username", element2));
+////                    tv.setText("\nName : " + getValue("name", element2)+"\n");
+////                    tv.setText(tv.getText()+"Surname : " + getValue("surname", element2)+"\n");
+////                    tv.setText(tv.getText()+"-----------------------");
+//                }
+//            }
+//            adapter.notifyDataSetChanged();
+//
+//
+//
+//        } catch (Exception e) {
+//            Log.d("tag","hij doet het niet");
+//            e.printStackTrace();}
 
 
         return view;
@@ -181,5 +195,110 @@ public class ProjectsFragment extends Fragment{
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public class XMLTask extends AsyncTask<String , String , String> {
+
+        private TextView tv;
+        private View view;
+        private ListView lv;
+        private List<String> strArr;
+        private ArrayAdapter<String> adapter;
+
+        @Override
+        protected String doInBackground(String... urls) {
+            HttpURLConnection connection =null;
+            BufferedReader reader = null;
+    Log.d("try","net voor try");
+            try{
+                java.net.URL url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream stream = connection.getInputStream();
+                Log.d("stream", stream.toString());
+                reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuffer buffer = new StringBuffer();
+
+                String line = "" ;
+                while((line = reader.readLine())!= null){
+                    buffer.append(line);
+                }
+
+                return buffer.toString();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }finally {
+                if(connection != null){
+                    connection.disconnect();}
+                try {
+                    if(reader != null){
+                        reader.close();}
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String line) {
+            Document document = null;
+            super.onPostExecute(line);
+            //deze onPost wordt uitgevoerd als er iets terug gegeven is
+            Log.d("tag" , line);
+            //line is een string
+            //maak van string een XML file
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder;
+            Document doc = null;
+
+            try{
+                builder = factory.newDocumentBuilder();
+                doc = builder.parse( new InputSource( new StringReader( line ) ) );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("tag" , "iets fout tijdens string naar xml");
+            }
+
+            //xml doc naar iets dat we kunnen weergeven op de app, hier is iets fout
+            try {
+
+            Element element=doc.getDocumentElement();
+            element.normalize();
+            if(doc == null){
+                Log.d("tag" , "leeg");
+            }
+            NodeList nList = doc.getElementsByTagName("project");
+            adapter = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_list_item_1,strArr);
+            lv.setAdapter(adapter);
+
+            for (int i=0; i<nList.getLength(); i++) {
+                Node node = nList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+
+                    Element element2 = (Element) node;
+                    strArr.add(getValue("title", element2));
+//                    tv.setText("\nName : " + getValue("name", element2)+"\n");
+//                    tv.setText(tv.getText()+"Surname : " + getValue("surname", element2)+"\n");
+//                    tv.setText(tv.getText()+"-----------------------");
+                }
+            }
+            adapter.notifyDataSetChanged();
+
+
+
+        } catch (Exception e) {
+            Log.d("tag","hij doet het niet");
+            e.printStackTrace();}
+
+
+        }
     }
 }

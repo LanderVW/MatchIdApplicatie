@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity
         public void onClick(View arg0) {
             // create class object
             gps = new GPSTracker(MainActivity.this);
-
+            Log.d("mainactivity","gps tracker");
             // check if GPS enabled
             if(gps.canGetLocation()){
 
@@ -95,6 +95,9 @@ public class MainActivity extends AppCompatActivity
                 // Ask user to enable GPS/network in settings
                 gps.showSettingsAlert();
             }
+
+
+
 
         }
     };
