@@ -18,8 +18,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import static android.R.attr.id;
 
@@ -80,7 +90,7 @@ public class MainActivity extends AppCompatActivity
         public void onClick(View arg0) {
             // create class object
             gps = new GPSTracker(MainActivity.this);
-
+            Log.d("tag","probeer http te maken");
             // check if GPS enabled
             if(gps.canGetLocation()){
 
@@ -95,6 +105,9 @@ public class MainActivity extends AppCompatActivity
                 // Ask user to enable GPS/network in settings
                 gps.showSettingsAlert();
             }
+
+
+
 
         }
     };
