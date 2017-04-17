@@ -16,8 +16,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,15 +98,9 @@ public class ProjectsFragment extends Fragment{
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
         try {
+            XMLParser xmlparser = new XMLParser();
 
-            //InputStream is = getActivity().getAssets().open("user.xml");
-
-
-            URL url = new URL("http://www.androidpeople.com/wp-content/uploads/2010/06/example.xml");
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new InputSource(url.openStream()));
-            doc.getDocumentElement().normalize();
+            InputStream is = xmlparser.loadXML();//getActivity().getAssets().open("user.xml");
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
