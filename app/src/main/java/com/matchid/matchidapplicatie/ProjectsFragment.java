@@ -283,7 +283,7 @@ public class ProjectsFragment extends Fragment{
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
 
                     Element element2 = (Element) node;
-                    strArr.add(getValue("username", element2));
+                    strArr.add(getValue("title", element2));
 //                    tv.setText("\nName : " + getValue("name", element2)+"\n");
 //                    tv.setText(tv.getText()+"Surname : " + getValue("surname", element2)+"\n");
 //                    tv.setText(tv.getText()+"-----------------------");
