@@ -34,7 +34,7 @@ public class XMLParser extends AsyncTask<String , String , InputStream> {
 
             InputStream stream = connection.getInputStream();
 
-            ProjectsFragment.setXmlString(stream);
+            //ProjectsFragment.setXmlString(stream);
 
             Log.d("stream xmlparser", stream.toString());//dit geeft geen mooie xml pagina terug
 //            reader = new BufferedReader(new InputStreamReader(stream));
@@ -71,7 +71,7 @@ public class XMLParser extends AsyncTask<String , String , InputStream> {
         super.onPostExecute(line);
         //deze onPost wordt uitgevoerd als er iets terug gegeven is
         Log.d("xml?" , line.toString());
-        ProjectsFragment.setXmlString(line);
+        //ProjectsFragment.setXmlString(line);
 
     }
 
