@@ -138,7 +138,34 @@ public class ProjectsFragment extends Fragment{
 //            e.printStackTrace();}
 //
 
+
         return view;
+    }
+
+    public void updateListview(NodeList nd){
+        try {
+
+            adapter = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_list_item_1,strArr);
+            lv.setAdapter(adapter);
+            for (int i = 0; i < nd.getLength(); i++) {
+                Node node = nd.item(i);
+
+                Log.d("tag", "current element: " + node.getNodeName());
+
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) node;
+                    strArr.add(getValue("title",eElement));
+
+                    Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+                }
+            }
+
+            adapter.notifyDataSetChanged();
+        }catch(Exception e) {
+            Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
+            e.printStackTrace();
+        }
     }
 
     private static String getValue(String tag, Element element) {
@@ -267,23 +294,8 @@ public class ProjectsFragment extends Fragment{
             Log.d("tag" , "root element: "+ doc.getDocumentElement().getNodeName());
 
             NodeList nList = doc.getElementsByTagName("project");
-            try {
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node n = nList.item(i);
 
-                    Log.d("tag", "current element: " + n.getNodeName());
-
-                    if (n.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) n;
-                        Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
-
-                    }
-                }
-            }catch(Exception e) {
-                Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
-                e.printStackTrace();}
-
-
+            updateListview(nList);
         }
     }
 }
