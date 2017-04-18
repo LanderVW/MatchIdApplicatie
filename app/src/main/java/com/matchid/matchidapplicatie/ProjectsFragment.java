@@ -57,7 +57,6 @@ public class ProjectsFragment extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
-    private TextView tv;
     private View view;
     private ListView lv;
     private List<String> strArr;
@@ -95,7 +94,6 @@ public class ProjectsFragment extends Fragment{
                              Bundle savedInstanceState) {
         Log.d("tag","OncreateView");
         view = inflater.inflate(R.layout.fragment_projects, container, false);
-        tv = (TextView) view.findViewById(R.id.tv);
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
 
@@ -141,6 +139,34 @@ public class ProjectsFragment extends Fragment{
 //
 
         return view;
+    }
+
+    public void updateListview(NodeList nd){
+        try {
+
+            adapter = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_list_item_1,strArr);
+            lv.setAdapter(adapter);
+            for (int i = 0; i < nd.getLength(); i++) {
+                Node node = nd.item(i);
+
+                Log.d("tag", "current element: " + node.getNodeName());
+
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) node;
+                    strArr.add(getValue("title",eElement));
+
+                    Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+                }
+            }
+
+            adapter.notifyDataSetChanged();
+        }catch(Exception e) {
+            Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
+            e.printStackTrace();
+        }
+
+
     }
 
     private static String getValue(String tag, Element element) {
@@ -269,21 +295,22 @@ public class ProjectsFragment extends Fragment{
             Log.d("tag" , "root element: "+ doc.getDocumentElement().getNodeName());
 
             NodeList nList = doc.getElementsByTagName("project");
-            try {
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node n = nList.item(i);
-
-                    Log.d("tag", "current element: " + n.getNodeName());
-
-                    if (n.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) n;
-                        Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
-
-                    }
-                }
-            }catch(Exception e) {
-                Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
-                e.printStackTrace();}
+            updateListview(nList);
+//            try {
+//                for (int i = 0; i < nList.getLength(); i++) {
+//                    Node n = nList.item(i);
+//
+//                    Log.d("tag", "current element: " + n.getNodeName());
+//
+//                    if (n.getNodeType() == Node.ELEMENT_NODE) {
+//                        Element eElement = (Element) n;
+//                        Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+//                    }
+//
+//                }
+//            }catch(Exception e) {
+//                Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
+//                e.printStackTrace();}
 
 
         }
