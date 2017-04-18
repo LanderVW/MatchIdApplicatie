@@ -13,11 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,8 +26,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.parsers.*;
+import org.xml.sax.InputSource;
+import org.w3c.dom.*;
+import java.io.*;
 
 
 /**
@@ -73,14 +79,6 @@ public class ProjectsFragment extends Fragment{
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProjectsFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static ProjectsFragment newInstance(String param1, String param2) {
         ProjectsFragment fragment = new ProjectsFragment();
@@ -108,7 +106,7 @@ public class ProjectsFragment extends Fragment{
         strArr = new ArrayList<String>();
 
         //haal alle projecten op (nog niet naar id gekekeken)
-        String url = "http://192.168.1.7:8080/MatchIDEnterpriseApp-war/rest/project/";
+        String url = "http://192.168.0.191:8080/MatchIDEnterpriseApp-war/rest/project/";
         Log.d("tag", "start!");
         // haal het op, er is nu nog niks mee gebeurd!
         new XMLTask().execute(url);
@@ -146,7 +144,7 @@ public class ProjectsFragment extends Fragment{
 //        } catch (Exception e) {
 //            Log.d("tag","hij doet het niet");
 //            e.printStackTrace();}
-
+//
 
         return view;
     }
@@ -246,55 +244,51 @@ public class ProjectsFragment extends Fragment{
 
         @Override
         protected void onPostExecute(String line) {
-            Document document = null;
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
             Log.d("tag" , line);
             //line is een string
+            String[] parts = line.split(("\\?>"));
+            String part1 = parts[0];
+            String part2 = parts[1];
+
+            Log.d("tag" , part1);
+            Log.d("tag" , part2);
+
             //maak van string een XML file
+
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder;
             Document doc = null;
-
-            try{
+            try
+            {
                 builder = factory.newDocumentBuilder();
-                doc = builder.parse( new InputSource( new StringReader( line ) ) );
+                doc = builder.parse( new InputSource( new StringReader( part2 ) ) );
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.d("tag" , "iets fout tijdens string naar xml");
             }
 
-            //xml doc naar iets dat we kunnen weergeven op de app, hier is iets fout
-            try {
 
-            Element element=doc.getDocumentElement();
-            element.normalize();
-            if(doc == null){
-                Log.d("tag" , "leeg");
-            }
+            //xml doc naar iets dat we kunnen weergeven op de app
+            doc.getDocumentElement().normalize();
+            Log.d("tag" , "root element: "+ doc.getDocumentElement().getNodeName());
+
             NodeList nList = doc.getElementsByTagName("project");
-            adapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1,strArr);
-            lv.setAdapter(adapter);
+    try {
+        for (int i = 0; i < nList.getLength(); i++) {
+            Node n = nList.item(i);
 
-            for (int i=0; i<nList.getLength(); i++) {
-                Node node = nList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Log.d("tag", "current element: " + n.getNodeName());
 
-                    Element element2 = (Element) node;
-                    strArr.add(getValue("title", element2));
-//                    tv.setText("\nName : " + getValue("name", element2)+"\n");
-//                    tv.setText(tv.getText()+"Surname : " + getValue("surname", element2)+"\n");
-//                    tv.setText(tv.getText()+"-----------------------");
-                }
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) n;
+                Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+
             }
-            adapter.notifyDataSetChanged();
-
-
-
-        } catch (Exception e) {
-            Log.d("tag","hij doet het niet");
+        }
+    }catch(Exception e) {
+            Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
             e.printStackTrace();}
 
 
