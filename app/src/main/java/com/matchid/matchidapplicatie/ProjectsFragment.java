@@ -57,7 +57,6 @@ public class ProjectsFragment extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
-
     private TextView tv;
     private View view;
     private ListView lv;
@@ -74,14 +73,6 @@ public class ProjectsFragment extends Fragment{
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProjectsFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static ProjectsFragment newInstance(String param1, String param2) {
         ProjectsFragment fragment = new ProjectsFragment();
@@ -147,7 +138,7 @@ public class ProjectsFragment extends Fragment{
 //        } catch (Exception e) {
 //            Log.d("tag","hij doet het niet");
 //            e.printStackTrace();}
-
+//
 
         return view;
     }
@@ -209,14 +200,14 @@ public class ProjectsFragment extends Fragment{
         protected String doInBackground(String... urls) {
             HttpURLConnection connection =null;
             BufferedReader reader = null;
-    Log.d("try","net voor try");
+
             try{
                 java.net.URL url = new URL(urls[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
 
                 InputStream stream = connection.getInputStream();
-                Log.d("stream", stream.toString());
+
                 reader = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer buffer = new StringBuffer();
 
@@ -247,56 +238,51 @@ public class ProjectsFragment extends Fragment{
 
         @Override
         protected void onPostExecute(String line) {
-            Document document = null;
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
             Log.d("tag" , line);
             //line is een string
+            String[] parts = line.split(("\\?>"));
+            String part1 = parts[0];
+            String part2 = parts[1];
+
+            Log.d("tag" , part1);
+            Log.d("tag" , part2);
+
             //maak van string een XML file
+
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder;
             Document doc = null;
-
             try{
                 builder = factory.newDocumentBuilder();
-                doc = builder.parse( new InputSource( new StringReader( line ) ) );
+                doc = builder.parse( new InputSource( new StringReader( part2 ) ) );
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.d("tag" , "iets fout tijdens string naar xml");
             }
 
-            //xml doc naar iets dat we kunnen weergeven op de app, hier is iets fout
-            try {
 
-            Element element=doc.getDocumentElement();
-            element.normalize();
-            if(doc == null){
-                Log.d("tag" , "leeg");
-            }
+            //xml doc naar iets dat we kunnen weergeven op de app
+            doc.getDocumentElement().normalize();
+            Log.d("tag" , "root element: "+ doc.getDocumentElement().getNodeName());
+
             NodeList nList = doc.getElementsByTagName("project");
-            adapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1,strArr);
-            lv.setAdapter(adapter);
+            try {
+                for (int i = 0; i < nList.getLength(); i++) {
+                    Node n = nList.item(i);
 
-            for (int i=0; i<nList.getLength(); i++) {
-                Node node = nList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Log.d("tag", "current element: " + n.getNodeName());
 
-                    Element element2 = (Element) node;
-                    strArr.add(getValue("title", element2));
-//                    tv.setText("\nName : " + getValue("name", element2)+"\n");
-//                    tv.setText(tv.getText()+"Surname : " + getValue("surname", element2)+"\n");
-//                    tv.setText(tv.getText()+"-----------------------");
+                    if (n.getNodeType() == Node.ELEMENT_NODE) {
+                        Element eElement = (Element) n;
+                        Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+
+                    }
                 }
-            }
-            adapter.notifyDataSetChanged();
-
-
-
-        } catch (Exception e) {
-            Log.d("tag","hij doet het niet");
-            e.printStackTrace();}
+            }catch(Exception e) {
+                Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
+                e.printStackTrace();}
 
 
         }
