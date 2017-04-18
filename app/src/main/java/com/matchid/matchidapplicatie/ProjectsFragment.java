@@ -62,9 +62,6 @@ public class ProjectsFragment extends Fragment{
     private List<String> strArr;
     private ArrayAdapter<String> adapter;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -72,16 +69,21 @@ public class ProjectsFragment extends Fragment{
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
-    public static ProjectsFragment newInstance(String param1, String param2) {
+    /**
+     *
+     * @return fragment
+     */
+    public static ProjectsFragment newInstance() {
         ProjectsFragment fragment = new ProjectsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +91,13 @@ public class ProjectsFragment extends Fragment{
 
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -100,48 +109,14 @@ public class ProjectsFragment extends Fragment{
         //haal alle projecten op (nog niet naar id gekekeken)
         String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project/";
         Log.d("tag", "start!");
-        // haal het op, er is nu nog niks mee gebeurd!
         new XMLTask().execute(url);
-
-//        try {
-//            InputStream is = getActivity().getAssets().open("user.xml");
-//
-//            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-//            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-//            Document doc = dBuilder.parse(is);
-//
-//            Element element=doc.getDocumentElement();
-//            element.normalize();
-//
-//            NodeList nList = doc.getElementsByTagName("users");
-//            adapter = new ArrayAdapter<String>(getActivity(),
-//                    android.R.layout.simple_list_item_1,strArr);
-//            lv.setAdapter(adapter);
-//
-//            for (int i=0; i<nList.getLength(); i++) {
-//                Node node = nList.item(i);
-//                if (node.getNodeType() == Node.ELEMENT_NODE) {
-//
-//                    Element element2 = (Element) node;
-//                    strArr.add(getValue("username", element2));
-////                    tv.setText("\nName : " + getValue("name", element2)+"\n");
-////                    tv.setText(tv.getText()+"Surname : " + getValue("surname", element2)+"\n");
-////                    tv.setText(tv.getText()+"-----------------------");
-//                }
-//            }
-//            adapter.notifyDataSetChanged();
-//
-//
-//
-//        } catch (Exception e) {
-//            Log.d("tag","hij doet het niet");
-//            e.printStackTrace();}
-//
-
-
         return view;
     }
 
+    /**
+     *
+     * @param nd
+     */
     public void updateListview(NodeList nd){
         try {
 
@@ -168,12 +143,23 @@ public class ProjectsFragment extends Fragment{
         }
     }
 
+    /**
+     * op basis van een xml tag wordt de waarde terug gegeven in de vorm van een String
+     *
+     * @param tag
+     * @param element
+     * @return String
+     */
     private static String getValue(String tag, Element element) {
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
         Node node = nodeList.item(0);
         return node.getNodeValue();
     }
 
+    /**
+     *
+     * @param uri
+     */
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -181,6 +167,10 @@ public class ProjectsFragment extends Fragment{
         }
     }
 
+    /**
+     *
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -213,6 +203,10 @@ public class ProjectsFragment extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     *
+     * @author lander
+     */
     public class XMLTask extends AsyncTask<String , String , String> {
 
         private TextView tv;
@@ -221,6 +215,11 @@ public class ProjectsFragment extends Fragment{
         private List<String> strArr;
         private ArrayAdapter<String> adapter;
 
+        /**
+         *
+         * @param urls
+         * @return
+         */
         @Override
         protected String doInBackground(String... urls) {
             HttpURLConnection connection =null;
@@ -261,6 +260,10 @@ public class ProjectsFragment extends Fragment{
             return null;
         }
 
+        /**
+         *
+         * @param line
+         */
         @Override
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
