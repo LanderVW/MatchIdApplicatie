@@ -57,7 +57,6 @@ public class ProjectsFragment extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
-    private TextView tv;
     private View view;
     private ListView lv;
     private List<String> strArr;
@@ -95,7 +94,6 @@ public class ProjectsFragment extends Fragment{
                              Bundle savedInstanceState) {
         Log.d("tag","OncreateView");
         view = inflater.inflate(R.layout.fragment_projects, container, false);
-        tv = (TextView) view.findViewById(R.id.tv);
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
 
