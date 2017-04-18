@@ -47,6 +47,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

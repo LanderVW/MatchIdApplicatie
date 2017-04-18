@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -54,18 +55,18 @@ public class ProjectsFragment extends Fragment{
     static final String KEY_NAME = "username";
     static final String KEY_COST = "cost";
     static final String KEY_DESC = "description";
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
-    private TextView tv;
+
+    private static String xmlString;
+    static InputStream is;
+
+    private static TextView tv;
     private View view;
     private ListView lv;
     private List<String> strArr;
     private ArrayAdapter<String> adapter;
+    XMLParser xmlParser;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -73,12 +74,17 @@ public class ProjectsFragment extends Fragment{
         // Required empty public constructor
     }
 
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @return A new instance of fragment ProjectsFragment.
+     */
     // TODO: Rename and change types and number of parameters
-    public static ProjectsFragment newInstance(String param1, String param2) {
+    public static ProjectsFragment newInstance() {
         ProjectsFragment fragment = new ProjectsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -100,18 +106,77 @@ public class ProjectsFragment extends Fragment{
         strArr = new ArrayList<String>();
 
         //haal alle projecten op (nog niet naar id gekekeken)
-        String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project/";
+        String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project";
         Log.d("tag", "start!");
         // haal het op, er is nu nog niks mee gebeurd!
-        new XMLTask().execute(url);
 
-//        try {
+        try {
+            xmlParser = new XMLParser();
+            xmlParser.execute(url);
+            Log.d("ProjectFragment","xmlParser aangemaakt");
+//        new XMLTask().execute(url);     //dit mag er nu niet meer in
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        /**
+         * dit stuk code vormt de verkregen xml STRING om naar een xml document
+         */
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);//waarom is dit eiglijk feitelijk
+        DocumentBuilder builder;
+        StringReader sr;
+
+        try{
+
+
+            builder = factory.newDocumentBuilder();Log.d("ProjectFragment", "start bouw xml");
+//           // sr = new StringReader(xmlString);Log.d("ProjectFragment", "Stringreader");
+//            InputSource inps = new InputSource(xmlString);
+
+
+            Document doc = builder.parse(is);//xmlParser.loadXMLFromString(xmlString);
+            Log.d("log","doc");
+            //builder.parse(inps);
+
+
+
+//            builder = factory.newDocumentBuilder();Log.d("log","test");
+//            Document doc = builder.parse( new InputSource( new StringReader( xmlString ) ) );
+
+//        hier heb je nu een document die een xml bestand bevat
+
+
 //            InputStream is = getActivity().getAssets().open("user.xml");
 //
 //            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 //            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 //            Document doc = dBuilder.parse(is);
+
+            Element element=doc.getDocumentElement();
+            element.normalize();
+
+            NodeList nList = doc.getElementsByTagName("project");
+            adapter = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_list_item_1,strArr);
+            lv.setAdapter(adapter);
+
+
+            for (int i=0; i<nList.getLength(); i++) {
+                Node node = nList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+
+                    Element element2 = (Element) node;
+                    strArr.add(getValue("title", element2));
+                    Log.d("in if","strArr");
+//                    tv.setText("\nName : " + getValue("name", element2)+"\n");
+//                    tv.setText(tv.getText()+"Surname : " + getValue("surname", element2)+"\n");
+//                    tv.setText(tv.getText()+"-----------------------");
+                }
+            }
+            adapter.notifyDataSetChanged();
 //
+
 //            Element element=doc.getDocumentElement();
 //            element.normalize();
 //
@@ -140,6 +205,11 @@ public class ProjectsFragment extends Fragment{
 //            e.printStackTrace();}
 //
 
+        } catch (Exception e) {
+            Log.d("tag","hij doet het niet");
+            e.printStackTrace();}
+
+
         return view;
     }
 
@@ -149,28 +219,9 @@ public class ProjectsFragment extends Fragment{
         return node.getNodeValue();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public static void setXmlString(InputStream xml) {
+        Log.d("ProjectsFragment", "setXmlString");
+        is = xml;
     }
 
     /**
@@ -183,11 +234,10 @@ public class ProjectsFragment extends Fragment{
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 
+    public static void settext(String string){
+        tv.setText(string);
+    }
     public class XMLTask extends AsyncTask<String , String , String> {
 
         private TextView tv;
@@ -240,7 +290,7 @@ public class ProjectsFragment extends Fragment{
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
-            Log.d("tag" , line);
+            Log.d("onpostexecute" , line);
             //line is een string
             String[] parts = line.split(("\\?>"));
             String part1 = parts[0];
@@ -286,5 +336,33 @@ public class ProjectsFragment extends Fragment{
 
 
         }
+    }
+
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 }
