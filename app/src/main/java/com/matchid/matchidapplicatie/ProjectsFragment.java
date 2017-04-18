@@ -13,6 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,19 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.parsers.*;
-import org.xml.sax.InputSource;
-import org.w3c.dom.*;
-import java.io.*;
 
 
 /**
@@ -106,7 +100,7 @@ public class ProjectsFragment extends Fragment{
         strArr = new ArrayList<String>();
 
         //haal alle projecten op (nog niet naar id gekekeken)
-        String url = "http://192.168.0.191:8080/MatchIDEnterpriseApp-war/rest/project/";
+        String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project/";
         Log.d("tag", "start!");
         // haal het op, er is nu nog niks mee gebeurd!
         new XMLTask().execute(url);
