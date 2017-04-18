@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
     /*de onclicklistener voor de location
     * er wordt momenteel gewoon een toast getoond op het scherm
      */
-    View.OnClickListener getLocation = new View.OnClickListener(){
+    /*View.OnClickListener getLocation = new View.OnClickListener(){
         @Override
         public void onClick(View arg0) {
             // create class object
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity
 
 
         }
-    };
+    };*/
 /*
 *de onclicklistener voor de camera te gebruiken
 * er verschijnt een dialoogvenster die aangeeft of je een nieuwe
