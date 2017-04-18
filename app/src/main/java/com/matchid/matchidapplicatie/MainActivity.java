@@ -16,23 +16,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import static android.R.attr.id;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ProjectsFragment.OnFragmentInteractionListener {
-
-    Button btn_add_picture, btn_gallery, btn_results, btn_analyse;
-    ImageView img;
-    TextView username_nav_header, companyname_nav_header;
-    GPSTracker gps;
-    private static final int CAMERA_REQUEST = 123;
-    private static final int GALLERY_REQUEST = 124;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +61,6 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
 
     }
-    
 
     /*
      * methode die aangeeft wat gebeurt als op de terug
