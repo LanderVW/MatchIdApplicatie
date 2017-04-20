@@ -13,6 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,34 +31,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.parsers.*;
-import org.xml.sax.InputSource;
-import org.w3c.dom.*;
-import java.io.*;
-
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProjectsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ProjectsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Created by vulst on 18/04/2017.
  */
-public class ProjectsFragment extends Fragment{
+
+public class UserFragment extends Fragment {
+
+
     static final String ipadress = LoginActivity.ipadress;
-    // All static variables
-    //static final String URL = "http://"+ipadress+":8080/MatchIDEnterpriseApp-war/rest/entities.users";
-    static final String URL = "http://api.androidhive.info/pizza/?format=xml";
+    static int id = LoginActivity.id;
     // XML node keys
     static final String KEY_ITEM = "item"; // parent node
     static final String KEY_ID = "id";
@@ -63,10 +52,16 @@ public class ProjectsFragment extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
-    private TextView tv;
+    private TextView tvUsername;
+    private TextView tvRole;
+    private TextView tvLicense;
+    private TextView tvCompany;
+    private TextView tvStreet;
+    private TextView tvHousenumber;
+    private TextView tvPostalCode;
+    private TextView tvCountry;
+    private TextView tvTown;
     private View view;
-    private ListView lv;
-    private List<String> strArr;
     private ArrayAdapter<String> adapter;
 
     // TODO: Rename and change types of parameters
@@ -75,13 +70,13 @@ public class ProjectsFragment extends Fragment{
 
     private OnFragmentInteractionListener mListener;
 
-    public ProjectsFragment() {
+    public UserFragment() {
         // Required empty public constructor
     }
 
     // TODO: Rename and change types and number of parameters
-    public static ProjectsFragment newInstance(String param1, String param2) {
-        ProjectsFragment fragment = new ProjectsFragment();
+    public static UserFragment newInstance(String param1, String param2) {
+        UserFragment fragment = new UserFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -92,34 +87,35 @@ public class ProjectsFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("tag","onCreate");
+        Log.d("tag", "onCreateUserFragment");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("tag","OncreateView");
-        view = inflater.inflate(R.layout.fragment_projects, container, false);
-        tv = (TextView) view.findViewById(R.id.tv);
-        lv = (ListView) view.findViewById(R.id.lvproject);
-        strArr = new ArrayList<String>();
+        Log.d("tag", "OncreateViewUserFragment");
+        view = inflater.inflate(R.layout.currentuser, container, false);
+        tvUsername = (TextView) view.findViewById(R.id.tvUsername);
+        tvRole = (TextView) view.findViewById(R.id.tvRole);
 
-        //haal alle projecten op (nog niet naar id gekekeken)
-        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
-        Log.d("tag", "start!");
+        tvRole = (TextView) view.findViewById(R.id.tvRole);
+         tvLicense = (TextView) view.findViewById(R.id.tvLicense);
+         tvCompany = (TextView) view.findViewById(R.id.tvCompany);
+         tvStreet = (TextView) view.findViewById(R.id.tvStreet);
+        tvHousenumber = (TextView) view.findViewById(R.id.tvHousenumber);
+         tvPostalCode = (TextView) view.findViewById(R.id.tvPostalCode);
+         tvCountry = (TextView) view.findViewById(R.id.tvCountry);
+        tvTown = (TextView) view.findViewById(R.id.tvTown);
+        //haal current user op
+        //de id staat hier boven maar om te testen gebruik ik gwn 3
+        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/entities.users/id/3";
+        Log.d("tag", "start van user ophalen!");
         // haal het op, er is nu nog niks mee gebeurd!
         new XMLTask().execute(url);
-
-
         return view;
     }
 
-    private static String getValue(String tag, Element element) {
-        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node = nodeList.item(0);
-        return node.getNodeValue();
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -131,11 +127,10 @@ public class ProjectsFragment extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
+        try {
             mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+        } catch (ClassCastException e) {
+            Log.d("tag", e.toString());
         }
     }
 
@@ -160,7 +155,7 @@ public class ProjectsFragment extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
 
-    public class XMLTask extends AsyncTask<String , String , String> {
+    public class XMLTask extends AsyncTask<String, String, String> {
 
         private TextView tv;
         private View view;
@@ -170,10 +165,10 @@ public class ProjectsFragment extends Fragment{
 
         @Override
         protected String doInBackground(String... urls) {
-            HttpURLConnection connection =null;
+            HttpURLConnection connection = null;
             BufferedReader reader = null;
 
-            try{
+            try {
                 java.net.URL url = new URL(urls[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
@@ -183,8 +178,8 @@ public class ProjectsFragment extends Fragment{
                 reader = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer buffer = new StringBuffer();
 
-                String line = "" ;
-                while((line = reader.readLine())!= null){
+                String line = "";
+                while ((line = reader.readLine()) != null) {
                     buffer.append(line);
                 }
 
@@ -194,12 +189,14 @@ public class ProjectsFragment extends Fragment{
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            }finally {
-                if(connection != null){
-                    connection.disconnect();}
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
                 try {
-                    if(reader != null){
-                        reader.close();}
+                    if (reader != null) {
+                        reader.close();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -212,24 +209,19 @@ public class ProjectsFragment extends Fragment{
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
-            Log.d("tag" , line);
+            Log.d("tag", line);
             //line is een string
             String[] parts = line.split(("\\?>"));
-            String part1 = parts[0];
             String part2 = parts[1];
-
-            Log.d("tag" , part1);
-            Log.d("tag" , part2);
+            Log.d("tag", part2);
 
             //maak van string een XML file
-
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder;
             Document doc = null;
-            try
-            {
+            try {
                 builder = factory.newDocumentBuilder();
-                doc = builder.parse( new InputSource( new StringReader( part2 ) ) );
+                doc = builder.parse(new InputSource(new StringReader(part2)));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -238,10 +230,10 @@ public class ProjectsFragment extends Fragment{
 
             //xml doc naar iets dat we kunnen weergeven op de app
             doc.getDocumentElement().normalize();
-            Log.d("tag" , "root element: "+ doc.getDocumentElement().getNodeName());
-
-            NodeList nList = doc.getElementsByTagName("project");
+            Log.d("tag", "root element: " + doc.getDocumentElement().getNodeName());
             try {
+            NodeList nList = doc.getElementsByTagName("users");
+
                 for (int i = 0; i < nList.getLength(); i++) {
                     Node n = nList.item(i);
 
@@ -249,15 +241,41 @@ public class ProjectsFragment extends Fragment{
 
                     if (n.getNodeType() == Node.ELEMENT_NODE) {
                         Element eElement = (Element) n;
-                        Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+                        //Log.d("tag", "username: " + eElement.getElementsByTagName("username").item(0).getTextContent());
+                        tvUsername.setText(eElement.getElementsByTagName("username").item(0).getTextContent());
+                        tvRole.setText(eElement.getElementsByTagName("roles").item(0).getTextContent());
 
+                        NodeList nList2 = doc.getElementsByTagName("company");
+                        for (int i2 = 0; i2 < nList2.getLength(); i2++) {
+                            Node n2 = nList2.item(i2);
+
+                            Log.d("tag", "current element: " + n2.getNodeName());
+
+                            if (n2.getNodeType() == Node.ELEMENT_NODE) {
+                                Log.d("tag" , "ind if");
+                                Element eElement2 = (Element) n2;
+                                //Log.d("tag", "username: " + eElement.getElementsByTagName("username").item(0).getTextContent());
+                                Log.d("tag" ,eElement2.getElementsByTagName("name").item(0).getTextContent() );
+                                tvCompany.setText(eElement2.getElementsByTagName("name").item(0).getTextContent());
+                                tvCountry.setText(eElement2.getElementsByTagName("country").item(0).getTextContent());
+                                tvStreet.setText(eElement2.getElementsByTagName("street").item(0).getTextContent());
+                                tvHousenumber.setText(eElement2.getElementsByTagName("streetnumber").item(0).getTextContent());
+                                tvPostalCode.setText(eElement2.getElementsByTagName("postalCode").item(0).getTextContent());
+                                tvCountry.setText(eElement2.getElementsByTagName("country").item(0).getTextContent());
+                                tvTown.setText(eElement2.getElementsByTagName("town").item(0).getTextContent());
+                                tvLicense.setText(eElement2.getElementsByTagName("endOfLicence").item(0).getTextContent());
+                            }
+                        }
                     }
                 }
-            }catch(Exception e) {
-                Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
-                e.printStackTrace();}
+            } catch (Exception e) {
+                Log.d("tag", "hij doet het niet in het parsen van XML naar de app lijst");
+                e.printStackTrace();
+            }
 
 
         }
     }
+
+
 }

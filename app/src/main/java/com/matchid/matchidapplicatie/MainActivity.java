@@ -1,6 +1,7 @@
 package com.matchid.matchidapplicatie;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +22,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.squareup.picasso.Picasso;
+
 import static android.R.attr.id;
 
 public class MainActivity extends AppCompatActivity
@@ -32,15 +38,31 @@ public class MainActivity extends AppCompatActivity
     GPSTracker gps;
     private static final int CAMERA_REQUEST = 123;
     private static final int GALLERY_REQUEST = 124;
+    // a static variable to get a reference of our application context
+    public static Context contextOfApplication;
+    public static Context getContextOfApplication()
+    {
+        return contextOfApplication;
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        contextOfApplication = getApplicationContext();
+        // Create global configuration and initialize ImageLoader with this config
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+
         Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+
 
         if (savedInstanceState == null) {
             Fragment fragment = null;
@@ -75,105 +97,17 @@ public class MainActivity extends AppCompatActivity
     /*de onclicklistener voor de location
     * er wordt momenteel gewoon een toast getoond op het scherm
      */
+
     View.OnClickListener getLocation = new View.OnClickListener(){
         @Override
         public void onClick(View arg0) {
-            // create class object
-            gps = new GPSTracker(MainActivity.this);
-            Log.d("mainactivity","gps tracker");
-            // check if GPS enabled
-            if(gps.canGetLocation()){
-
-                double latitude = gps.getLatitude();
-                double longitude = gps.getLongitude();
-
-                // \n is for new line
-                Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-            }else{
-                // can't get location
-                // GPS or Network is not enabled
-                // Ask user to enable GPS/network in settings
-                gps.showSettingsAlert();
-            }
-
-
-
-
+            Log.d("tag" , "in de imageview ding");
         }
     };
-/*
-*de onclicklistener voor de camera te gebruiken
-* er verschijnt een dialoogvenster die aangeeft of je een nieuwe
-* foto wil nemen of een van de gallery wil gebruiken
- */
-    /*View.OnClickListener openCamera = new View.OnClickListener(){
-        public void onClick(View v){
-            PopupMenu popupMenu = new PopupMenu(MainActivity.this,btn_add_picture);
-            popupMenu.getMenuInflater().inflate(R.menu.add_picture,popupMenu.getMenu());
-            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    //luisteren naar wat je aanklikt in het menu
-                    int id = item.getItemId();
-
-                    if (id == R.id.option_from_camera) {
-                        //Intent = zorgt dat je naar een andere view kan
-                        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        //opstarten intent
-                        startActivityForResult(camera, CAMERA_REQUEST);//getal doet er niet toe maar moet uniek zijn
-
-                    } else if (id == R.id.option_from_gallery) {
-                        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                        startActivityForResult(pickPhoto , GALLERY_REQUEST);//one can be replaced with any action code
-                    }
-
-                    return true;
-                }
-            });
-
-            popupMenu.show();
 
 
-        }
-    };*/
 
-    /*
-     *na het onvangen van de foto wordt die opgeslagen
-     */
-    /*@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        super.onActivityResult(requestCode, resultCode, data);//kweet nie waarom
-
-        switch(requestCode){
-            case CAMERA_REQUEST:
-                if(resultCode==RESULT_OK){
-                    Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
-                    //img is de imageview voor in de layout de foto te tonen
-                    img.setImageBitmap(selectedImage);
-                }
-                //popup venstertje (short of long = tijd)
-                Toast.makeText(this,"picture added from camera",Toast.LENGTH_SHORT).show();
-
-            break;
-            case GALLERY_REQUEST:
-                if(resultCode ==RESULT_OK){
-                    Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
-                    img.setImageBitmap(selectedImage);
-                }
-                Toast.makeText(this,"picture added from gallery",Toast.LENGTH_SHORT).show();
-
-                break;
-            default:break;
-        }
-    }*/
-
-    /*
-     * methode die aangeeft wat gebeurt als op de terug
-     * knop wordt gedrukt
-     */
     @Override
     public void onBackPressed() {
         //dit is als op de ingebouwde terugknop wordt gedrukt
@@ -207,8 +141,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_user_info) {
+            Log.d("tag", "in account");
             Toast.makeText(this, "account", Toast.LENGTH_SHORT).show();
-
             return true;
         }else if(id ==R.id.logout){
             Intent logout = new Intent(MainActivity.this, LoginActivity.class);
@@ -233,11 +167,14 @@ public class MainActivity extends AppCompatActivity
 
         if(id==R.id.nav_home){
             Toast.makeText(this, "home", Toast.LENGTH_SHORT).show();
-            fragmentClass = HomeFragment.class;
+            fragmentClass = UserFragment.class;
         }else if(id ==R.id.nav_projects){
-            Toast.makeText(this, "projects", Toast.LENGTH_SHORT).show();
-            fragmentClass = ProjectsFragment.class;
+            Toast.makeText(this, "pictureview", Toast.LENGTH_SHORT).show();
+            //fragmentClass = ProjectsFragment.class;
+            //fragmentClass = PictureViewFragment.class;
+            fragmentClass = PictureUploadFragment.class;
         }
+
         try{
             Log.d("newinstance", "newinstance");
             fragment = (Fragment) fragmentClass.newInstance();

@@ -4,15 +4,26 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,34 +37,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.parsers.*;
-import org.xml.sax.InputSource;
-import org.w3c.dom.*;
-import java.io.*;
-
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProjectsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ProjectsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Created by vulst on 18/04/2017.
  */
-public class ProjectsFragment extends Fragment{
+
+public class PictureViewFragment extends Fragment {
+
+
     static final String ipadress = LoginActivity.ipadress;
-    // All static variables
-    //static final String URL = "http://"+ipadress+":8080/MatchIDEnterpriseApp-war/rest/entities.users";
-    static final String URL = "http://api.androidhive.info/pizza/?format=xml";
+    static int id = LoginActivity.id;
     // XML node keys
     static final String KEY_ITEM = "item"; // parent node
     static final String KEY_ID = "id";
@@ -63,10 +58,12 @@ public class ProjectsFragment extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
-    private TextView tv;
+
+    String url = "http://www.1080x1920wallpapers.com/1080x1920-backgrounds/1080x1920-wallpapers-2/1080x1920-HD-wallpapers-samsung-htc-android-smartphone-642srwg4-1080P.jpg";
+
+    private ImageView ivFoto;
+
     private View view;
-    private ListView lv;
-    private List<String> strArr;
     private ArrayAdapter<String> adapter;
 
     // TODO: Rename and change types of parameters
@@ -75,13 +72,13 @@ public class ProjectsFragment extends Fragment{
 
     private OnFragmentInteractionListener mListener;
 
-    public ProjectsFragment() {
+    public PictureViewFragment() {
         // Required empty public constructor
     }
 
     // TODO: Rename and change types and number of parameters
-    public static ProjectsFragment newInstance(String param1, String param2) {
-        ProjectsFragment fragment = new ProjectsFragment();
+    public static PictureViewFragment newInstance(String param1, String param2) {
+        PictureViewFragment fragment = new PictureViewFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -92,34 +89,39 @@ public class ProjectsFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("tag","onCreate");
+        Log.d("tag", "onPictureViewFragment");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("tag","OncreateView");
-        view = inflater.inflate(R.layout.fragment_projects, container, false);
-        tv = (TextView) view.findViewById(R.id.tv);
-        lv = (ListView) view.findViewById(R.id.lvproject);
-        strArr = new ArrayList<String>();
-
-        //haal alle projecten op (nog niet naar id gekekeken)
-        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
-        Log.d("tag", "start!");
-        // haal het op, er is nu nog niks mee gebeurd!
-        new XMLTask().execute(url);
-
+        Log.d("tag", "OncreateViewPictureViewFragment");
+        view = inflater.inflate(R.layout.picture, container, false);
+        ivFoto = (ImageView) view.findViewById(R.id.fotoweertegeven);
+        loadImageFromURL(url);
 
         return view;
     }
 
-    private static String getValue(String tag, Element element) {
-        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node = nodeList.item(0);
-        return node.getNodeValue();
+    private void loadImageFromURL(String url) {
+        Picasso.with(getActivity()).load(url).placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher)
+                .into(ivFoto , new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
+
+
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -131,11 +133,10 @@ public class ProjectsFragment extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
+        try {
             mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+        } catch (ClassCastException e) {
+            Log.d("tag", "error"+ e.toString());
         }
     }
 
@@ -160,7 +161,7 @@ public class ProjectsFragment extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
 
-    public class XMLTask extends AsyncTask<String , String , String> {
+    public class XMLTask extends AsyncTask<String, String, String> {
 
         private TextView tv;
         private View view;
@@ -170,10 +171,10 @@ public class ProjectsFragment extends Fragment{
 
         @Override
         protected String doInBackground(String... urls) {
-            HttpURLConnection connection =null;
+            HttpURLConnection connection = null;
             BufferedReader reader = null;
 
-            try{
+            try {
                 java.net.URL url = new URL(urls[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
@@ -183,8 +184,8 @@ public class ProjectsFragment extends Fragment{
                 reader = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer buffer = new StringBuffer();
 
-                String line = "" ;
-                while((line = reader.readLine())!= null){
+                String line = "";
+                while ((line = reader.readLine()) != null) {
                     buffer.append(line);
                 }
 
@@ -194,12 +195,14 @@ public class ProjectsFragment extends Fragment{
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            }finally {
-                if(connection != null){
-                    connection.disconnect();}
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
                 try {
-                    if(reader != null){
-                        reader.close();}
+                    if (reader != null) {
+                        reader.close();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -212,52 +215,12 @@ public class ProjectsFragment extends Fragment{
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
-            Log.d("tag" , line);
+            Log.d("tag", line);
             //line is een string
-            String[] parts = line.split(("\\?>"));
-            String part1 = parts[0];
-            String part2 = parts[1];
-
-            Log.d("tag" , part1);
-            Log.d("tag" , part2);
-
-            //maak van string een XML file
-
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder;
-            Document doc = null;
-            try
-            {
-                builder = factory.newDocumentBuilder();
-                doc = builder.parse( new InputSource( new StringReader( part2 ) ) );
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            //xml doc naar iets dat we kunnen weergeven op de app
-            doc.getDocumentElement().normalize();
-            Log.d("tag" , "root element: "+ doc.getDocumentElement().getNodeName());
-
-            NodeList nList = doc.getElementsByTagName("project");
-            try {
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node n = nList.item(i);
-
-                    Log.d("tag", "current element: " + n.getNodeName());
-
-                    if (n.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) n;
-                        Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
-
-                    }
-                }
-            }catch(Exception e) {
-                Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
-                e.printStackTrace();}
 
 
         }
     }
+
+
 }

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +26,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.StringRequest;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,7 +45,8 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     TextView matchid_logo, error_message;
     private ProgressBar spinner;
     public static final String KEY_PRIVATE = "USERNAME";
-    static final String ipadress = "192.168.0.232";
+    static final String ipadress = "192.168.0.191";
+    static int id =0;
 
 
 
@@ -50,6 +54,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         Typeface face = Typeface.createFromAsset(getAssets(),"fonts/calibri.ttf");
         matchid_logo = (TextView)findViewById(R.id.matchid_logo);
@@ -133,7 +138,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
         String url ="http://"+ipadress+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
-        Toast.makeText(LoginActivity.this, "test", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(LoginActivity.this, "test", Toast.LENGTH_SHORT).show();
 
 
         // Formulate the request and handle the response.
@@ -143,8 +148,9 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                     @Override
                     public void onResponse(String response) {
                         // Do something with the response
-                        if(response.equalsIgnoreCase("ok")){
-
+                        if(!response.equalsIgnoreCase("nowp")){
+                            id = Integer.parseInt(response);
+                            Log.d("tag" , response);
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
                             spinner.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this, "Welcome " + etUsername.getText().toString() , Toast.LENGTH_SHORT).show();
