@@ -9,13 +9,14 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import static android.app.Activity.RESULT_OK;
@@ -29,19 +30,11 @@ import static android.app.Activity.RESULT_OK;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment implements View.OnClickListener{
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     View view;
     Button btn_add_picture, btn_gallery, btn_results, btn_analyse;
     ImageView img;
-    TextView username_nav_header, companyname_nav_header;
     GPSTracker gps;
     private static final int CAMERA_REQUEST = 123;
     private static final int GALLERY_REQUEST = 124;
@@ -56,16 +49,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     *
+     * deze methode is een beetje de vervanger van een deftige constructor want een fragment
+     * moet alleen een default constructor hebben
+     *
+     *
      * @return A new instance of fragment HomeFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
+    public static HomeFragment newInstance() {
+        Log.d("Home Fragment", "begin newInstance");
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,14 +68,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("tag", "onCreate: ");
+        setHasOptionsMenu(true);
+        Log.d("Home Fragment", "onCreate: ");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("tag", "onCreateView: ");
+        Log.d("Home Fragment", "onCreateView: ");
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -88,7 +84,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         init de knoppen in de home
          */
         btn_add_picture = (Button) view.findViewById(R.id.btn_camera);//initialitie knop (zet de naam zelf bovenaan de klasse zodat je er overal aankan)
-        btn_gallery =(Button) view.findViewById(R.id.btn_gallery);
+        btn_gallery = (Button) view.findViewById(R.id.btn_gallery);
         btn_results = (Button) view.findViewById(R.id.btn_results);
         btn_analyse = (Button) view.findViewById(R.id.btn_analyse);
         img = (ImageView) view.findViewById(R.id.img);
@@ -98,6 +94,36 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
         return view;
     }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Do something that differs the Activity's menu here
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.action_user_info:
+                Log.d("Home Fragment","action user info");
+                return false;
+            case R.id.logout:
+                Log.d("Home Fragment", "logout option");
+                Intent logout = new Intent(getActivity(), LoginActivity.class);
+                startActivity(logout);
+
+                getActivity().finish();
+                return true;
+
+            default:
+                break;
+        }
+
+        return false;
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -125,11 +151,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
-    View.OnClickListener getPicture = new View.OnClickListener(){
-        public void onClick(View v){
-            PopupMenu popupMenu = new PopupMenu(getActivity(),btn_add_picture);
-            popupMenu.getMenuInflater().inflate(R.menu.add_picture,popupMenu.getMenu());
+    View.OnClickListener getPicture = new View.OnClickListener() {
+        public void onClick(View v) {
+            PopupMenu popupMenu = new PopupMenu(getActivity(), btn_add_picture);
+            popupMenu.getMenuInflater().inflate(R.menu.add_picture, popupMenu.getMenu());
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -146,7 +171,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-                        startActivityForResult(pickPhoto , GALLERY_REQUEST);//one can be replaced with any action code
+                        startActivityForResult(pickPhoto, GALLERY_REQUEST);//one can be replaced with any action code
                     }
 
                     return true;
@@ -164,30 +189,29 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
         super.onActivityResult(requestCode, resultCode, data);//kweet nie waarom
 
-        switch(requestCode){
+        switch (requestCode) {
             case CAMERA_REQUEST:
-                if(resultCode==RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
                     //img is de imageview voor in de layout de foto te tonen
                     img.setImageBitmap(selectedImage);
                 }
                 //popup venstertje (short of long = tijd)
-                Toast.makeText(getActivity(),"picture added from camera",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "picture added from camera", Toast.LENGTH_SHORT).show();
 
                 break;
             case GALLERY_REQUEST:
-                if(resultCode ==RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
                     img.setImageBitmap(selectedImage);
                 }
-                Toast.makeText(getActivity(),"picture added from gallery",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "picture added from gallery", Toast.LENGTH_SHORT).show();
 
                 break;
-            default:break;
+            default:
+                break;
         }
     }
-
-
 
 
     @Override
@@ -209,7 +233,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
 
 
     View.OnClickListener getLocation = new View.OnClickListener() {
@@ -238,12 +261,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
             //vanaf hier van Axel voor verbinding met mysql
             //ip niet vergeten te veranderen!
-            String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project";
+            String url = "http://" + LoginActivity.ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project";
 
-            Log.d("tag", "start!");
-
-            XMLParser xml = new XMLParser();
-            xml.execute(url);
         }
     };
 }

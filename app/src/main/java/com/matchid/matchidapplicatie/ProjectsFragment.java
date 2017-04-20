@@ -1,12 +1,16 @@
 package com.matchid.matchidapplicatie;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -28,7 +32,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -46,22 +49,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class ProjectsFragment extends Fragment{
     static final String ipadress = LoginActivity.ipadress;
     // All static variables
-    //static final String URL = "http://"+ipadress+":8080/MatchIDEnterpriseApp-war/rest/entities.users";
-    static final String URL = "http://api.androidhive.info/pizza/?format=xml";
-    // XML node keys
-    static final String KEY_ITEM = "item"; // parent node
-    static final String KEY_ID = "id";
-    static final String KEY_NAME = "username";
-    static final String KEY_COST = "cost";
-    static final String KEY_DESC = "description";
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    ArrayList<HashMap<String, String>> menuItems;
+
     private View view;
     private ListView lv;
     private List<String> strArr;
     private ArrayAdapter<String> adapter;
-
 
     private OnFragmentInteractionListener mListener;
 
@@ -87,22 +79,19 @@ public class ProjectsFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         Log.d("tag","onCreate");
 
     }
 
-    /**
-     *
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         Log.d("tag","OncreateView");
         view = inflater.inflate(R.layout.fragment_projects, container, false);
+
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
 
@@ -111,6 +100,35 @@ public class ProjectsFragment extends Fragment{
         Log.d("tag", "start!");
         new XMLTask().execute(url);
         return view;
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Do something that differs the Activity's menu here
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.action_user_info:
+                Log.d("Project Fragment","action user info");
+                return false;
+            case R.id.logout:
+                Log.d("Project Fragment", "logout option");
+                Intent logout = new Intent(getActivity(), LoginActivity.class);
+                startActivity(logout);
+
+                getActivity().finish();
+                return true;
+
+            default:
+                break;
+        }
+
+        return false;
     }
 
     /**
@@ -243,16 +261,24 @@ public class ProjectsFragment extends Fragment{
                 return buffer.toString();
 
             } catch (MalformedURLException e) {
+                Log.d("ProjectFragment", "malformedURL");
                 e.printStackTrace();
             } catch (IOException e) {
+
+                Log.d("ProjectFragment", "ioexception");
                 e.printStackTrace();
             }finally {
                 if(connection != null){
+
+                    Log.d("ProjectFragment", "disconnect");
                     connection.disconnect();}
                 try {
                     if(reader != null){
+                        Log.d("ProjectFragment", "reader close");
                         reader.close();}
                 } catch (IOException e) {
+
+                    Log.d("ProjectFragment", "ioexception 2");
                     e.printStackTrace();
                 }
             }

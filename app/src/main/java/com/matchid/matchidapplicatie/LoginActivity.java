@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,10 +28,6 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.net.UnknownHostException;
 
 import static android.graphics.Typeface.BOLD;
@@ -42,7 +39,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     TextView matchid_logo, error_message;
     private ProgressBar spinner;
     public static final String KEY_PRIVATE = "USERNAME";
-    static final String ipadress = "10.108.16.220";
+    static final String ipadress = "192.168.0.233";
 
 
 
@@ -88,11 +85,6 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         });
     }
 
-    private static String getValue(String tag, Element element) {
-        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node = nodeList.item(0);
-        return node.getNodeValue();
-    }
 
     @Override
     public void onBackPressed() {
@@ -135,7 +127,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         String url ="http://"+ipadress+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
         Toast.makeText(LoginActivity.this, "test", Toast.LENGTH_SHORT).show();
-
+        Log.d("LoginActivity", "nog niet verstuurd");
 
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -145,7 +137,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                     public void onResponse(String response) {
                         // Do something with the response
                         if(response.equalsIgnoreCase("ok")){
-
+                            Log.d("loginActivity", "login succesvol");
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
                             spinner.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this, "Welcome " + etUsername.getText().toString() , Toast.LENGTH_SHORT).show();
@@ -155,20 +147,25 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
 
                             startActivity(goHome);
                             spinner.setVisibility(View.GONE);
+                        }else{
+                            Log.d("LoginActivity", "tesst" +response);
+                            spinner.setVisibility(View.GONE);
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Log.d("LoginActivity","error bij login");
+                        spinner.setVisibility(View.GONE);
                         // Handle error
                         if(error.toString().contains("TimeoutError")||error.toString().contains("NoConnectionError")){
-                            error_message.setText("Er is iets foutgelopen.\nCheck je connectie en probeer opnieuw.");
-
+                            //error_message.setText("Er is iets foutgelopen.\nCheck je connectie en probeer opnieuw.");
+                            error_message.setText(error.toString());
                         }else error_message.setText(error.toString());
 
                         error_message.setVisibility(TextView.VISIBLE);
-                        spinner.setVisibility(View.GONE);
+
                     }
                 });
 

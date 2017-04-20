@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
+        Log.d("MainActivity","begin oncreate");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
 
+        Log.d("MainActivity" , "einde oncreate");
     }
 
     /*
@@ -99,18 +100,17 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_user_info) {
-            Toast.makeText(this, "account", Toast.LENGTH_SHORT).show();
-
-            return true;
+            Log.d("MainActivity", "userinfo option");
+            return false;
         }else if(id ==R.id.logout){
+            Log.d("MainActivity", "logout option");
             Intent logout = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(logout);
 
             finish();
-            return true;
+            return false;
         }
-
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
 
