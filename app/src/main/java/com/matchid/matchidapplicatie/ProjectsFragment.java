@@ -13,6 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,19 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.parsers.*;
-import org.xml.sax.InputSource;
-import org.w3c.dom.*;
-import java.io.*;
 
 
 /**
@@ -63,7 +57,6 @@ public class ProjectsFragment extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
-    private TextView tv;
     private View view;
     private ListView lv;
     private List<String> strArr;
@@ -101,18 +94,46 @@ public class ProjectsFragment extends Fragment{
                              Bundle savedInstanceState) {
         Log.d("tag","OncreateView");
         view = inflater.inflate(R.layout.fragment_projects, container, false);
-        tv = (TextView) view.findViewById(R.id.tv);
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
 
         //haal alle projecten op (nog niet naar id gekekeken)
+
         String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
+
         Log.d("tag", "start!");
         // haal het op, er is nu nog niks mee gebeurd!
         new XMLTask().execute(url);
 
 
+
         return view;
+    }
+
+    public void updateListview(NodeList nd){
+        try {
+
+            adapter = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_list_item_1,strArr);
+            lv.setAdapter(adapter);
+            for (int i = 0; i < nd.getLength(); i++) {
+                Node node = nd.item(i);
+
+                Log.d("tag", "current element: " + node.getNodeName());
+
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) node;
+                    strArr.add(getValue("title",eElement));
+
+                    Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+                }
+            }
+
+            adapter.notifyDataSetChanged();
+        }catch(Exception e) {
+            Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
+            e.printStackTrace();
+        }
     }
 
     private static String getValue(String tag, Element element) {
@@ -241,23 +262,8 @@ public class ProjectsFragment extends Fragment{
             Log.d("tag" , "root element: "+ doc.getDocumentElement().getNodeName());
 
             NodeList nList = doc.getElementsByTagName("project");
-            try {
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node n = nList.item(i);
 
-                    Log.d("tag", "current element: " + n.getNodeName());
-
-                    if (n.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) n;
-                        Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
-
-                    }
-                }
-            }catch(Exception e) {
-                Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
-                e.printStackTrace();}
-
-
+            updateListview(nList);
         }
     }
 }

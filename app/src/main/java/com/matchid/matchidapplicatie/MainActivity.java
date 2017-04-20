@@ -32,6 +32,7 @@ import static android.R.attr.id;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ProjectsFragment.OnFragmentInteractionListener {
 
+
     Button btn_add_picture, btn_gallery, btn_results, btn_analyse;
     ImageView img;
     TextView username_nav_header, companyname_nav_header;
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity
     {
         return contextOfApplication;
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
 
     }
+
     /*de onclicklistener voor de location
     * er wordt momenteel gewoon een toast getoond op het scherm
      */
@@ -104,8 +105,6 @@ public class MainActivity extends AppCompatActivity
             Log.d("tag" , "in de imageview ding");
         }
     };
-
-
 
 
     @Override
