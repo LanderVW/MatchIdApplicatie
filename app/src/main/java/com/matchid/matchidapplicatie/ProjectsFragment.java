@@ -1,17 +1,20 @@
 package com.matchid.matchidapplicatie;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,7 +31,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,18 +47,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 public class ProjectsFragment extends Fragment{
     static final String ipadress = LoginActivity.ipadress;
-    // All static variables
-    //static final String URL = "http://"+ipadress+":8080/MatchIDEnterpriseApp-war/rest/entities.users";
-    static final String URL = "http://api.androidhive.info/pizza/?format=xml";
-    // XML node keys
-    static final String KEY_ITEM = "item"; // parent node
-    static final String KEY_ID = "id";
-    static final String KEY_NAME = "username";
-    static final String KEY_COST = "cost";
-    static final String KEY_DESC = "description";
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    ArrayList<HashMap<String, String>> menuItems;
+    boolean ok = false;
     private View view;
     private ListView lv;
     private List<String> strArr;
@@ -87,9 +78,12 @@ public class ProjectsFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("tag","onCreate");
+        setHasOptionsMenu(true);
+        Log.d("ProjectFragment","onCreate");
 
     }
+
+
 
     /**
      *
@@ -101,15 +95,23 @@ public class ProjectsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("tag","OncreateView");
+        Log.d("ProjectFragment","OncreateView");
         view = inflater.inflate(R.layout.fragment_projects, container, false);
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
 
         //haal alle projecten op (nog niet naar id gekekeken)
-        String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project/";
-        Log.d("tag", "start!");
-        new XMLTask().execute(url);
+
+        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
+
+
+        while(ok){
+            Log.d("ProjectFragment", "start!");
+            new XMLTask().execute(url);
+            Log.d("ProjectFragment", "na start");
+        }
+
+
         return view;
     }
 
@@ -126,21 +128,47 @@ public class ProjectsFragment extends Fragment{
             for (int i = 0; i < nd.getLength(); i++) {
                 Node node = nd.item(i);
 
-                Log.d("tag", "current element: " + node.getNodeName());
+                Log.d("ProjectFragment", "current element: " + node.getNodeName());
 
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) node;
                     strArr.add(getValue("title",eElement));
 
-                    Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+                    Log.d("ProjectFragment", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
                 }
             }
 
             adapter.notifyDataSetChanged();
         }catch(Exception e) {
-            Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
+            Log.d("ProjectFragment","hij doet het niet in het parsen van XML naar de app lijst");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Add your menu entries here
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.logout:
+                Log.d("HomeFragment","Logout");
+                Intent logout = new Intent(getActivity(),LoginActivity.class);
+                startActivity(logout);
+                return true;
+            case R.id.action_user_info:
+                Log.d("HomeFragment","Action user info");
+                return true;
+
+            default:
+                break;
+        }
+
+        return false;
     }
 
     /**
@@ -209,17 +237,6 @@ public class ProjectsFragment extends Fragment{
      */
     public class XMLTask extends AsyncTask<String , String , String> {
 
-        private TextView tv;
-        private View view;
-        private ListView lv;
-        private List<String> strArr;
-        private ArrayAdapter<String> adapter;
-
-        /**
-         *
-         * @param urls
-         * @return
-         */
         @Override
         protected String doInBackground(String... urls) {
             HttpURLConnection connection =null;
@@ -268,37 +285,45 @@ public class ProjectsFragment extends Fragment{
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
-            Log.d("tag" , line);
-            //line is een string
-            String[] parts = line.split(("\\?>"));
-            String part1 = parts[0];
-            String part2 = parts[1];
+            Log.d("ProjectFragment" , "dit is de output\n"+line);
+            if (line.equalsIgnoreCase(null)) {
+                Log.d("ProjectsFragment","500 terug");
+                ok = false;
 
-            Log.d("tag" , part1);
-            Log.d("tag" , part2);
 
-            //maak van string een XML file
+            }else {
+                ok = true;
+                //line is een string
+                String[] parts = line.split(("\\?>"));
+                String part1 = parts[0];
+                String part2 = parts[1];
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder;
-            Document doc = null;
-            try
-            {
-                builder = factory.newDocumentBuilder();
-                doc = builder.parse( new InputSource( new StringReader( part2 ) ) );
+                Log.d("ProjectFragment", part1);
+                Log.d("ProjectFragment", part2);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                //maak van string een XML file
+
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder;
+                Document doc = null;
+                try {
+                    builder = factory.newDocumentBuilder();
+                    doc = builder.parse(new InputSource(new StringReader(part2)));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                //xml doc naar iets dat we kunnen weergeven op de app
+                doc.getDocumentElement().normalize();
+                Log.d("ProjectFragment", "root element: " + doc.getDocumentElement().getNodeName());
+
+                NodeList nList = doc.getElementsByTagName("project");
+
+                updateListview(nList);
             }
 
-
-            //xml doc naar iets dat we kunnen weergeven op de app
-            doc.getDocumentElement().normalize();
-            Log.d("tag" , "root element: "+ doc.getDocumentElement().getNodeName());
-
-            NodeList nList = doc.getElementsByTagName("project");
-
-            updateListview(nList);
         }
     }
 }

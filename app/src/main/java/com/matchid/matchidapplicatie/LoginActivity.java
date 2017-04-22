@@ -6,9 +6,9 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,7 +42,8 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     TextView matchid_logo, error_message;
     private ProgressBar spinner;
     public static final String KEY_PRIVATE = "USERNAME";
-    static final String ipadress = "10.108.16.220";
+    static final String ipadress = "192.168.0.234";
+    static int id =0;
 
 
 
@@ -51,6 +52,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         Typeface face = Typeface.createFromAsset(getAssets(),"fonts/calibri.ttf");
         matchid_logo = (TextView)findViewById(R.id.matchid_logo);
@@ -106,7 +108,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         dialog.show(manager,"dialog");
 
     }
-
+/*
     public void safeInfo(){
         SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 
@@ -114,12 +116,13 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         editor.putString(KEY_PRIVATE, etUsername.getText().toString());
         editor.commit();
     }
-
+*/
     public String getUsername(){
         SharedPreferences sp = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 
         return sp.getString("name", "fout");
     }
+
     public void login() throws UnknownHostException{
         RequestQueue mRequestQueue;
         // Instantiate the cache
@@ -134,8 +137,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
         String url ="http://"+ipadress+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
-        Toast.makeText(LoginActivity.this, "test", Toast.LENGTH_SHORT).show();
-
+        //Toast.makeText(LoginActivity.this, "test", Toast.LENGTH_SHORT).show();
 
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -145,7 +147,8 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                     public void onResponse(String response) {
                         // Do something with the response
                         if(response.equalsIgnoreCase("ok")){
-
+                            //id = Integer.parseInt(response);
+                            Log.d("LoginFragment" , response);
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
                             spinner.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this, "Welcome " + etUsername.getText().toString() , Toast.LENGTH_SHORT).show();
@@ -155,6 +158,8 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
 
                             startActivity(goHome);
                             spinner.setVisibility(View.GONE);
+                        }else{
+                            Log.d("LoginActivity",response);
                         }
                     }
                 },

@@ -1,6 +1,7 @@
 package com.matchid.matchidapplicatie;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,20 +17,49 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
 import static android.R.attr.id;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ProjectsFragment.OnFragmentInteractionListener {
 
+
+    Button btn_add_picture, btn_gallery, btn_results, btn_analyse;
+    ImageView img;
+    TextView username_nav_header, companyname_nav_header;
+    GPSTracker gps;
+    private static final int CAMERA_REQUEST = 123;
+    private static final int GALLERY_REQUEST = 124;
+    // a static variable to get a reference of our application context
+    public static Context contextOfApplication;
+    public static Context getContextOfApplication()
+    {
+        return contextOfApplication;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        contextOfApplication = getApplicationContext();
+        // Create global configuration and initialize ImageLoader with this config
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+
         Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+
 
         if (savedInstanceState == null) {
             Fragment fragment = null;
@@ -62,10 +92,18 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    /*
-     * methode die aangeeft wat gebeurt als op de terug
-     * knop wordt gedrukt
+    /*de onclicklistener voor de location
+    * er wordt momenteel gewoon een toast getoond op het scherm
      */
+
+    View.OnClickListener getLocation = new View.OnClickListener(){
+        @Override
+        public void onClick(View arg0) {
+            Log.d("MainActivity" , "in de imageview ding");
+        }
+    };
+
+
     @Override
     public void onBackPressed() {
         //dit is als op de ingebouwde terugknop wordt gedrukt
@@ -99,8 +137,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_user_info) {
+            Log.d("MainActivity", "in account");
             Toast.makeText(this, "account", Toast.LENGTH_SHORT).show();
-
             return true;
         }else if(id ==R.id.logout){
             Intent logout = new Intent(MainActivity.this, LoginActivity.class);
@@ -127,13 +165,22 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "home", Toast.LENGTH_SHORT).show();
             fragmentClass = HomeFragment.class;
         }else if(id ==R.id.nav_projects){
-            Toast.makeText(this, "projects", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "pictureview", Toast.LENGTH_SHORT).show();
             fragmentClass = ProjectsFragment.class;
+            //fragmentClass = PictureViewFragment.class;
+            //fragmentClass = AnalyseFragment.class;
+        }else if(id == R.id.nav_slideshow){
+            fragmentClass = AnalyseFragment.class;
         }
+
         try{
             Log.d("newinstance", "newinstance");
             fragment = (Fragment) fragmentClass.newInstance();
-        }catch (Exception e){
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (Exception e ){
             e.printStackTrace();
         }
         FragmentManager fragmentManager = getSupportFragmentManager();

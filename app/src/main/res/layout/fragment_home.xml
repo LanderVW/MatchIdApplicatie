@@ -42,32 +42,32 @@
         android:layout_below="@id/matchid_subtekst"
         />
     <Button
-        android:id="@+id/btn_gallery"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:drawableTop="@drawable/ic_gallery"
-        android:text="gallery"
+        android:id="@+id/btn_analyse"
+        android:layout_width="wrap_content"
+        android:layout_height="135dp"
+        android:drawableTop="@drawable/ic_analyze_icon"
+        android:text="analyse"
         android:layout_alignLeft="@id/centerShim"
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@id/btn_camera"
         android:layout_alignTop="@id/btn_camera"
         android:layout_alignBottom="@id/btn_camera"/>
     <Button
-        android:id="@+id/btn_results"
+        android:id="@+id/btn_projects"
         android:layout_width="wrap_content"
         android:layout_height="135dp"
         android:drawableTop="@drawable/ic_manage"
-        android:text="results"
+        android:text="projects"
         android:layout_alignParentLeft="true"
         android:layout_alignRight="@id/centerShim"
         android:layout_below="@id/btn_camera"/>
 
     <Button
-        android:id="@+id/btn_analyse"
+        android:id="@+id/btn_logout"
         android:layout_width="wrap_content"
         android:layout_height="135dp"
-        android:drawableTop="@drawable/ic_analyze_icon"
-        android:text="analyse"
+        android:drawableTop="@drawable/ic_logout"
+        android:text="logout"
         android:layout_alignParentRight="true"
         android:layout_alignLeft="@id/centerShim"
         android:layout_below="@id/btn_camera"/>
