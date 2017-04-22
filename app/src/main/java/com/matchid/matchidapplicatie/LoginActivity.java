@@ -40,10 +40,10 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     private static final String TAG = "LoginActivity";
     public static final String KEY_PRIVATE = "USERNAME";
 
-    static final String ipadress = "192.168.0.234";
-
     static int id =0;
 
+
+    static final String ipadress = "192.168.1.7";
 
 
 

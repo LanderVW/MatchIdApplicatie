@@ -203,9 +203,9 @@ public class ProjectsFragment extends Fragment{
             mListener.onFragmentInteraction(uri);
         }
     }
-    
 
-    
+
+
 
     /**
      *
