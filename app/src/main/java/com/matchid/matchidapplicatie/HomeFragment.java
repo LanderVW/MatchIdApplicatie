@@ -124,6 +124,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // TODO Add your menu entries here
+
+        inflater.inflate(R.menu.main, menu);
+
+        //return true;
         super.onCreateOptionsMenu(menu, inflater);
     }
 
