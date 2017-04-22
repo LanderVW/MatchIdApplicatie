@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,15 +31,14 @@ import static android.app.Activity.RESULT_OK;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class HomeFragment extends Fragment implements View.OnClickListener{
 
     View view;
-    Button btn_add_picture, btn_gallery, btn_results, btn_analyse;
+    Button btn_add_picture, btn_analyse, btn_logout, btn_projects;
     ImageView img;
     GPSTracker gps;
     private static final int CAMERA_REQUEST = 123;
     private static final int GALLERY_REQUEST = 124;
-    private static final String TAG = "HomeFragment";
 
     private OnFragmentInteractionListener mListener;
 
@@ -49,19 +49,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     *
-     * deze methode is een beetje de vervanger van een deftige constructor want een fragment
-     * moet alleen een default constructor hebben
-     *
-     *
+
      * @return A new instance of fragment HomeFragment.
      */
+    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance() {
-        Log.d(TAG, "begin newInstance");
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,14 +64,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.d(TAG, "onCreate: ");
+        Log.d("tag", "onCreate: ");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: ");
+        Log.d("tag", "onCreateView: ");
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -85,13 +79,43 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         init de knoppen in de home
          */
         btn_add_picture = (Button) view.findViewById(R.id.btn_camera);//initialitie knop (zet de naam zelf bovenaan de klasse zodat je er overal aankan)
-        btn_gallery = (Button) view.findViewById(R.id.btn_analyse);
-        btn_results = (Button) view.findViewById(R.id.btn_projects);
-        btn_analyse = (Button) view.findViewById(R.id.btn_logout);
+        btn_logout =(Button) view.findViewById(R.id.btn_logout);
+        btn_projects = (Button) view.findViewById(R.id.btn_projects);
+        btn_analyse = (Button) view.findViewById(R.id.btn_analyse);
         img = (ImageView) view.findViewById(R.id.img);
 
         btn_analyse.setOnClickListener(getLocation);
         btn_add_picture.setOnClickListener(getPicture);
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent logout = new Intent(getActivity(),LoginActivity.class);
+                startActivity(logout);
+            }
+        });
+        btn_projects.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = null;
+                Class fragmentClass = ProjectsFragment.class;
+                try{
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (java.lang.InstantiationException e) {
+                    Log.d("HomeFragment", "instantiationException");
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    Log.d("HomeFragment", "illegalAccesException");
+                    e.printStackTrace();
+                } catch(Exception e){
+                    Log.d("HomeFragment", "onverwachte fout");
+                    e.printStackTrace();
+                }
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+
+            }
+        });
 
         return view;
     }
@@ -99,7 +123,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Do something that differs the Activity's menu here
+        // TODO Add your menu entries here
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -107,15 +131,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
-            case R.id.action_user_info:
-                Log.d(TAG,"action user info");
-                return false;
             case R.id.logout:
-                Log.d(TAG, "logout option");
-                Intent logout = new Intent(getActivity(), LoginActivity.class);
+                Log.d("HomeFragment","Logout");
+                Intent logout = new Intent(getActivity(),LoginActivity.class);
                 startActivity(logout);
-
-                getActivity().finish();
+                return true;
+            case R.id.action_user_info:
+                Log.d("HomeFragment","Action user info");
                 return true;
 
             default:
@@ -124,7 +146,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         return false;
     }
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -152,10 +173,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    View.OnClickListener getPicture = new View.OnClickListener() {
-        public void onClick(View v) {
-            PopupMenu popupMenu = new PopupMenu(getActivity(), btn_add_picture);
-            popupMenu.getMenuInflater().inflate(R.menu.add_picture, popupMenu.getMenu());
+
+    View.OnClickListener getPicture = new View.OnClickListener(){
+        public void onClick(View v){
+            PopupMenu popupMenu = new PopupMenu(getActivity(),btn_add_picture);
+            popupMenu.getMenuInflater().inflate(R.menu.add_picture,popupMenu.getMenu());
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -172,7 +194,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-                        startActivityForResult(pickPhoto, GALLERY_REQUEST);//one can be replaced with any action code
+                        startActivityForResult(pickPhoto , GALLERY_REQUEST);//one can be replaced with any action code
                     }
 
                     return true;
@@ -190,29 +212,30 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         super.onActivityResult(requestCode, resultCode, data);//kweet nie waarom
 
-        switch (requestCode) {
+        switch(requestCode){
             case CAMERA_REQUEST:
-                if (resultCode == RESULT_OK) {
+                if(resultCode==RESULT_OK){
                     Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
                     //img is de imageview voor in de layout de foto te tonen
                     img.setImageBitmap(selectedImage);
                 }
                 //popup venstertje (short of long = tijd)
-                Toast.makeText(getActivity(), "picture added from camera", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"picture added from camera",Toast.LENGTH_SHORT).show();
 
                 break;
             case GALLERY_REQUEST:
-                if (resultCode == RESULT_OK) {
+                if(resultCode ==RESULT_OK){
                     Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
                     img.setImageBitmap(selectedImage);
                 }
-                Toast.makeText(getActivity(), "picture added from gallery", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"picture added from gallery",Toast.LENGTH_SHORT).show();
 
                 break;
-            default:
-                break;
+            default:break;
         }
     }
+
+
 
 
     @Override
@@ -236,12 +259,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
 
+
     View.OnClickListener getLocation = new View.OnClickListener() {
 
         @Override
         public void onClick(View arg0) {
             // create class object
-            Log.d(TAG, " get location");
+            Log.d("home fragment", " get location");
             gps = new GPSTracker(getActivity());
 
             // check if GPS enabled
@@ -262,8 +286,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             //vanaf hier van Axel voor verbinding met mysql
             //ip niet vergeten te veranderen!
-            String url = "http://" + LoginActivity.ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project";
+            String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project";
 
+            Log.d("HomeFragment", "start!");
+
+            XMLParser xml = new XMLParser();
+            xml.execute(url);
         }
     };
 }
