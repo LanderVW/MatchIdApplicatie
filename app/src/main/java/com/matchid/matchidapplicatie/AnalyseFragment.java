@@ -11,9 +11,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -40,6 +44,8 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
+import static android.R.attr.fragment;
+import static android.R.attr.id;
 import static com.matchid.matchidapplicatie.R.menu.main;
 
 /**
@@ -165,6 +171,30 @@ public class AnalyseFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_user_info) {
+            Log.d("tag", "userinfo option");
+            Toast.makeText(getActivity(), "account", Toast.LENGTH_SHORT).show();
+            return false;
+
+        }else if(id ==R.id.logout){
+            Log.d("tag", "logout option");
+            Intent logout = new Intent(getActivity(), LoginActivity.class);
+            startActivity(logout);
+            return false;
+        }
+        return false;
+    }
+
+
     public void loadImagefromGallery() {
 
         Log.d(TAG, "in loadimagefrom gallery");
@@ -186,12 +216,10 @@ public class AnalyseFragment extends Fragment {
             if (requestCode == RESULT_LOAD_IMG && RESULT_OK == resultCode
                     && null != data) {
                 // Get the Image from data
-
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                Log.d("tag" ,"gwn test");
                 // Get the cursor troubles for getting application context
-                Context applicationContext = MainActivity.getContextOfApplication();
                 Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(selectedImage,
                         filePathColumn, null, null, null);
 
@@ -288,7 +316,7 @@ public class AnalyseFragment extends Fragment {
     }
 
     public void makeHTTPCall() {
-        prgDialog.setMessage("Invoking JSP");
+        prgDialog.setMessage("Uploading image");
         AsyncHttpClient client = new AsyncHttpClient();
         // Don't forget to change the IP address to your LAN address. Port no as well.
 
@@ -341,10 +369,12 @@ public class AnalyseFragment extends Fragment {
                 });
     }
 
+
     public void startAnalyse(int sub, int set) {
             Log.d("tag", etSubset.getText().toString() + "  " + etStepsize.getText().toString());
-            String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/Tensile_Hole_Unloaded.tif/pic2/Tensile_Hole_2177N.tif";
-            Log.d("tag", url);
+            fileName = "Tensile_Hole_Unloaded.tif";
+            fileName2 = "Tensile_Hole_2177N.tif";
+            String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/"+  fileName + "/pic2/" + fileName2;
             new XMLTask().execute(url);
     }
 
