@@ -40,6 +40,8 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.matchid.matchidapplicatie.R.menu.main;
+
 /**
  * Created by vulst on 19/04/2017.
  */
@@ -49,7 +51,7 @@ public class AnalyseFragment extends Fragment {
     ProgressDialog prgDialog;
     String encodedString;
     RequestParams params = new RequestParams();
-    String imgPath, fileName;
+    String imgPath, fileName , fileName2;
     Bitmap bitmap;
     private static String TAG = "PictureUploadFragment";
     private static int RESULT_LOAD_IMG = 1;
@@ -72,7 +74,6 @@ public class AnalyseFragment extends Fragment {
     private EditText etStepsize;
 
     private View view;
-    private ArrayAdapter<String> adapter;
 
 
     private OnFragmentInteractionListener mListener;
@@ -105,7 +106,6 @@ public class AnalyseFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_analyse, container, false);
         btn_select_picture1 = (Button) view.findViewById(R.id.PicPicture1);
         btn_select_picture1.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 getal = 1;
@@ -130,6 +130,15 @@ public class AnalyseFragment extends Fragment {
             }
         });
 
+        btn_upload_picture2 = (Button) view.findViewById(R.id.uploadPicture2);
+        btn_upload_picture2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                uploadImage();
+            }
+        });
+
+
         btn_analyse = (Button) view.findViewById(R.id.btn_StartAnalyse);
         btn_analyse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,15 +149,6 @@ public class AnalyseFragment extends Fragment {
 
         etStepsize = (EditText) view.findViewById(R.id.etStepsize);
         etSubset = (EditText) view.findViewById(R.id.etSubset);
-
-        btn_select_picture1 = (Button) view.findViewById(R.id.PicPicture1);
-        btn_select_picture1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getal = 1;
-                loadImagefromGallery();
-            }
-        });
 
         prgDialog = new ProgressDialog(getActivity());
         // Set Cancelable as False
@@ -203,7 +203,12 @@ public class AnalyseFragment extends Fragment {
                         .decodeFile(imgPath));
                 // Get the Image's file name
                 String fileNameSegments[] = imgPath.split("/");
-                fileName = fileNameSegments[fileNameSegments.length - 1];
+                if(getal == 1){
+                    fileName = fileNameSegments[fileNameSegments.length - 1];
+                }else{
+                    fileName2 = fileNameSegments[fileNameSegments.length - 1];
+                }
+
                 // Put file name in Async Http Post Param which will used in Java web app
                 params.put("filename", fileName);
 
@@ -240,10 +245,7 @@ public class AnalyseFragment extends Fragment {
         new AsyncTask<Void, Void, String>() {
 
             protected void onPreExecute() {
-
-            }
-
-            ;
+            };
 
             @Override
             protected String doInBackground(Void... params) {
@@ -331,7 +333,10 @@ public class AnalyseFragment extends Fragment {
     }
 
     public void startAnalyse(int sub, int set) {
-        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/etSubset/3/etStepsize/5/pic1/cover.jpg/pic2/Knipsel.PNG";
+
+        Log.d("tag" , etSubset.getText().toString() +"  " +  etStepsize.getText().toString());
+        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/Tensile_Hole_Unloaded.tif/pic2/Tensile_Hole_2177N.tif";
+        Log.d("tag" , url);
         new XMLTask().execute(url);
 
     }
@@ -377,12 +382,6 @@ public class AnalyseFragment extends Fragment {
 
 
     public class XMLTask extends AsyncTask<String, String, String> {
-
-        private TextView tv;
-        private View view;
-        private ListView lv;
-        private List<String> strArr;
-        private ArrayAdapter<String> adapter;
 
         @Override
         protected String doInBackground(String... urls) {
@@ -430,6 +429,16 @@ public class AnalyseFragment extends Fragment {
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
+
+            if(line.equals("ok")){
+                Toast.makeText(getActivity(),
+                        "Analysis is done",
+                        Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getActivity(),
+                        "Something went wrong with analysis",
+                        Toast.LENGTH_SHORT).show();
+            }
             Log.d(TAG, line);
             //line is een string
 
