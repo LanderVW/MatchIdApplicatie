@@ -48,11 +48,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class ProjectsFragment extends Fragment{
     static final String ipadress = LoginActivity.ipadress;
     boolean ok = false;
+
     private View view;
     private ListView lv;
     private List<String> strArr;
     private ArrayAdapter<String> adapter;
-
+    private static final String TAG ="ProjectFragment";
 
     private OnFragmentInteractionListener mListener;
 
@@ -79,10 +80,9 @@ public class ProjectsFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.d("ProjectFragment","onCreate");
+        Log.d(TAG,"onCreate");
 
     }
-
 
 
     /**
@@ -92,11 +92,14 @@ public class ProjectsFragment extends Fragment{
      * @param savedInstanceState
      * @return
      */
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("ProjectFragment","OncreateView");
+
+        Log.d(TAG, "OncreateView");
         view = inflater.inflate(R.layout.fragment_projects, container, false);
+
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
 
@@ -105,15 +108,18 @@ public class ProjectsFragment extends Fragment{
         String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
 
 
-        while(ok){
+        while (ok) {
             Log.d("ProjectFragment", "start!");
             new XMLTask().execute(url);
             Log.d("ProjectFragment", "na start");
         }
-
-
         return view;
     }
+
+
+
+
+
 
     /**
      *
@@ -128,19 +134,22 @@ public class ProjectsFragment extends Fragment{
             for (int i = 0; i < nd.getLength(); i++) {
                 Node node = nd.item(i);
 
-                Log.d("ProjectFragment", "current element: " + node.getNodeName());
+
+                Log.d(TAG, "current element: " + node.getNodeName());
 
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) node;
                     strArr.add(getValue("title",eElement));
 
-                    Log.d("ProjectFragment", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+
+                    Log.d(TAG, "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
                 }
             }
 
             adapter.notifyDataSetChanged();
         }catch(Exception e) {
-            Log.d("ProjectFragment","hij doet het niet in het parsen van XML naar de app lijst");
+
+            Log.d(TAG,"hij doet het niet in het parsen van XML naar de app lijst");
             e.printStackTrace();
         }
     }
@@ -194,6 +203,7 @@ public class ProjectsFragment extends Fragment{
             mListener.onFragmentInteraction(uri);
         }
     }
+    
 
     
 
@@ -262,16 +272,24 @@ public class ProjectsFragment extends Fragment{
                 return buffer.toString();
 
             } catch (MalformedURLException e) {
+                Log.d("ProjectFragment", "malformedURL");
                 e.printStackTrace();
             } catch (IOException e) {
+
+                Log.d("ProjectFragment", "ioexception");
                 e.printStackTrace();
             }finally {
                 if(connection != null){
+
+                    Log.d("ProjectFragment", "disconnect");
                     connection.disconnect();}
                 try {
                     if(reader != null){
+                        Log.d("ProjectFragment", "reader close");
                         reader.close();}
                 } catch (IOException e) {
+
+                    Log.d("ProjectFragment", "ioexception 2");
                     e.printStackTrace();
                 }
             }
@@ -287,45 +305,43 @@ public class ProjectsFragment extends Fragment{
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
-            Log.d("ProjectFragment" , "dit is de output\n"+line);
-            if (line.equalsIgnoreCase(null)) {
-                Log.d("ProjectsFragment","500 terug");
-                ok = false;
+
+            Log.d(TAG , line);
+            //line is een string
+            String[] parts = line.split(("\\?>"));
+            String part1 = parts[0];
+            String part2 = parts[1];
+
+            Log.d(TAG , part1);
+            Log.d(TAG , part2);
+
+            //maak van string een XML file
 
 
-            }else {
-                ok = true;
-                //line is een string
-                String[] parts = line.split(("\\?>"));
-                String part1 = parts[0];
-                String part2 = parts[1];
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder;
+            Document doc = null;
+            try {
+                builder = factory.newDocumentBuilder();
+                doc = builder.parse(new InputSource(new StringReader(part2)));
 
-                Log.d("ProjectFragment", part1);
-                Log.d("ProjectFragment", part2);
-
-                //maak van string een XML file
-
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder builder;
-                Document doc = null;
-                try {
-                    builder = factory.newDocumentBuilder();
-                    doc = builder.parse(new InputSource(new StringReader(part2)));
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-
-                //xml doc naar iets dat we kunnen weergeven op de app
-                doc.getDocumentElement().normalize();
-                Log.d("ProjectFragment", "root element: " + doc.getDocumentElement().getNodeName());
-
-                NodeList nList = doc.getElementsByTagName("project");
-
-                updateListview(nList);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
+
+            //xml doc naar iets dat we kunnen weergeven op de app
+            doc.getDocumentElement().normalize();
+            Log.d(TAG , "root element: "+ doc.getDocumentElement().getNodeName());
+
+            //xml doc naar iets dat we kunnen weergeven op de app
+            doc.getDocumentElement().normalize();
+            Log.d("ProjectFragment", "root element: " + doc.getDocumentElement().getNodeName());
+
+            NodeList nList = doc.getElementsByTagName("project");
+
+            updateListview(nList);
         }
+
     }
 }

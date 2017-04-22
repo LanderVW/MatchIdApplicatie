@@ -51,6 +51,7 @@ public class AnalyseFragment extends Fragment {
     RequestParams params = new RequestParams();
     String imgPath, fileName;
     Bitmap bitmap;
+    private static String TAG = "PictureUploadFragment";
     private static int RESULT_LOAD_IMG = 1;
 
 
@@ -62,6 +63,7 @@ public class AnalyseFragment extends Fragment {
 
     private Button btn_upload_picture1;
     private Button btn_upload_picture2;
+
     private int getal;
 
     private Button btn_analyse;
@@ -81,6 +83,7 @@ public class AnalyseFragment extends Fragment {
 
     public static AnalyseFragment newInstance() {
         AnalyseFragment fragment = new AnalyseFragment();
+
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -90,7 +93,7 @@ public class AnalyseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.d("tag", "onPicture upload Fragment");
+        Log.d(TAG, "onPicture upload Fragment");
 
     }
 
@@ -98,10 +101,11 @@ public class AnalyseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d("tag", "Oncreate upload PictureViewFragment");
+        Log.d(TAG, "Oncreate upload PictureViewFragment");
         view = inflater.inflate(R.layout.fragment_analyse, container, false);
         btn_select_picture1 = (Button) view.findViewById(R.id.PicPicture1);
         btn_select_picture1.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 getal = 1;
@@ -153,7 +157,8 @@ public class AnalyseFragment extends Fragment {
     }
 
     public void loadImagefromGallery() {
-        Log.d("AnalyseFragment", "in loadimagefrom gallery");
+
+        Log.d(TAG, "in loadimagefrom gallery");
         // Create intent to Open Image applications like Gallery, Google Photos
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -167,7 +172,8 @@ public class AnalyseFragment extends Fragment {
         try {
             // When an Image is picked
             int RESULT_OK = -1;
-            Log.d("AnalyseFragment", String.valueOf(resultCode));
+
+            Log.d(TAG, String.valueOf(resultCode));
             if (requestCode == RESULT_LOAD_IMG && RESULT_OK == resultCode
                     && null != data) {
                 // Get the Image from data
@@ -214,7 +220,8 @@ public class AnalyseFragment extends Fragment {
 
     public void uploadImage() {
         // When Image is selected from Gallery
-        Log.d("AnalyseFragment", "in upload Image");
+
+        Log.d(TAG, "in upload Image");
         if (imgPath != null && !imgPath.isEmpty()) {
             prgDialog.setMessage("Converting Image to Binary Data");
             prgDialog.show();
@@ -275,7 +282,7 @@ public class AnalyseFragment extends Fragment {
         // Don't forget to change the IP address to your LAN address. Port no as well.
 
         String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/uploadimg.jsp";
-        Log.d("AnalyseFragment", url);
+        Log.d(TAG, url);
         client.post(url,
                 params, new AsyncHttpResponseHandler() {
 
@@ -283,7 +290,7 @@ public class AnalyseFragment extends Fragment {
                     // response code '200'
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        Log.d("AnalyseFragment", "on success" + statusCode);
+                        Log.d(TAG, "on success" + statusCode);
                         // Hide Progress Dialog
                         prgDialog.hide();
                         Toast.makeText(getActivity(), "Picture uploaded!",
@@ -296,7 +303,7 @@ public class AnalyseFragment extends Fragment {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                         // Hide Progress Dialog
-                        Log.d("AnalyseFragment", "onfailure");
+                        Log.d(TAG, "onfailure");
                         prgDialog.hide();
                         // When Http response code is '404'
                         if (statusCode == 404) {
@@ -353,7 +360,7 @@ public class AnalyseFragment extends Fragment {
         try {
             mListener = (OnFragmentInteractionListener) context;
         } catch (ClassCastException e) {
-            Log.d("AnalyseFragment", "error in onAttach" + e.toString());
+            Log.d(TAG, "error in onAttach" + e.toString());
         }
     }
 
@@ -423,7 +430,7 @@ public class AnalyseFragment extends Fragment {
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
-            Log.d("AnalyseFragment", line);
+            Log.d(TAG, line);
             //line is een string
 
 

@@ -17,9 +17,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -30,14 +27,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ProjectsFragment.OnFragmentInteractionListener {
 
 
-    Button btn_add_picture, btn_gallery, btn_results, btn_analyse;
-    ImageView img;
-    TextView username_nav_header, companyname_nav_header;
-    GPSTracker gps;
-    private static final int CAMERA_REQUEST = 123;
-    private static final int GALLERY_REQUEST = 124;
     // a static variable to get a reference of our application context
     public static Context contextOfApplication;
+    private static final String TAG = "MainActivity";
     public static Context getContextOfApplication()
     {
         return contextOfApplication;
@@ -46,6 +38,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(TAG,"oncreate");
+
         contextOfApplication = getApplicationContext();
         // Create global configuration and initialize ImageLoader with this config
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
@@ -53,7 +48,6 @@ public class MainActivity extends AppCompatActivity
                 .cacheOnDisk(true)
                 .build();
 
-        Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -90,6 +84,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
 
+        Log.d(TAG , "einde oncreate");
     }
 
     /*de onclicklistener voor de location
@@ -99,7 +94,7 @@ public class MainActivity extends AppCompatActivity
     View.OnClickListener getLocation = new View.OnClickListener(){
         @Override
         public void onClick(View arg0) {
-            Log.d("MainActivity" , "in de imageview ding");
+            Log.d(TAG , "in de imageview ding");
         }
     };
 
@@ -137,18 +132,19 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_user_info) {
-            Log.d("MainActivity", "in account");
+            Log.d(TAG, "userinfo option");
             Toast.makeText(this, "account", Toast.LENGTH_SHORT).show();
-            return true;
+            return false;
+
         }else if(id ==R.id.logout){
+            Log.d(TAG, "logout option");
             Intent logout = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(logout);
 
             finish();
-            return true;
+            return false;
         }
-
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
 

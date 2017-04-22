@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +32,8 @@ public class PictureViewFragment extends Fragment {
 
     static final String ipadress = LoginActivity.ipadress;
     static int id = LoginActivity.id;
-    static final String TAG = "PictureViewFragment";
+
+    private static final String TAG = "PictureViewFragment";
 
     String url = "http://www.1080x1920wallpapers.com/1080x1920-backgrounds/1080x1920-wallpapers-2/1080x1920-HD-wallpapers-samsung-htc-android-smartphone-642srwg4-1080P.jpg";
 
@@ -43,9 +42,6 @@ public class PictureViewFragment extends Fragment {
     private View view;
     private ArrayAdapter<String> adapter;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -137,11 +133,6 @@ public class PictureViewFragment extends Fragment {
 
     public class XMLTask extends AsyncTask<String, String, String> {
 
-        private TextView tv;
-        private View view;
-        private ListView lv;
-        private List<String> strArr;
-        private ArrayAdapter<String> adapter;
 
         @Override
         protected String doInBackground(String... urls) {
