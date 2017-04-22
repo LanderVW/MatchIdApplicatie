@@ -85,9 +85,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         init de knoppen in de home
          */
         btn_add_picture = (Button) view.findViewById(R.id.btn_camera);//initialitie knop (zet de naam zelf bovenaan de klasse zodat je er overal aankan)
-        btn_gallery = (Button) view.findViewById(R.id.btn_gallery);
-        btn_results = (Button) view.findViewById(R.id.btn_results);
-        btn_analyse = (Button) view.findViewById(R.id.btn_analyse);
+        btn_gallery = (Button) view.findViewById(R.id.btn_analyse);
+        btn_results = (Button) view.findViewById(R.id.btn_projects);
+        btn_analyse = (Button) view.findViewById(R.id.btn_logout);
         img = (ImageView) view.findViewById(R.id.img);
 
         btn_analyse.setOnClickListener(getLocation);

@@ -6,7 +6,6 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,9 +25,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.StringRequest;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.net.UnknownHostException;
 
@@ -40,9 +41,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     EditText etUsername, etPassword;
     TextView matchid_logo, error_message;
     private ProgressBar spinner;
-    private static final String TAG = "LoginActivity";
     public static final String KEY_PRIVATE = "USERNAME";
-
     static final String ipadress = "192.168.0.234";
     static int id =0;
 
@@ -91,6 +90,11 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         });
     }
 
+    private static String getValue(String tag, Element element) {
+        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
+        Node node = nodeList.item(0);
+        return node.getNodeValue();
+    }
 
     @Override
     public void onBackPressed() {
@@ -104,20 +108,21 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         dialog.show(manager,"dialog");
 
     }
+    /*
+        public void safeInfo(){
+            SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 
-    public void safeInfo(){
-        SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
-
-        Editor editor = userinfo.edit();
-        editor.putString(KEY_PRIVATE, etUsername.getText().toString());
-        editor.commit();
-    }
-
+            Editor editor = userinfo.edit();
+            editor.putString(KEY_PRIVATE, etUsername.getText().toString());
+            editor.commit();
+        }
+    */
     public String getUsername(){
         SharedPreferences sp = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 
         return sp.getString("name", "fout");
     }
+
     public void login() throws UnknownHostException{
         RequestQueue mRequestQueue;
         // Instantiate the cache
@@ -132,9 +137,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
         String url ="http://"+ipadress+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
-
-        Toast.makeText(LoginActivity.this, "test", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "nog niet verstuurd");
+        //Toast.makeText(LoginActivity.this, "test", Toast.LENGTH_SHORT).show();
 
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -144,12 +147,8 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                     public void onResponse(String response) {
                         // Do something with the response
                         if(response.equalsIgnoreCase("ok")){
-                            Log.d(TAG, "login succesvol");
-
-                        //if(!response.equalsIgnoreCase("nowp")){
-                          //  id = Integer.parseInt(response);
-                            Log.d(TAG , response);
-
+                            //id = Integer.parseInt(response);
+                            Log.d("LoginFragment" , response);
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
                             spinner.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this, "Welcome " + etUsername.getText().toString() , Toast.LENGTH_SHORT).show();
@@ -160,24 +159,21 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                             startActivity(goHome);
                             spinner.setVisibility(View.GONE);
                         }else{
-                            Log.d(TAG, "tesst" +response);
-                            spinner.setVisibility(View.GONE);
+                            Log.d("LoginActivity",response);
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG,"error bij login");
-                        spinner.setVisibility(View.GONE);
                         // Handle error
                         if(error.toString().contains("TimeoutError")||error.toString().contains("NoConnectionError")){
-                            //error_message.setText("Er is iets foutgelopen.\nCheck je connectie en probeer opnieuw.");
-                            error_message.setText(error.toString());
+                            error_message.setText("Er is iets foutgelopen.\nCheck je connectie en probeer opnieuw.");
+
                         }else error_message.setText(error.toString());
 
                         error_message.setVisibility(TextView.VISIBLE);
-
+                        spinner.setVisibility(View.GONE);
                     }
                 });
 
