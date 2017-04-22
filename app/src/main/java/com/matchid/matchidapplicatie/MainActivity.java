@@ -162,10 +162,8 @@ public class MainActivity extends AppCompatActivity
         Class fragmentClass = null;
 
         if(id==R.id.nav_home){
-            Toast.makeText(this, "home", Toast.LENGTH_SHORT).show();
             fragmentClass = HomeFragment.class;
         }else if(id ==R.id.nav_projects){
-            Toast.makeText(this, "pictureview", Toast.LENGTH_SHORT).show();
             fragmentClass = ProjectsFragment.class;
             //fragmentClass = PictureViewFragment.class;
             //fragmentClass = AnalyseFragment.class;
@@ -174,7 +172,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         try{
-            Log.d("newinstance", "newinstance");
+            Log.d("MainActivity", "newinstance");
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();

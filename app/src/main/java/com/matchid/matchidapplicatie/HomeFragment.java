@@ -86,7 +86,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
         btn_analyse.setOnClickListener(getLocation);
         btn_add_picture.setOnClickListener(getPicture);
-        //btn_logout.setOnClickListener(logout);
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent logout = new Intent(getActivity(),LoginActivity.class);
+                startActivity(logout);
+            }
+        });
         btn_projects.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
