@@ -72,6 +72,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d("tag", "onCreateView: ");
+        getActivity().setTitle("Home");
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -97,7 +98,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View v) {
                 Fragment fragment = null;
-                Class fragmentClass = ProjectsFragment.class;
+                Class fragmentClass = ProjectInformationFragment.class;
                 try{
                     fragment = (Fragment) fragmentClass.newInstance();
                 } catch (java.lang.InstantiationException e) {
@@ -214,7 +215,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        super.onActivityResult(requestCode, resultCode, data);//kweet nie waarom
+        super.onActivityResult(requestCode, resultCode, data);
 
         switch(requestCode){
             case CAMERA_REQUEST:

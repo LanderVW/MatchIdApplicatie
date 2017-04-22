@@ -89,6 +89,7 @@ public class AnalyseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setTitle("Analyse");
         setHasOptionsMenu(true);
         Log.d("tag", "onPicture upload Fragment");
 
@@ -99,6 +100,7 @@ public class AnalyseFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         Log.d("tag", "Oncreate upload PictureViewFragment");
+
         view = inflater.inflate(R.layout.fragment_analyse, container, false);
         btn_select_picture1 = (Button) view.findViewById(R.id.PicPicture1);
         btn_select_picture1.setOnClickListener(new View.OnClickListener() {

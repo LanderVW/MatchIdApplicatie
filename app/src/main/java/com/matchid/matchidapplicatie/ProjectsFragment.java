@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,8 +14,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,13 +49,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * Use the {@link ProjectsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProjectsFragment extends Fragment{
+public class ProjectsFragment extends Fragment {
     static final String ipadress = LoginActivity.ipadress;
     boolean ok = false;
     private View view;
     private ListView lv;
+    private Button test;
     private List<String> strArr;
     private ArrayAdapter<String> adapter;
+    private static final String TAG = "ProjectsFragment";
 
 
     private OnFragmentInteractionListener mListener;
@@ -78,6 +84,7 @@ public class ProjectsFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setTitle("Projects");
         setHasOptionsMenu(true);
         Log.d("ProjectFragment","onCreate");
 
@@ -95,6 +102,7 @@ public class ProjectsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         Log.d("ProjectFragment","OncreateView");
         view = inflater.inflate(R.layout.fragment_projects, container, false);
         lv = (ListView) view.findViewById(R.id.lvproject);
@@ -105,12 +113,69 @@ public class ProjectsFragment extends Fragment{
         String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
 
 
-        while(ok){
+        test = (Button) view.findViewById(R.id.testbutton);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // Fragment fragment = null;
+               // Class fragmentClass = ProjectInfoFragment.class;
+                ProjectInfoFragment fragment = new ProjectInfoFragment();
+                /*try{
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (java.lang.InstantiationException e) {
+                    Log.d(TAG, "instantiationException");
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    Log.d(TAG, "illegalAccesException");
+                    e.printStackTrace();
+                } catch(Exception e){
+                    Log.d(TAG, "onverwachte fout");
+                    e.printStackTrace();
+                }*/
+
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+
+
+            }
+        });
+        adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1,strArr);
+        lv.setAdapter(adapter);
+
             Log.d("ProjectFragment", "start!");
             new XMLTask().execute(url);
-            Log.d("ProjectFragment", "na start");
-        }
 
+
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "naar nieuwe activity", Toast.LENGTH_SHORT).show();
+                /*Intent test = new Intent(getActivity(),LoginActivity.class);
+                startActivity(test);*/
+                Fragment fragment = null;
+                Class fragmentClass = ProjectInfoFragment.class;
+                try{
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (java.lang.InstantiationException e) {
+                    Log.d(TAG, "instantiationException");
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    Log.d(TAG, "illegalAccesException");
+                    e.printStackTrace();
+                } catch(Exception e){
+                    Log.d(TAG, "onverwachte fout");
+                    e.printStackTrace();
+                }
+
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+            }
+
+        });
 
         return view;
     }
@@ -122,9 +187,6 @@ public class ProjectsFragment extends Fragment{
     public void updateListview(NodeList nd){
         try {
 
-            adapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1,strArr);
-            lv.setAdapter(adapter);
             for (int i = 0; i < nd.getLength(); i++) {
                 Node node = nd.item(i);
 

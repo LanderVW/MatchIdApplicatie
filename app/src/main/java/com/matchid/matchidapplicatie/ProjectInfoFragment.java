@@ -4,10 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,6 +18,7 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class ProjectInfoFragment extends Fragment {
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -41,7 +42,9 @@ public class ProjectInfoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setTitle("Project Info");
         setHasOptionsMenu(true);
+        Log.d("ProjectInfoFragment", "onPicture upload Fragment");
     }
 
     @Override
@@ -51,12 +54,18 @@ public class ProjectInfoFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_project_info, container, false);
     }
 
-
-
+    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
     }
 
     @Override
@@ -75,6 +84,7 @@ public class ProjectInfoFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
