@@ -28,7 +28,6 @@ import java.net.URL;
 
 public class PictureViewFragment extends Fragment {
 
-
     static final String ipadress = LoginActivity.ipadress;
     static int id = LoginActivity.id;
 
