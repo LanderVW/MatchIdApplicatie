@@ -54,6 +54,7 @@ public class ProjectsFragment extends Fragment{
     private ListView lv;
     private List<String> strArr;
     private ArrayAdapter<String> adapter;
+    private static final String TAG ="ProjectFragment";
 
     private OnFragmentInteractionListener mListener;
 
@@ -80,7 +81,7 @@ public class ProjectsFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.d("tag","onCreate");
+        Log.d(TAG,"onCreate");
 
     }
 
@@ -89,15 +90,17 @@ public class ProjectsFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d("tag","OncreateView");
+        Log.d(TAG,"OncreateView");
         view = inflater.inflate(R.layout.fragment_projects, container, false);
 
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<String>();
 
         //haal alle projecten op (nog niet naar id gekekeken)
-        String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project/";
-        Log.d("tag", "start!");
+
+        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
+
+        Log.d(TAG, "start!");
         new XMLTask().execute(url);
         return view;
     }
@@ -114,10 +117,10 @@ public class ProjectsFragment extends Fragment{
         switch (item.getItemId()) {
 
             case R.id.action_user_info:
-                Log.d("Project Fragment","action user info");
+                Log.d(TAG,"action user info");
                 return false;
             case R.id.logout:
-                Log.d("Project Fragment", "logout option");
+                Log.d(TAG, "logout option");
                 Intent logout = new Intent(getActivity(), LoginActivity.class);
                 startActivity(logout);
 
@@ -144,19 +147,19 @@ public class ProjectsFragment extends Fragment{
             for (int i = 0; i < nd.getLength(); i++) {
                 Node node = nd.item(i);
 
-                Log.d("tag", "current element: " + node.getNodeName());
+                Log.d(TAG, "current element: " + node.getNodeName());
 
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) node;
                     strArr.add(getValue("title",eElement));
 
-                    Log.d("tag", "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+                    Log.d(TAG, "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
                 }
             }
 
             adapter.notifyDataSetChanged();
         }catch(Exception e) {
-            Log.d("tag","hij doet het niet in het parsen van XML naar de app lijst");
+            Log.d(TAG,"hij doet het niet in het parsen van XML naar de app lijst");
             e.printStackTrace();
         }
     }
@@ -294,14 +297,14 @@ public class ProjectsFragment extends Fragment{
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
-            Log.d("tag" , line);
+            Log.d(TAG , line);
             //line is een string
             String[] parts = line.split(("\\?>"));
             String part1 = parts[0];
             String part2 = parts[1];
 
-            Log.d("tag" , part1);
-            Log.d("tag" , part2);
+            Log.d(TAG , part1);
+            Log.d(TAG , part2);
 
             //maak van string een XML file
 
@@ -320,7 +323,7 @@ public class ProjectsFragment extends Fragment{
 
             //xml doc naar iets dat we kunnen weergeven op de app
             doc.getDocumentElement().normalize();
-            Log.d("tag" , "root element: "+ doc.getDocumentElement().getNodeName());
+            Log.d(TAG , "root element: "+ doc.getDocumentElement().getNodeName());
 
             NodeList nList = doc.getElementsByTagName("project");
 

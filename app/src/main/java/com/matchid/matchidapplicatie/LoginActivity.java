@@ -26,7 +26,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.StringRequest;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.net.UnknownHostException;
 
@@ -38,8 +40,11 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     EditText etUsername, etPassword;
     TextView matchid_logo, error_message;
     private ProgressBar spinner;
+    private static final String TAG = "LoginActivity";
     public static final String KEY_PRIVATE = "USERNAME";
-    static final String ipadress = "192.168.0.233";
+
+    static final String ipadress = "192.168.0.234";
+    static int id =0;
 
 
 
@@ -48,6 +53,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         Typeface face = Typeface.createFromAsset(getAssets(),"fonts/calibri.ttf");
         matchid_logo = (TextView)findViewById(R.id.matchid_logo);
@@ -126,8 +132,9 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
         String url ="http://"+ipadress+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
+
         Toast.makeText(LoginActivity.this, "test", Toast.LENGTH_SHORT).show();
-        Log.d("LoginActivity", "nog niet verstuurd");
+        Log.d(TAG, "nog niet verstuurd");
 
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -137,7 +144,12 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                     public void onResponse(String response) {
                         // Do something with the response
                         if(response.equalsIgnoreCase("ok")){
-                            Log.d("loginActivity", "login succesvol");
+                            Log.d(TAG, "login succesvol");
+
+                        //if(!response.equalsIgnoreCase("nowp")){
+                          //  id = Integer.parseInt(response);
+                            Log.d(TAG , response);
+
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
                             spinner.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this, "Welcome " + etUsername.getText().toString() , Toast.LENGTH_SHORT).show();
@@ -148,7 +160,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                             startActivity(goHome);
                             spinner.setVisibility(View.GONE);
                         }else{
-                            Log.d("LoginActivity", "tesst" +response);
+                            Log.d(TAG, "tesst" +response);
                             spinner.setVisibility(View.GONE);
                         }
                     }
@@ -156,7 +168,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("LoginActivity","error bij login");
+                        Log.d(TAG,"error bij login");
                         spinner.setVisibility(View.GONE);
                         // Handle error
                         if(error.toString().contains("TimeoutError")||error.toString().contains("NoConnectionError")){

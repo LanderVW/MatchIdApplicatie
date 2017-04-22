@@ -38,6 +38,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     GPSTracker gps;
     private static final int CAMERA_REQUEST = 123;
     private static final int GALLERY_REQUEST = 124;
+    private static final String TAG = "HomeFragment";
 
     private OnFragmentInteractionListener mListener;
 
@@ -57,7 +58,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
      * @return A new instance of fragment HomeFragment.
      */
     public static HomeFragment newInstance() {
-        Log.d("Home Fragment", "begin newInstance");
+        Log.d(TAG, "begin newInstance");
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
 
@@ -69,14 +70,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.d("Home Fragment", "onCreate: ");
+        Log.d(TAG, "onCreate: ");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("Home Fragment", "onCreateView: ");
+        Log.d(TAG, "onCreateView: ");
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -107,10 +108,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         switch (item.getItemId()) {
 
             case R.id.action_user_info:
-                Log.d("Home Fragment","action user info");
+                Log.d(TAG,"action user info");
                 return false;
             case R.id.logout:
-                Log.d("Home Fragment", "logout option");
+                Log.d(TAG, "logout option");
                 Intent logout = new Intent(getActivity(), LoginActivity.class);
                 startActivity(logout);
 
@@ -240,7 +241,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         @Override
         public void onClick(View arg0) {
             // create class object
-            Log.d("home fragment", " get location");
+            Log.d(TAG, " get location");
             gps = new GPSTracker(getActivity());
 
             // check if GPS enabled

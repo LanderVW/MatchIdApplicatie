@@ -1,6 +1,7 @@
 package com.matchid.matchidapplicatie;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,18 +19,41 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+
 import static android.R.attr.id;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ProjectsFragment.OnFragmentInteractionListener {
 
+
+    // a static variable to get a reference of our application context
+    public static Context contextOfApplication;
+    private static final String TAG = "MainActivity";
+    public static Context getContextOfApplication()
+    {
+        return contextOfApplication;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("MainActivity","begin oncreate");
+
+        Log.d(TAG,"oncreate");
+
+        contextOfApplication = getApplicationContext();
+        // Create global configuration and initialize ImageLoader with this config
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+
 
         if (savedInstanceState == null) {
             Fragment fragment = null;
@@ -60,13 +84,21 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
 
-        Log.d("MainActivity" , "einde oncreate");
+        Log.d(TAG , "einde oncreate");
     }
 
-    /*
-     * methode die aangeeft wat gebeurt als op de terug
-     * knop wordt gedrukt
+    /*de onclicklistener voor de location
+    * er wordt momenteel gewoon een toast getoond op het scherm
      */
+
+    View.OnClickListener getLocation = new View.OnClickListener(){
+        @Override
+        public void onClick(View arg0) {
+            Log.d(TAG , "in de imageview ding");
+        }
+    };
+
+
     @Override
     public void onBackPressed() {
         //dit is als op de ingebouwde terugknop wordt gedrukt
@@ -100,10 +132,13 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_user_info) {
-            Log.d("MainActivity", "userinfo option");
+
+            Log.d(TAG, "userinfo option");
+            Toast.makeText(this, "account", Toast.LENGTH_SHORT).show();
             return false;
+
         }else if(id ==R.id.logout){
-            Log.d("MainActivity", "logout option");
+            Log.d(TAG, "logout option");
             Intent logout = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(logout);
 
@@ -125,11 +160,17 @@ public class MainActivity extends AppCompatActivity
 
         if(id==R.id.nav_home){
             Toast.makeText(this, "home", Toast.LENGTH_SHORT).show();
+
             fragmentClass = HomeFragment.class;
         }else if(id ==R.id.nav_projects){
-            Toast.makeText(this, "projects", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "pictureview", Toast.LENGTH_SHORT).show();
             fragmentClass = ProjectsFragment.class;
+            //fragmentClass = PictureViewFragment.class;
+            //fragmentClass = PictureUploadFragment.class;
+        }else if(id ==R.id.nav_slideshow){
+            fragmentClass = PictureUploadFragment.class;
         }
+
         try{
             Log.d("newinstance", "newinstance");
             fragment = (Fragment) fragmentClass.newInstance();
