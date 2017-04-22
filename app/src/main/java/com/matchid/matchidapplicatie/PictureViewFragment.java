@@ -1,5 +1,6 @@
 package com.matchid.matchidapplicatie;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +17,8 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 import android.util.Base64;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -42,8 +45,13 @@ public class PictureViewFragment extends Fragment {
 
 
 //  String url = "http://www.1080x1920wallpapers.com/1080x1920-backgrounds/1080x1920-wallpapers-2/1080x1920-HD-wallpapers-samsung-htc-android-smartphone-642srwg4-1080P.jpg";
-    String url = "http://"+ ipadress + ":8080/MatchIDEnterpriseApp-war/rest/getImage/imageid/3";
+    //het pad is gekend uit de db
+    String nameUitDbVanResult = "naam ng komen";
+    String nameUitDbVanResultPath = "Tensile_Hole_2177N.tif_u";
+    String url = "http://"+ ipadress + ":8080/MatchIDEnterpriseApp-war/rest/getImage/imagepath/"+nameUitDbVanResultPath;
     private ImageView ivFoto;
+    private TextView tvName;
+    private ProgressDialog prgDialog;
 
     private View view;
 
@@ -71,9 +79,16 @@ public class PictureViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "OncreateViewPictureViewFragment");
+        prgDialog = new ProgressDialog(getActivity());
+        // Set Cancelable as False
+        prgDialog.setCancelable(false);
         view = inflater.inflate(R.layout.picture, container, false);
+        tvName = (TextView) view.findViewById(R.id.tvName);
         ivFoto = (ImageView) view.findViewById(R.id.fotoweertegeven);
+        prgDialog.setMessage("Downloading image");
+        prgDialog.show();
         loadImageFromURL(url);
+
         //view image
         return view;
     }
@@ -155,13 +170,18 @@ public class PictureViewFragment extends Fragment {
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
             Log.d(TAG, line);
             //line is een string
-
-            byte[] imageByteArray = Base64.decode(line , Base64.DEFAULT);
-            try {
-                Bitmap bmp = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
-                ivFoto.setImageBitmap(bmp);
-            }catch (Exception e){
-                Log.d(TAG , e.toString());
+            if(line.equals("0")){
+                tvName.setText( "The image is not found");
+                prgDialog.hide();
+            }else {
+                byte[] imageByteArray = Base64.decode(line, Base64.DEFAULT);
+                try {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+                    ivFoto.setImageBitmap(bmp);
+                } catch (Exception e) {
+                    Log.d(TAG, e.toString());
+                }
+                prgDialog.hide();
             }
         }
     }

@@ -160,8 +160,8 @@ public class MainActivity extends AppCompatActivity
         if(id==R.id.nav_home){
             fragmentClass = HomeFragment.class;
         }else if(id ==R.id.nav_projects){
-            fragmentClass = ProjectsFragment.class;
-            //fragmentClass = PictureViewFragment.class;
+            //fragmentClass = ProjectsFragment.class;
+            fragmentClass = PictureViewFragment.class;
             //fragmentClass = AnalyseFragment.class;
         }else if(id == R.id.nav_slideshow){
             fragmentClass = AnalyseFragment.class;

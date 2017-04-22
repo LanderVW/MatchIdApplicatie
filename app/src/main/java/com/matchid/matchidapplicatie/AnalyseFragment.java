@@ -143,7 +143,16 @@ public class AnalyseFragment extends Fragment {
         btn_analyse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startAnalyse(Integer.parseInt(etSubset.getText().toString()), Integer.parseInt(etStepsize.getText().toString()));
+                Log.d("tag" , "text: " + etStepsize.getText().toString());
+                if(etStepsize.getText().toString().equals("") | etStepsize.getText().toString().equals("")){
+                    Toast.makeText(
+                            getActivity(),
+                            "Please select subset and stepsize!", Toast.LENGTH_LONG)
+                            .show();
+                }else {
+                    startAnalyse(Integer.parseInt(etSubset.getText().toString()), Integer.parseInt(etStepsize.getText().toString()));
+                }
+
             }
         });
 
@@ -333,12 +342,10 @@ public class AnalyseFragment extends Fragment {
     }
 
     public void startAnalyse(int sub, int set) {
-
-        Log.d("tag" , etSubset.getText().toString() +"  " +  etStepsize.getText().toString());
-        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/Tensile_Hole_Unloaded.tif/pic2/Tensile_Hole_2177N.tif";
-        Log.d("tag" , url);
-        new XMLTask().execute(url);
-
+            Log.d("tag", etSubset.getText().toString() + "  " + etStepsize.getText().toString());
+            String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/Tensile_Hole_Unloaded.tif/pic2/Tensile_Hole_2177N.tif";
+            Log.d("tag", url);
+            new XMLTask().execute(url);
     }
 
     @Override
