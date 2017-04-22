@@ -39,16 +39,6 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,7 +65,7 @@ public class PictureUploadFragment extends Fragment {
     ProgressDialog prgDialog;
     String encodedString;
     RequestParams params = new RequestParams();
-    String imgPath, fileName;
+    String imgPath, fileName , fileName2;
     Bitmap bitmap;
     private static int RESULT_LOAD_IMG = 1;
 
@@ -104,7 +94,6 @@ public class PictureUploadFragment extends Fragment {
     private EditText stepsize;
 
     private View view;
-    private ArrayAdapter<String> adapter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -117,11 +106,9 @@ public class PictureUploadFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static PictureUploadFragment newInstance(String param1, String param2) {
+    public static PictureUploadFragment newInstance() {
         PictureUploadFragment fragment = new PictureUploadFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -129,7 +116,7 @@ public class PictureUploadFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("tag", "onPicture upload Fragment");
+        //Log.d("tag", "onPicture upload Fragment");
 
     }
 
@@ -137,7 +124,7 @@ public class PictureUploadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d("tag", "Oncreate upload PictureViewFragment");
+        //Log.d("tag", "Oncreate upload PictureViewFragment");
         view = inflater.inflate(R.layout.picture_upload, container, false);
         loadbutton = (Button) view.findViewById(R.id.PicPicture1);
         loadbutton.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +152,14 @@ public class PictureUploadFragment extends Fragment {
             }
         });
 
+        uploadButton2 = (Button) view.findViewById(R.id.uploadPicture1);
+        uploadButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                uploadImage();
+            }
+        });
+
         analyseButton = (Button) view.findViewById(R.id.buttonStartAnalyse);
         analyseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,15 +170,6 @@ public class PictureUploadFragment extends Fragment {
 
         stepsize = (EditText) view.findViewById(R.id.etStepsize);
         subset = (EditText) view.findViewById(R.id.etSubset);
-
-        loadbutton = (Button) view.findViewById(R.id.PicPicture1);
-        loadbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getal = 1;
-                loadImagefromGallery();
-            }
-        });
 
         prgDialog = new ProgressDialog(getActivity());
         // Set Cancelable as False
@@ -236,7 +222,12 @@ public class PictureUploadFragment extends Fragment {
                         .decodeFile(imgPath));
                 // Get the Image's file name
                 String fileNameSegments[] = imgPath.split("/");
-                fileName = fileNameSegments[fileNameSegments.length - 1];
+                if(getal == 1){
+                    fileName = fileNameSegments[fileNameSegments.length - 1];
+                }else{
+                    fileName2 = fileNameSegments[fileNameSegments.length - 1];
+                }
+
                 // Put file name in Async Http Post Param which will used in Java web app
                 params.put("filename", fileName);
 
@@ -253,7 +244,7 @@ public class PictureUploadFragment extends Fragment {
 
     public void uploadImage() {
         // When Image is selected from Gallery
-        Log.d("tag", "in upload Image");
+        //Log.d("tag", "in upload Image");
         if (imgPath != null && !imgPath.isEmpty()) {
             prgDialog.setMessage("Converting Image to Binary Data");
             prgDialog.show();
@@ -272,10 +263,7 @@ public class PictureUploadFragment extends Fragment {
         new AsyncTask<Void, Void, String>() {
 
             protected void onPreExecute() {
-
-            }
-
-            ;
+            };
 
             @Override
             protected String doInBackground(Void... params) {
@@ -363,7 +351,9 @@ public class PictureUploadFragment extends Fragment {
     }
 
     public void startAnalyse(int sub, int set) {
-        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/3/stepsize/5/pic1/cover.jpg/pic2/Knipsel.PNG";
+        Log.d("tag" , subset.getText().toString() +"  " +  stepsize.getText().toString());
+        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + subset.getText().toString() + "/stepsize/" + stepsize.getText().toString() + "/pic1/Tensile_Hole_Unloaded.tif/pic2/Tensile_Hole_2177N.tif";
+        Log.d("tag" , url);
         new XMLTask().execute(url);
 
     }
@@ -409,12 +399,6 @@ public class PictureUploadFragment extends Fragment {
 
 
     public class XMLTask extends AsyncTask<String, String, String> {
-
-        private TextView tv;
-        private View view;
-        private ListView lv;
-        private List<String> strArr;
-        private ArrayAdapter<String> adapter;
 
         @Override
         protected String doInBackground(String... urls) {
@@ -462,6 +446,15 @@ public class PictureUploadFragment extends Fragment {
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
+            if(line.equals("ok")){
+                Toast.makeText(getActivity(),
+                        "Analysis is done",
+                        Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getActivity(),
+                        "Something went wrong with analysis",
+                        Toast.LENGTH_SHORT).show();
+            }
             Log.d("tag", line);
             //line is een string
 

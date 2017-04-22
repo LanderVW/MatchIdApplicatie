@@ -170,8 +170,8 @@ public class MainActivity extends AppCompatActivity
         }else if(id ==R.id.nav_projects){
             Toast.makeText(this, "pictureview", Toast.LENGTH_SHORT).show();
             //fragmentClass = ProjectsFragment.class;
-            //fragmentClass = PictureViewFragment.class;
-            fragmentClass = PictureUploadFragment.class;
+            fragmentClass = PictureViewFragment.class;
+            //3fragmentClass = PictureUploadFragment.class;
         }
 
         try{
