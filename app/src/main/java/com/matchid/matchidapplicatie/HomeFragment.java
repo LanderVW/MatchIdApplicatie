@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import static android.app.Activity.RESULT_OK;
  */
 public class HomeFragment extends Fragment implements View.OnClickListener{
 
+
     View view;
     Button btn_add_picture, btn_analyse, btn_logout, btn_projects;
     ImageView img;
@@ -43,11 +45,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     public HomeFragment() {
         // Required empty public constructor
     }
-
     /**
+<<<<<<< HEAD
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
 
+=======
+     *
+     *
+     * deze methode is een beetje de vervanger van een deftige constructor want een fragment
+     * moet alleen een default constructor hebben
+     *
+     *
+>>>>>>> refs/remotes/origin/master
      * @return A new instance of fragment HomeFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -96,7 +106,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View v) {
                 Fragment fragment = null;
-                Class fragmentClass = ProjectInformationFragment.class;
+                Class fragmentClass = ProjectsFragment.class;
                 try{
                     fragment = (Fragment) fragmentClass.newInstance();
                 } catch (java.lang.InstantiationException e) {
@@ -116,10 +126,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             }
         });
 
+
         return view;
     }
-
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -259,12 +268,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
             //vanaf hier van Axel voor verbinding met mysql
             //ip niet vergeten te veranderen!
-            String url = "http://"+LoginActivity.ipadress+":8080/MatchIDEnterpriseApp-war/rest/project";
-
-            Log.d("HomeFragment", "start!");
-
-            XMLParser xml = new XMLParser();
-            xml.execute(url);
+            //XMLParser xml = new XMLParser();
+            //xml.execute(url);
         }
     };
 }

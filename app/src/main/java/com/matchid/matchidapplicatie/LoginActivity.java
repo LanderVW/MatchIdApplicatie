@@ -26,7 +26,6 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -44,6 +43,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     private ProgressBar spinner;
     public static final String KEY_PRIVATE = "USERNAME";
     static final String ipadress = "192.168.0.234";
+
     static int id =0;
 
 
@@ -118,15 +118,15 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         dialog.show(manager,"dialog");
 
     }
-    /*
-        public void safeInfo(){
-            SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
+/*
+    public void safeInfo(){
+        SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 
-            Editor editor = userinfo.edit();
-            editor.putString(KEY_PRIVATE, etUsername.getText().toString());
-            editor.commit();
-        }
-    */
+        Editor editor = userinfo.edit();
+        editor.putString(KEY_PRIVATE, etUsername.getText().toString());
+        editor.commit();
+    }
+*/
     public String getUsername(){
         SharedPreferences sp = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 
@@ -147,7 +147,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
         String url ="http://"+ipadress+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
-        //Toast.makeText(LoginActivity.this, "test", Toast.LENGTH_SHORT).show();
+
 
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -157,8 +157,12 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                     public void onResponse(String response) {
                         // Do something with the response
                         if(response.equalsIgnoreCase("ok")){
-                            //id = Integer.parseInt(response);
-                            Log.d("LoginFragment" , response);
+
+
+                        //if(!response.equalsIgnoreCase("nowp")){
+                          //  id = Integer.parseInt(response);
+                            Log.d("LoginActivity" , response);
+
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
                             spinner.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this, "Welcome " + etUsername.getText().toString() , Toast.LENGTH_SHORT).show();
