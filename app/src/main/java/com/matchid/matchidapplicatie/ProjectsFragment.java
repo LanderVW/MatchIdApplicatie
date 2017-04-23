@@ -40,8 +40,6 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import static android.content.ContentValues.TAG;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,6 +56,8 @@ public class ProjectsFragment extends Fragment {
     private ListView lv;
     private Button test;
     private List<String> strArr;
+    private List<String> descriptionList, locationList, aAnalysisList;
+    private List<Boolean> activeList;
     private ArrayAdapter<String> adapter;
     private static final String TAG = "ProjectsFragment";
     private static String url;
@@ -104,12 +104,16 @@ public class ProjectsFragment extends Fragment {
         Log.d(TAG, "OncreateView");
         view = inflater.inflate(R.layout.fragment_projects, container, false);
         lv = (ListView) view.findViewById(R.id.lvproject);
-        strArr = new ArrayList<String>();
+        strArr = new ArrayList<>();
+        descriptionList = new ArrayList<>();
+        activeList = new ArrayList<>();
+        locationList = new ArrayList<>();
+        aAnalysisList = new ArrayList<>();
+
 
         //haal alle projecten op (nog niet naar id gekekeken)
 
         url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
-        new XMLTask().execute(url);
 
 
         test = (Button) view.findViewById(R.id.testbutton);
@@ -138,12 +142,14 @@ public class ProjectsFragment extends Fragment {
 
             }
         });
+
         adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, strArr);
         lv.setAdapter(adapter);
 
         Log.d("ProjectFragment", "start!");
         new XMLTask().execute(url);
+        Log.d("ProjectFragment", "na start");
 
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -153,10 +159,11 @@ public class ProjectsFragment extends Fragment {
                 /*Intent test = new Intent(getActivity(),LoginActivity.class);
                 startActivity(test);*/
                 Fragment fragment = null;
+
                 Class fragmentClass = ProjectInformationFragment.class;
                 try {
-
                     fragment = (Fragment) fragmentClass.newInstance();
+
                 } catch (java.lang.InstantiationException e) {
                     Log.d(TAG, "instantiationException");
                     e.printStackTrace();
@@ -167,7 +174,12 @@ public class ProjectsFragment extends Fragment {
                     Log.d(TAG, "onverwachte fout");
                     e.printStackTrace();
                 }
-
+                Bundle bundle = new Bundle();
+                bundle.putString("description", descriptionList.get(position));
+                bundle.putString("location",locationList.get(position));
+                bundle.putBoolean("active",activeList.get(position));
+                bundle.putString("numberAnalysis",aAnalysisList.get(position));
+                fragment.setArguments(bundle);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
@@ -192,10 +204,22 @@ public class ProjectsFragment extends Fragment {
                 Log.d(TAG, "current element: " + node.getNodeName());
 
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    //ier moeten we nog zorgen dat het ook leeg kan zijn
                     Element eElement = (Element) node;
                     strArr.add(getValue("title", eElement));
 
-                    Log.d(TAG, "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+                    descriptionList.add(getValue("description",eElement));
+
+                    activeList.add(Boolean.parseBoolean(getValue("active",eElement)));
+
+                    locationList.add(getValue("location", eElement));
+
+                    aAnalysisList.add(getValue("numberAnalysis",eElement));
+
+
+
+
+                    //Log.d(TAG, "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
                 }
             }
 
@@ -206,6 +230,18 @@ public class ProjectsFragment extends Fragment {
         }
     }
 
+    /**
+     * op basis van een xml tag wordt de waarde terug gegeven in de vorm van een String
+     *
+     * @param tag
+     * @param element
+     * @return String
+     */
+    private static String getValue(String tag, Element element) {
+        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
+        Node node = nodeList.item(0);
+        return node.getNodeValue();
+    }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // TODO Add your menu entries here
@@ -232,18 +268,6 @@ public class ProjectsFragment extends Fragment {
         return false;
     }
 
-    /**
-     * op basis van een xml tag wordt de waarde terug gegeven in de vorm van een String
-     *
-     * @param tag
-     * @param element
-     * @return String
-     */
-    private static String getValue(String tag, Element element) {
-        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node = nodeList.item(0);
-        return node.getNodeValue();
-    }
 
     /**
      * @param uri
@@ -319,12 +343,16 @@ public class ProjectsFragment extends Fragment {
                 return buffer.toString();
 
             } catch (MalformedURLException e) {
+
                 Log.d("ProjectFragment", "malformedURL");
                 e.printStackTrace();
+                return null;
             } catch (IOException e) {
 
                 Log.d("ProjectFragment", "ioexception");
                 e.printStackTrace();
+
+                return null;
             } finally {
                 if (connection != null) {
 
@@ -340,10 +368,12 @@ public class ProjectsFragment extends Fragment {
 
                     Log.d("ProjectFragment", "ioexception 2");
                     e.printStackTrace();
+
+                    return null;
                 }
             }
 
-            return null;
+
         }
 
         /**
@@ -354,7 +384,6 @@ public class ProjectsFragment extends Fragment {
             if (line == null) {
                 new XMLTask().execute();
             } else {
-
                 super.onPostExecute(line);
                 //deze onPost wordt uitgevoerd als er iets terug gegeven is
 
@@ -398,5 +427,3 @@ public class ProjectsFragment extends Fragment {
 
     }
 }
-
-

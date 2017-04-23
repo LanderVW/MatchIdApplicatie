@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +92,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         btn_analyse = (Button) view.findViewById(R.id.btn_analyse);
         img = (ImageView) view.findViewById(R.id.img);
 
-        btn_analyse.setOnClickListener(getLocation);
+        btn_analyse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = null;
+                Class fragmentClass = AnalyseFragment.class;
+                try{
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (java.lang.InstantiationException e) {
+                    Log.d("HomeFragment", "instantiationException");
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    Log.d("HomeFragment", "illegalAccesException");
+                    e.printStackTrace();
+                } catch(Exception e){
+                    Log.d("HomeFragment", "onverwachte fout");
+                    e.printStackTrace();
+                }
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+            }
+        });
         btn_add_picture.setOnClickListener(getPicture);
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -2,7 +2,6 @@ package com.matchid.matchidapplicatie;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,10 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-
-import com.loopj.android.http.RequestParams;
+import android.widget.TextView;
 
 /**
  * @author lander
@@ -23,27 +19,15 @@ import com.loopj.android.http.RequestParams;
 public class ProjectInformationFragment extends Fragment {
     //voor upload
     ProgressDialog prgDialog;
-    String encodedString;
-    RequestParams params = new RequestParams();
-    String imgPath, fileName;
-    Bitmap bitmap;
-    private static int RESULT_LOAD_IMG = 1;
+
+    TextView tv_description, tv_location, tv_numberAnalysis;
+    android.support.v7.widget.AppCompatCheckBox cb_active;
+
 
 
     static final String ipadress = LoginActivity.ipadress;
     static int id = LoginActivity.id;
 
-    private Button btn_select_picture1;
-    private Button btn_select_picture2;
-
-    private Button btn_upload_picture1;
-    private Button btn_upload_picture2;
-    private int getal;
-
-    private Button btn_analyse;
-
-    private EditText etSubset;
-    private EditText etStepsize;
 
     private View view;
     private ArrayAdapter<String> adapter;
@@ -67,7 +51,7 @@ public class ProjectInformationFragment extends Fragment {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("Project Info");
         setHasOptionsMenu(true);
-        Log.d("pif", "onPicture upload Fragment");
+        Log.d("pif", "onCreate");
 
     }
 
@@ -75,9 +59,33 @@ public class ProjectInformationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d("pif", "Oncreate upload PictureViewFragment");
+        Log.d("pif", "OncreateView");
 
         view = inflater.inflate(R.layout.fragment_project_info, container, false);
+
+        tv_description = (TextView) view.findViewById(R.id.tv_description);
+        tv_location = (TextView) view.findViewById(R.id.tv_location);
+        tv_numberAnalysis = (TextView) view.findViewById(R.id.tv_number_analysis);
+        cb_active = (android.support.v7.widget.AppCompatCheckBox) view.findViewById(R.id.appCompatCheckBox);
+        String description ="";
+        String location = "";
+        String numberAnalysis = "";
+        Boolean active = false;
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            description = bundle.getString("description", "default");
+            numberAnalysis = bundle.getString("numberAnalysis","default");
+            location = bundle.getString("location", "default");
+            active = bundle.getBoolean("active",false);
+
+        }
+
+        tv_description.setText(description);
+        tv_location.setText(location);
+        tv_numberAnalysis.setText(numberAnalysis);
+        cb_active.setChecked(active);
+
+
 
         return view;
     }
