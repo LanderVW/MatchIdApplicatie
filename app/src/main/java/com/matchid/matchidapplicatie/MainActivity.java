@@ -2,6 +2,7 @@ package com.matchid.matchidapplicatie;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -13,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //bij opstarten van mainActivity
         //Toast.makeText(this, "create options", Toast.LENGTH_SHORT).show();
@@ -130,7 +132,7 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-
+        int id =item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_user_info) {
             Log.d("MainActivity", "in account");
@@ -146,7 +148,7 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-*/
+
 
 
     @SuppressWarnings("StatementWithEmptyBody")

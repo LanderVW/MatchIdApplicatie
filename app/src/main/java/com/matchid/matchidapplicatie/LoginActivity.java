@@ -38,11 +38,12 @@ import static android.graphics.Typeface.BOLD;
 
 public class LoginActivity extends Activity implements QuitDialog.Communicator{
     Button btn_signin, btn_cancel;
+    Button btn_skip_login;
     EditText etUsername, etPassword;
     TextView matchid_logo, error_message;
     private ProgressBar spinner;
     public static final String KEY_PRIVATE = "USERNAME";
-    static final String ipadress = "192.168.0.249";
+    static final String ipadress = "192.168.0.234";
     static int id =0;
 
 
@@ -63,6 +64,15 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         etPassword = (EditText)findViewById(R.id.password);
         btn_signin = (Button)findViewById(R.id.btn_signin);
         btn_cancel = (Button)findViewById(R.id.btn_cancel);
+        btn_skip_login = (Button) findViewById(R.id.skip_login);
+
+        btn_skip_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent skipLogin = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(skipLogin);
+            }
+        });
 
         error_message=(TextView)findViewById(R.id.error_message);
         error_message.setVisibility(TextView.INVISIBLE);

@@ -58,6 +58,7 @@ public class ProjectsFragment extends Fragment {
     private List<String> strArr;
     private ArrayAdapter<String> adapter;
     private static final String TAG = "ProjectsFragment";
+    private String url;
 
 
     private OnFragmentInteractionListener mListener;
@@ -110,17 +111,17 @@ public class ProjectsFragment extends Fragment {
 
         //haal alle projecten op (nog niet naar id gekekeken)
 
-        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
+        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
 
 
         test = (Button) view.findViewById(R.id.testbutton);
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // Fragment fragment = null;
-               // Class fragmentClass = ProjectInfoFragment.class;
-                ProjectInfoFragment fragment = new ProjectInfoFragment();
-                /*try{
+                Fragment fragment = null;
+                Class fragmentClass = ProjectInformationFragment.class;
+                //ProjectInformationFragment fragment = new ProjectInformationFragment();
+                try{
                     fragment = (Fragment) fragmentClass.newInstance();
                 } catch (java.lang.InstantiationException e) {
                     Log.d(TAG, "instantiationException");
@@ -131,7 +132,7 @@ public class ProjectsFragment extends Fragment {
                 } catch(Exception e){
                     Log.d(TAG, "onverwachte fout");
                     e.printStackTrace();
-                }*/
+                }
 
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -156,8 +157,9 @@ public class ProjectsFragment extends Fragment {
                 /*Intent test = new Intent(getActivity(),LoginActivity.class);
                 startActivity(test);*/
                 Fragment fragment = null;
-                Class fragmentClass = ProjectInfoFragment.class;
+                Class fragmentClass = ProjectInformationFragment.class;
                 try{
+
                     fragment = (Fragment) fragmentClass.newInstance();
                 } catch (java.lang.InstantiationException e) {
                     Log.d(TAG, "instantiationException");
@@ -347,16 +349,13 @@ public class ProjectsFragment extends Fragment {
          */
         @Override
         protected void onPostExecute(String line) {
-            super.onPostExecute(line);
+            if (line==null) {
+                new XMLTask().execute(url);
+            }else{
+                super.onPostExecute(line);
             //deze onPost wordt uitgevoerd als er iets terug gegeven is
             Log.d("ProjectFragment" , "dit is de output\n"+line);
-            if (line.equalsIgnoreCase(null)) {
-                Log.d("ProjectsFragment","500 terug");
-                ok = false;
 
-
-            }else {
-                ok = true;
                 //line is een string
                 String[] parts = line.split(("\\?>"));
                 String part1 = parts[0];

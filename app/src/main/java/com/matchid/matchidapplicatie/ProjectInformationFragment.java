@@ -2,16 +2,12 @@ package com.matchid.matchidapplicatie;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -85,39 +81,6 @@ public class ProjectInformationFragment extends Fragment {
 
         return view;
     }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Add your menu entries here
-
-        inflater.inflate(R.menu.main, menu);
-
-        //return true;
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.logout:
-                Log.d("pif","Logout");
-                Intent logout = new Intent(getActivity(),LoginActivity.class);
-                startActivity(logout);
-                return true;
-            case R.id.action_user_info:
-                Log.d("pif","Action user info");
-                return true;
-
-            default:
-                break;
-        }
-
-        return false;
-    }
-
-
-
 
     @Override
     public void onDestroy() {
