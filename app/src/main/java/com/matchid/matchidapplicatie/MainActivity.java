@@ -21,13 +21,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.matchid.matchidapplicatie.entities.SessionManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
 import static android.R.attr.id;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ProjectsFragment.OnFragmentInteractionListener {
-
 
     // a static variable to get a reference of our application context
     public static Context contextOfApplication;
@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     {
         return getContentResolver();
     }
+
 
 
 
@@ -153,14 +154,17 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
             return false;
 
-        }else if(id == R.id.logout){
-            //Log.d(TAG, "logout option");
-            Toast.makeText(this, "Goodbye!", Toast.LENGTH_SHORT).show();
-            Intent logout = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(logout);
-
-            finish();
-            return false;
+        }else {
+            if (id == R.id.logout) {
+                //Log.d(TAG, "logout option");
+                Toast.makeText(this, "Goodbye!", Toast.LENGTH_SHORT).show();
+                Intent logout = new Intent(MainActivity.this, LoginActivity.class);
+                SessionManager session = new SessionManager(getApplicationContext());
+                session.logoutUser();
+                startActivity(logout);
+                finish();
+                return false;
+            }
         }
 
 

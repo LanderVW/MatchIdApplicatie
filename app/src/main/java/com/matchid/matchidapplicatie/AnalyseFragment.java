@@ -59,6 +59,7 @@ public class AnalyseFragment extends Fragment {
     RequestParams params = new RequestParams();
     String imgPath, fileName , fileName2;
     Bitmap bitmap;
+    private static final int CAMERA_REQUEST = 123;
     private static String TAG = "PictureUploadFragment";
     private static int RESULT_LOAD_IMG = 1;
 
@@ -116,6 +117,7 @@ public class AnalyseFragment extends Fragment {
             public void onClick(View view) {
                 getal = 1;
                 loadImagefromGallery();
+
             }
         });
 
@@ -192,6 +194,13 @@ public class AnalyseFragment extends Fragment {
             return false;
         }
         return false;
+    }
+
+    public void takePicture(){
+        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //opstarten intent
+        startActivityForResult(camera, CAMERA_REQUEST);//getal doet er niet toe maar moet uniek zijn
+
     }
 
 
