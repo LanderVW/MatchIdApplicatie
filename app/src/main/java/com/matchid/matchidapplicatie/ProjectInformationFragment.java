@@ -1,7 +1,7 @@
 package com.matchid.matchidapplicatie;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,16 +9,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -40,127 +36,139 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import static android.content.ContentValues.TAG;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProjectsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ProjectsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * @author lander
  */
-public class ProjectsFragment extends Fragment {
-    static final String ipadress = LoginActivity.ipadress;
-    boolean ok = false;
-    private View view;
-    private ListView lv;
-    private Button test;
-    private List<String> strArr;
-    private List<String> descriptionList, locationList, aAnalysisList, projectIDList;
-    private List<Boolean> activeList;
-    private ArrayAdapter<String> adapter;
-    private static final String TAG = "ProjectsFragment";
+
+public class ProjectInformationFragment extends Fragment {
+    //voor upload
+    ProgressDialog prgDialog;
+
+    List<String> naamList, componentDescriptionList;
+    String projectNaam, projectID = "";
+    ListView lv_components;
+    TextView tv_description, tv_location, tv_numberAnalysis;
+    android.support.v7.widget.AppCompatCheckBox cb_active;
     private static String url;
+
+
+
+    static final String ipadress = LoginActivity.ipadress;
+    static int id = LoginActivity.id;
+
+
+    private View view;
+    private ArrayAdapter<String> adapter;
 
 
     private OnFragmentInteractionListener mListener;
 
-    public ProjectsFragment() {
+    public ProjectInformationFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * @return fragment
-     */
-    public static ProjectsFragment newInstance() {
-        ProjectsFragment fragment = new ProjectsFragment();
+    public static ProjectInformationFragment newInstance() {
+        ProjectInformationFragment fragment = new ProjectInformationFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
-    /**
-     * @param savedInstanceState
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Projects");
+        Bundle bundle = this.getArguments();
+
+        if (bundle != null) {
+            getActivity().setTitle(bundle.getString("title"));
+            projectID = bundle.getString("projectID");
+        }
         setHasOptionsMenu(true);
-        Log.d("ProjectFragment", "onCreate");
+        Log.d("pif", "onCreate");
 
     }
 
-    /**
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d(TAG, "OncreateView");
-        view = inflater.inflate(R.layout.fragment_projects, container, false);
-        lv = (ListView) view.findViewById(R.id.lvproject);
-        strArr = new ArrayList<>();
-        projectIDList = new ArrayList<>();
-        descriptionList = new ArrayList<>();
-        activeList = new ArrayList<>();
-        locationList = new ArrayList<>();
-        aAnalysisList = new ArrayList<>();
+        Log.d("pif", "OncreateView");
 
+        view = inflater.inflate(R.layout.fragment_project_info, container, false);
+        tv_description = (TextView) view.findViewById(R.id.tv_description);
+        tv_location = (TextView) view.findViewById(R.id.tv_location);
+        tv_numberAnalysis = (TextView) view.findViewById(R.id.tv_number_analysis);
+        cb_active = (android.support.v7.widget.AppCompatCheckBox) view.findViewById(R.id.appCompatCheckBox);
 
-        //haal alle projecten op (nog niet naar id gekekeken)
+        projectNaam = "";
+        String description ="";
+        String location = "";
+        String numberAnalysis = "";
+        Boolean active = false;
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            projectNaam = bundle.getString("title");
+            description = bundle.getString("description");
+            numberAnalysis = bundle.getString("numberAnalysis");
+            location = bundle.getString("location");
+            active = bundle.getBoolean("active");
 
-        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
+        }
 
+        tv_description.setText(description);
+        tv_location.setText(location);
+        tv_numberAnalysis.setText(numberAnalysis);
+        cb_active.setChecked(active);
+
+        //nu kijken we voor de listview
+
+        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/components/"+projectID;
+        naamList = new ArrayList<>();
+        componentDescriptionList = new ArrayList<>();
+        lv_components = (ListView) view.findViewById(R.id.lv_components);
         adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_1, strArr);
-        lv.setAdapter(adapter);
+                android.R.layout.simple_list_item_1, naamList);
+        lv_components.setAdapter(adapter);
 
-        Log.d("ProjectFragment", "start!");
+        Log.d("pif", "start!");
         new XMLTask().execute(url);
-        Log.d("ProjectFragment", "na start");
+        Log.d("pif", "na start");
 
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv_components.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "naar nieuwe activity", Toast.LENGTH_SHORT).show();
-                /*Intent test = new Intent(getActivity(),LoginActivity.class);
-                startActivity(test);*/
                 Fragment fragment = null;
-
-                Class fragmentClass = ProjectInformationFragment.class;
+                Class fragmentClass = ComponentInformationFragment.class;
                 try {
                     fragment = (Fragment) fragmentClass.newInstance();
 
                 } catch (java.lang.InstantiationException e) {
-                    Log.d(TAG, "instantiationException");
+                    Log.d("pif", "instantiationException");
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
-                    Log.d(TAG, "illegalAccesException");
+                    Log.d("pif", "illegalAccesException");
                     e.printStackTrace();
                 } catch (Exception e) {
-                    Log.d(TAG, "onverwachte fout");
+                    Log.d("pif", "onverwachte fout");
                     e.printStackTrace();
                 }
                 Bundle bundle = new Bundle();
-                bundle.putString("projectID",projectIDList.get(position));
-                bundle.putString("title",strArr.get(position));
-                bundle.putString("description", descriptionList.get(position));
-                bundle.putString("location",locationList.get(position));
-                bundle.putBoolean("active",activeList.get(position));
-                bundle.putString("numberAnalysis",aAnalysisList.get(position));
+                bundle.putString("title",projectNaam);
+                bundle.putString("componentNaam",naamList.get(position));
+                //bundle.putString("description", componentDescriptionList.get(position));
                 fragment.setArguments(bundle);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
             }
 
+
+
         });
+
+
 
         return view;
     }
@@ -176,31 +184,21 @@ public class ProjectsFragment extends Fragment {
                 Node node = nd.item(i);
 
 
-                Log.d(TAG, "current element: " + node.getNodeName());
+                Log.d("pif", "current element: " + node.getNodeName());
 
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     //ier moeten we nog zorgen dat het ook leeg kan zijn
                     Element eElement = (Element) node;
-                    strArr.add(getValue("title", eElement));
+                    String naam = getValue("componentNaam",eElement);
+                    naamList.add(getValue("componentNaam", eElement));
 
-                    projectIDList.add(getValue("projectID", eElement));
-
-                    descriptionList.add(getValue("description",eElement));
-
-
-                    activeList.add(Boolean.parseBoolean(getValue("active",eElement)));
-
-                    locationList.add(getValue("location", eElement));
-
-                    aAnalysisList.add(getValue("numberAnalysis",eElement));
-
-                    //Log.d(TAG, "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+                    componentDescriptionList.add(getValue("description",eElement));
                 }
             }
 
             adapter.notifyDataSetChanged();
         } catch (Exception e) {
-            Log.d(TAG, "hij doet het niet in het parsen van XML naar de app lijst");
+            Log.d("pif", "hij doet het niet in het parsen van XML naar de app lijst");
             e.printStackTrace();
         }
     }
@@ -218,38 +216,20 @@ public class ProjectsFragment extends Fragment {
             Node node = nodeList.item(0);
             return node.getNodeValue();
         }else return "leeg";
-
-    }
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Add your menu entries here
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.logout:
-                Log.d("HomeFragment", "Logout");
-                Intent logout = new Intent(getActivity(), LoginActivity.class);
-                startActivity(logout);
-                return true;
-            case R.id.action_user_info:
-                Log.d("HomeFragment", "Action user info");
-                return true;
-
-            default:
-                break;
+    public void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        // Dismiss the progress bar when application is closed
+        if (prgDialog != null) {
+            prgDialog.dismiss();
         }
-
-        return false;
     }
 
 
-    /**
-     * @param uri
-     */
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -257,18 +237,13 @@ public class ProjectsFragment extends Fragment {
         }
     }
 
-
-    /**
-     * @param context
-     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
+        try {
             mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+        } catch (ClassCastException e) {
+            Log.d("pif", "error in onAttach" + e.toString());
         }
     }
 
@@ -278,20 +253,11 @@ public class ProjectsFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 
     /**
      * @author lander
@@ -322,29 +288,29 @@ public class ProjectsFragment extends Fragment {
 
             } catch (MalformedURLException e) {
 
-                Log.d("ProjectFragment", "malformedURL");
+                Log.d("pif", "malformedURL");
                 e.printStackTrace();
                 return null;
             } catch (IOException e) {
 
-                Log.d("ProjectFragment", "ioexception");
+                Log.d("pif", "ioexception");
                 e.printStackTrace();
 
                 return null;
             } finally {
                 if (connection != null) {
 
-                    Log.d("ProjectFragment", "disconnect");
+                    Log.d("pif", "disconnect");
                     connection.disconnect();
                 }
                 try {
                     if (reader != null) {
-                        Log.d("ProjectFragment", "reader close");
+                        Log.d("pif", "reader close");
                         reader.close();
                     }
                 } catch (IOException e) {
 
-                    Log.d("ProjectFragment", "ioexception 2");
+                    Log.d("pif", "ioexception 2");
                     e.printStackTrace();
 
                     return null;
@@ -362,7 +328,7 @@ public class ProjectsFragment extends Fragment {
 
 
             if (line == null) {
-                Log.d("ProjectFragment", "nog keer");
+                Log.d("pif", "nog keer");
                 new XMLTask().execute(url);
             } else {
                 super.onPostExecute(line);
@@ -394,13 +360,13 @@ public class ProjectsFragment extends Fragment {
 
                 //xml doc naar iets dat we kunnen weergeven op de app
                 doc.getDocumentElement().normalize();
-                Log.d(TAG, "root element: " + doc.getDocumentElement().getNodeName());
+                Log.d("pif", "root element: " + doc.getDocumentElement().getNodeName());
 
                 //xml doc naar iets dat we kunnen weergeven op de app
                 doc.getDocumentElement().normalize();
-                Log.d("ProjectFragment", "root element: " + doc.getDocumentElement().getNodeName());
+                Log.d("pif", "root element: " + doc.getDocumentElement().getNodeName());
 
-                NodeList nList = doc.getElementsByTagName("project");
+                NodeList nList = doc.getElementsByTagName("components");
 
                 updateListview(nList);
             }
@@ -408,3 +374,7 @@ public class ProjectsFragment extends Fragment {
 
     }
 }
+
+
+
+

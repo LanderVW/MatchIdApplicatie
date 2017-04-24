@@ -60,7 +60,7 @@ public class AnalyseFragment extends Fragment {
     String imgPath, fileName , fileName2;
     Bitmap bitmap;
     private static final int CAMERA_REQUEST = 123;
-    private static String TAG = "PictureUploadFragment";
+    private static String TAG = "AnalyseFragment";
     private static int RESULT_LOAD_IMG = 1;
 
 
@@ -72,7 +72,6 @@ public class AnalyseFragment extends Fragment {
 
     private Button btn_upload_picture1;
     private Button btn_upload_picture2;
-
     private int getal;
 
     private Button btn_analyse;
@@ -91,7 +90,6 @@ public class AnalyseFragment extends Fragment {
 
     public static AnalyseFragment newInstance() {
         AnalyseFragment fragment = new AnalyseFragment();
-
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -100,6 +98,7 @@ public class AnalyseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setTitle("Analyse");
         setHasOptionsMenu(true);
         Log.d(TAG, "onPicture upload Fragment");
 
@@ -132,6 +131,17 @@ public class AnalyseFragment extends Fragment {
 
         btn_upload_picture1 = (Button) view.findViewById(R.id.uploadPicture1);
         btn_upload_picture1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                uploadImage();
+            }
+        });
+
+
+
+
+        btn_select_picture1 = (Button) view.findViewById(R.id.PicPicture1);
+        btn_select_picture1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 uploadImage();
@@ -330,7 +340,7 @@ public class AnalyseFragment extends Fragment {
         // Don't forget to change the IP address to your LAN address. Port no as well.
 
         String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/uploadimg.jsp";
-        Log.d(TAG, url);
+        Log.d("AnalyseFragment", url);
         client.post(url,
                 params, new AsyncHttpResponseHandler() {
 
@@ -338,7 +348,7 @@ public class AnalyseFragment extends Fragment {
                     // response code '200'
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        Log.d(TAG, "on success" + statusCode);
+                        Log.d("AnalyseFragment", "on success" + statusCode);
                         // Hide Progress Dialog
                         prgDialog.hide();
                         Toast.makeText(getActivity(), "Picture uploaded!",
@@ -351,7 +361,7 @@ public class AnalyseFragment extends Fragment {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                         // Hide Progress Dialog
-                        Log.d(TAG, "onfailure");
+                        Log.d("AnalyseFragment", "onfailure");
                         prgDialog.hide();
                         // When Http response code is '404'
                         if (statusCode == 404) {
@@ -411,7 +421,7 @@ public class AnalyseFragment extends Fragment {
         try {
             mListener = (OnFragmentInteractionListener) context;
         } catch (ClassCastException e) {
-            Log.d(TAG, "error in onAttach" + e.toString());
+            Log.d("AnalyseFragment", "error in onAttach" + e.toString());
         }
     }
 

@@ -26,6 +26,9 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import com.matchid.matchidapplicatie.entities.SessionManager;
 
 import java.net.UnknownHostException;
@@ -36,18 +39,18 @@ import static android.graphics.Typeface.BOLD;
 
 public class LoginActivity extends Activity implements QuitDialog.Communicator{
     Button btn_signin, btn_cancel;
+    Button btn_skip_login;
     EditText etUsername, etPassword;
     TextView matchid_logo, error_message;
     private ProgressBar spinner;
-    private static final String TAG = "LoginActivity";
     public static final String KEY_PRIVATE = "USERNAME";
+    static final String ipadress = "192.168.0.234";
     String name;
     String userId;
     Boolean logout;
 
     static int id =0;
 
-    static final String ipadress = "192.168.1.7";
     SessionManager session;
 
 
@@ -62,6 +65,15 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         etPassword = (EditText)findViewById(R.id.password);
         btn_signin = (Button)findViewById(R.id.btn_signin);
         btn_cancel = (Button)findViewById(R.id.btn_cancel);
+        btn_skip_login = (Button) findViewById(R.id.skip_login);
+
+        btn_skip_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent skipLogin = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(skipLogin);
+            }
+        });
 
         error_message=(TextView)findViewById(R.id.error_message);
         error_message.setVisibility(TextView.INVISIBLE);
@@ -94,6 +106,12 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
             Toast.makeText(LoginActivity.this, "Welcome " + user.get(SessionManager.KEY_NAME) , Toast.LENGTH_SHORT).show();
             startActivity(goHome);
         }
+    }
+
+    private static String getValue(String tag, Element element) {
+        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
+        Node node = nodeList.item(0);
+        return node.getNodeValue();
     }
 
     @Override
@@ -130,6 +148,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         String url ="http://"+ipadress+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
                 "&password="+ etPassword.getText()+"&android=true";
 
+
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -138,10 +157,11 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                     public void onResponse(String response) {
                         // Do something with the response
                         if(response.equalsIgnoreCase("ok")){
-                            Log.d(TAG, "login succesvol");
+
+                            Log.d("LoginActivity", "login succesvol");
                         //if(!response.equalsIgnoreCase("nowp")){
                           //id = Integer.parseInt(response);
-                            Log.d(TAG , response);
+                            Log.d("LoginActivity" , response);
 
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
                             spinner.setVisibility(View.GONE);
@@ -154,24 +174,21 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
 
                             spinner.setVisibility(View.GONE);
                         }else{
-                            Log.d(TAG, "tesst" +response);
-                            spinner.setVisibility(View.GONE);
+                            Log.d("LoginActivity",response);
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG,"error bij login");
-                        spinner.setVisibility(View.GONE);
                         // Handle error
                         if(error.toString().contains("TimeoutError")||error.toString().contains("NoConnectionError")){
-                            //error_message.setText("Er is iets foutgelopen.\nCheck je connectie en probeer opnieuw.");
-                            error_message.setText(error.toString());
+                            error_message.setText("Er is iets foutgelopen.\nCheck je connectie en probeer opnieuw.");
+
                         }else error_message.setText(error.toString());
 
                         error_message.setVisibility(TextView.VISIBLE);
-
+                        spinner.setVisibility(View.GONE);
                     }
                 });
 

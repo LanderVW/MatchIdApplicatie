@@ -19,21 +19,22 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.matchid.matchidapplicatie.entities.SessionManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
-import static android.R.attr.id;
-
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ProjectsFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
+            ProjectsFragment.OnFragmentInteractionListener {
 
-    // a static variable to get a reference of our application context
+
     public static Context contextOfApplication;
     private static final String TAG = "MainActivity";
-    public  ContentResolver getContextOfApplication()
-    {
+    public ContentResolver getContextOfApplication(){
         return getContentResolver();
     }
 
@@ -43,9 +44,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Log.d(TAG,"oncreate");
-
         contextOfApplication = getApplicationContext();
         // Create global configuration and initialize ImageLoader with this config
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
@@ -53,6 +51,7 @@ public class MainActivity extends AppCompatActivity
                 .cacheOnDisk(true)
                 .build();
 
+        Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,7 +88,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
 
-        Log.d(TAG , "einde oncreate");
     }
 
     /*de onclicklistener voor de location
@@ -99,7 +97,7 @@ public class MainActivity extends AppCompatActivity
     View.OnClickListener getLocation = new View.OnClickListener(){
         @Override
         public void onClick(View arg0) {
-            Log.d(TAG , "in de imageview ding");
+            Log.d("MainActivity" , "in de imageview ding");
         }
     };
 
@@ -129,12 +127,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        int id =item.getItemId();
         Fragment fragment = null;
         Class fragmentClass = null;
-        //noinspection SimplifiableIfStatement
-        int id = item.getItemId();
         //Log.d(TAG , id + "id van user: " + R.id.action_user_info);
         if (id == R.id.action_user_info) {
+
             Log.d(TAG, "userinfo option");
             Toast.makeText(this, "Show user info", Toast.LENGTH_SHORT).show();
             fragmentClass = UserFragment.class;
