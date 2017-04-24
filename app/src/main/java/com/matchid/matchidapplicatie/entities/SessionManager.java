@@ -52,14 +52,14 @@ public class SessionManager {
         /**
          * Create login session
          * */
-        public void createLoginSession(String name, Integer  id){
+        public void createLoginSession(String name, String  id){
             // Storing login value as TRUE
 
             editor.putBoolean(IS_LOGIN, true);
             // Storing name in pref
             editor.putString(KEY_NAME, name);
             // Storing email in pref
-            editor.putInt(userId , id);
+            editor.putString(userId , id);
             // commit changes
             editor.commit();
         }
@@ -73,11 +73,9 @@ public class SessionManager {
             //check login status
             boolean back =false;
             if(this.isLoggedIn()) {
-                Log.d("tag" ,"dosomethaihgid");
                 back =true;
             }
             else{
-                Log.d("tag" , "faoutjfdjfjakt");
             }
             return back;
         }
@@ -93,10 +91,7 @@ public class SessionManager {
             HashMap<String, String> user = new HashMap<String, String>();
             // user name
             user.put(KEY_NAME, pref.getString(KEY_NAME, null));
-            user.put(userId , userId.toString() );
-
-            // user id
-           // user.put(userId, pref.getInt(userId , ));
+            user.put(userId , pref.getString(userId  ,null));
 
             // return user
             return user;
