@@ -192,7 +192,7 @@ public class ProjectInformationFragment extends Fragment {
                     String naam = getValue("componentNaam",eElement);
                     naamList.add(getValue("componentNaam", eElement));
 
-                    componentDescriptionList.add(getValue("description",eElement));
+                    //componentDescriptionList.add(getValue("description",eElement));
                 }
             }
 
