@@ -26,8 +26,10 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
+import com.matchid.matchidapplicatie.entities.SessionManager;
 
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -39,25 +41,23 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     private ProgressBar spinner;
     private static final String TAG = "LoginActivity";
     public static final String KEY_PRIVATE = "USERNAME";
-
-    static final String ipadress = "192.168.0.234";
+    String name;
+    String userId;
+    Boolean logout;
 
     static int id =0;
 
-
-
+    static final String ipadress = "192.168.1.7";
+    SessionManager session;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_login);
         Typeface face = Typeface.createFromAsset(getAssets(),"fonts/calibri.ttf");
         matchid_logo = (TextView)findViewById(R.id.matchid_logo);
         matchid_logo.setTypeface(face,BOLD);
-
-
         etUsername = (EditText)findViewById(R.id.username);
         etPassword = (EditText)findViewById(R.id.password);
         btn_signin = (Button)findViewById(R.id.btn_signin);
@@ -67,6 +67,13 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         error_message.setVisibility(TextView.INVISIBLE);
         spinner = (ProgressBar)findViewById(R.id.progressLogin);
         spinner.setVisibility(View.GONE);
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog(v);
+            }
+        });
         btn_signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,17 +85,16 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                 }
             }
         });
-
-
-
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog(v);
-            }
-        });
+        boolean check =false;
+        session = new SessionManager(getApplicationContext());
+        check = session.checkLogin();
+        if(check){
+            Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
+            HashMap<String, String> user = session.getUserDetails();
+            Toast.makeText(LoginActivity.this, "Welcome " + user.get(SessionManager.KEY_NAME) , Toast.LENGTH_SHORT).show();
+            startActivity(goHome);
+        }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -102,15 +108,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         dialog.show(manager,"dialog");
 
     }
-/*
-    public void safeInfo(){
-        SharedPreferences userinfo = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 
-        Editor editor = userinfo.edit();
-        editor.putString(KEY_PRIVATE, etUsername.getText().toString());
-        editor.commit();
-    }
-*/
     public String getUsername(){
         SharedPreferences sp = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 
@@ -140,12 +138,9 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                     public void onResponse(String response) {
                         // Do something with the response
                         if(response.equalsIgnoreCase("ok")){
-
-
                             Log.d(TAG, "login succesvol");
-
                         //if(!response.equalsIgnoreCase("nowp")){
-                          //  id = Integer.parseInt(response);
+                          //id = Integer.parseInt(response);
                             Log.d(TAG , response);
 
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
@@ -154,8 +149,9 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                             //goHome.putExtra("username", etUsername.getText().toString());
                             //goHome.putExtra("ipadres", ipadress);
                             //safeInfo();
-
+                            session.createLoginSession(etUsername.getText().toString() , 8);
                             startActivity(goHome);
+
                             spinner.setVisibility(View.GONE);
                         }else{
                             Log.d(TAG, "tesst" +response);

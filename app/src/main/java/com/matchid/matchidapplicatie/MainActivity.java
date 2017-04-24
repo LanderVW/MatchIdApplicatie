@@ -1,8 +1,10 @@
 package com.matchid.matchidapplicatie;
 
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -19,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.matchid.matchidapplicatie.entities.SessionManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
 import static android.R.attr.id;
@@ -26,14 +29,16 @@ import static android.R.attr.id;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ProjectsFragment.OnFragmentInteractionListener {
 
-
     // a static variable to get a reference of our application context
     public static Context contextOfApplication;
     private static final String TAG = "MainActivity";
-    public static Context getContextOfApplication()
+    public  ContentResolver getContextOfApplication()
     {
-        return contextOfApplication;
+        return getContentResolver();
     }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,30 +129,48 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-
+        Fragment fragment = null;
+        Class fragmentClass = null;
         //noinspection SimplifiableIfStatement
+        int id = item.getItemId();
+        //Log.d(TAG , id + "id van user: " + R.id.action_user_info);
         if (id == R.id.action_user_info) {
             Log.d(TAG, "userinfo option");
-            Toast.makeText(this, "account", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Show user info", Toast.LENGTH_SHORT).show();
+            fragmentClass = UserFragment.class;
+            try{
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (InstantiationException e) {
+                Log.d("tag" , e.toString());
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (Exception e ){
+                e.printStackTrace();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
             return false;
 
-        }else if(id ==R.id.logout){
-            Log.d(TAG, "logout option");
-            Intent logout = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(logout);
-
-            finish();
-            return false;
+        }else {
+            if (id == R.id.logout) {
+                //Log.d(TAG, "logout option");
+                Toast.makeText(this, "Goodbye!", Toast.LENGTH_SHORT).show();
+                Intent logout = new Intent(MainActivity.this, LoginActivity.class);
+                SessionManager session = new SessionManager(getApplicationContext());
+                session.logoutUser();
+                startActivity(logout);
+                finish();
+                return false;
+            }
         }
+
+
+
         return false;
     }
-
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -159,7 +182,7 @@ public class MainActivity extends AppCompatActivity
 
         if(id==R.id.nav_home){
             fragmentClass = HomeFragment.class;
-        }else if(id ==R.id.nav_projects){
+        }else if(id == R.id.nav_projects){
             fragmentClass = ProjectsFragment.class;
             //fragmentClass = PictureViewFragment.class;
             //fragmentClass = AnalyseFragment.class;

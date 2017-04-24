@@ -48,7 +48,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class ProjectsFragment extends Fragment{
     static final String ipadress = LoginActivity.ipadress;
     boolean ok = false;
-
+    String url;
     private View view;
     private ListView lv;
     private List<String> strArr;
@@ -105,14 +105,10 @@ public class ProjectsFragment extends Fragment{
 
         //haal alle projecten op (nog niet naar id gekekeken)
 
-        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
+        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
 
+        new XMLTask().execute(url);
 
-        while (ok) {
-            Log.d("ProjectFragment", "start!");
-            new XMLTask().execute(url);
-            Log.d("ProjectFragment", "na start");
-        }
         return view;
     }
 
@@ -203,9 +199,9 @@ public class ProjectsFragment extends Fragment{
             mListener.onFragmentInteraction(uri);
         }
     }
-    
 
-    
+
+
 
     /**
      *
@@ -303,44 +299,45 @@ public class ProjectsFragment extends Fragment{
          */
         @Override
         protected void onPostExecute(String line) {
-            super.onPostExecute(line);
-            //deze onPost wordt uitgevoerd als er iets terug gegeven is
+            if (line == null) {new XMLTask().execute(url);}
+            else {
 
-            Log.d(TAG , line);
-            //line is een string
-            String[] parts = line.split(("\\?>"));
-            String part1 = parts[0];
-            String part2 = parts[1];
+                super.onPostExecute(line);
+                Log.d(TAG, line);
+                //line is een string
+                String[] parts = line.split(("\\?>"));
+                String part1 = parts[0];
+                String part2 = parts[1];
 
-            Log.d(TAG , part1);
-            Log.d(TAG , part2);
+                Log.d(TAG, part1);
+                Log.d(TAG, part2);
 
-            //maak van string een XML file
+                //maak van string een XML file
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder;
+                Document doc = null;
+                try {
+                    builder = factory.newDocumentBuilder();
+                    doc = builder.parse(new InputSource(new StringReader(part2)));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder;
-            Document doc = null;
-            try {
-                builder = factory.newDocumentBuilder();
-                doc = builder.parse(new InputSource(new StringReader(part2)));
+                //xml doc naar iets dat we kunnen weergeven op de app
+                doc.getDocumentElement().normalize();
+                Log.d(TAG, "root element: " + doc.getDocumentElement().getNodeName());
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                //xml doc naar iets dat we kunnen weergeven op de app
+                doc.getDocumentElement().normalize();
+                Log.d("ProjectFragment", "root element: " + doc.getDocumentElement().getNodeName());
+
+                NodeList nList = doc.getElementsByTagName("project");
+
+                updateListview(nList);
             }
 
-
-            //xml doc naar iets dat we kunnen weergeven op de app
-            doc.getDocumentElement().normalize();
-            Log.d(TAG , "root element: "+ doc.getDocumentElement().getNodeName());
-
-            //xml doc naar iets dat we kunnen weergeven op de app
-            doc.getDocumentElement().normalize();
-            Log.d("ProjectFragment", "root element: " + doc.getDocumentElement().getNodeName());
-
-            NodeList nList = doc.getElementsByTagName("project");
-
-            updateListview(nList);
         }
 
     }

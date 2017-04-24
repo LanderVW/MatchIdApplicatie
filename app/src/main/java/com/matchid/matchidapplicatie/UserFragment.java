@@ -52,6 +52,8 @@ public class UserFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
+    String url;
+    int tel=0;
     private TextView tvUsername;
     private TextView tvRole;
     private TextView tvLicense;
@@ -109,7 +111,7 @@ public class UserFragment extends Fragment {
         tvTown = (TextView) view.findViewById(R.id.tvTown);
         //haal current user op
         //de id staat hier boven maar om te testen gebruik ik gwn 3
-        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/entities.users/id/3";
+        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/entities.users/id/3";
         Log.d("tag", "start van user ophalen!");
         // haal het op, er is nu nog niks mee gebeurd!
         new XMLTask().execute(url);
@@ -207,72 +209,74 @@ public class UserFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String line) {
-            super.onPostExecute(line);
-            //deze onPost wordt uitgevoerd als er iets terug gegeven is
-            Log.d("tag", line);
-            //line is een string
-            String[] parts = line.split(("\\?>"));
-            String part2 = parts[1];
-            Log.d("tag", part2);
+            if (line == null && tel<10) {new XMLTask().execute(url); tel++;}
+            else {
+                super.onPostExecute(line);
+                //deze onPost wordt uitgevoerd als er iets terug gegeven is
+                Log.d("tag", line);
+                //line is een string
+                String[] parts = line.split(("\\?>"));
+                String part2 = parts[1];
+                Log.d("tag", part2);
 
-            //maak van string een XML file
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder;
-            Document doc = null;
-            try {
-                builder = factory.newDocumentBuilder();
-                doc = builder.parse(new InputSource(new StringReader(part2)));
+                //maak van string een XML file
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder;
+                Document doc = null;
+                try {
+                    builder = factory.newDocumentBuilder();
+                    doc = builder.parse(new InputSource(new StringReader(part2)));
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
 
-            //xml doc naar iets dat we kunnen weergeven op de app
-            doc.getDocumentElement().normalize();
-            Log.d("tag", "root element: " + doc.getDocumentElement().getNodeName());
-            try {
-            NodeList nList = doc.getElementsByTagName("users");
+                //xml doc naar iets dat we kunnen weergeven op de app
+                doc.getDocumentElement().normalize();
+                Log.d("tag", "root element: " + doc.getDocumentElement().getNodeName());
+                try {
+                    NodeList nList = doc.getElementsByTagName("users");
 
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node n = nList.item(i);
+                    for (int i = 0; i < nList.getLength(); i++) {
+                        Node n = nList.item(i);
 
-                    Log.d("tag", "current element: " + n.getNodeName());
+                        Log.d("tag", "current element: " + n.getNodeName());
 
-                    if (n.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) n;
-                        //Log.d("tag", "username: " + eElement.getElementsByTagName("username").item(0).getTextContent());
-                        tvUsername.setText(eElement.getElementsByTagName("username").item(0).getTextContent());
-                        tvRole.setText(eElement.getElementsByTagName("roles").item(0).getTextContent());
+                        if (n.getNodeType() == Node.ELEMENT_NODE) {
+                            Element eElement = (Element) n;
+                            //Log.d("tag", "username: " + eElement.getElementsByTagName("username").item(0).getTextContent());
+                            tvUsername.setText(eElement.getElementsByTagName("username").item(0).getTextContent());
+                            tvRole.setText(eElement.getElementsByTagName("roles").item(0).getTextContent());
 
-                        NodeList nList2 = doc.getElementsByTagName("company");
-                        for (int i2 = 0; i2 < nList2.getLength(); i2++) {
-                            Node n2 = nList2.item(i2);
+                            NodeList nList2 = doc.getElementsByTagName("company");
+                            for (int i2 = 0; i2 < nList2.getLength(); i2++) {
+                                Node n2 = nList2.item(i2);
 
-                            Log.d("tag", "current element: " + n2.getNodeName());
+                                Log.d("tag", "current element: " + n2.getNodeName());
 
-                            if (n2.getNodeType() == Node.ELEMENT_NODE) {
-                                Log.d("tag" , "ind if");
-                                Element eElement2 = (Element) n2;
-                                //Log.d("tag", "username: " + eElement.getElementsByTagName("username").item(0).getTextContent());
-                                Log.d("tag" ,eElement2.getElementsByTagName("name").item(0).getTextContent() );
-                                tvCompany.setText(eElement2.getElementsByTagName("name").item(0).getTextContent());
-                                tvCountry.setText(eElement2.getElementsByTagName("country").item(0).getTextContent());
-                                tvStreet.setText(eElement2.getElementsByTagName("street").item(0).getTextContent());
-                                tvHousenumber.setText(eElement2.getElementsByTagName("streetnumber").item(0).getTextContent());
-                                tvPostalCode.setText(eElement2.getElementsByTagName("postalCode").item(0).getTextContent());
-                                tvCountry.setText(eElement2.getElementsByTagName("country").item(0).getTextContent());
-                                tvTown.setText(eElement2.getElementsByTagName("town").item(0).getTextContent());
-                                tvLicense.setText(eElement2.getElementsByTagName("endOfLicence").item(0).getTextContent());
+                                if (n2.getNodeType() == Node.ELEMENT_NODE) {
+                                    Log.d("tag", "ind if");
+                                    Element eElement2 = (Element) n2;
+                                    //Log.d("tag", "username: " + eElement.getElementsByTagName("username").item(0).getTextContent());
+                                    Log.d("tag", eElement2.getElementsByTagName("name").item(0).getTextContent());
+                                    tvCompany.setText(eElement2.getElementsByTagName("name").item(0).getTextContent());
+                                    tvCountry.setText(eElement2.getElementsByTagName("country").item(0).getTextContent());
+                                    tvStreet.setText(eElement2.getElementsByTagName("street").item(0).getTextContent());
+                                    tvHousenumber.setText(eElement2.getElementsByTagName("streetnumber").item(0).getTextContent());
+                                    tvPostalCode.setText(eElement2.getElementsByTagName("postalCode").item(0).getTextContent());
+                                    tvCountry.setText(eElement2.getElementsByTagName("country").item(0).getTextContent());
+                                    tvTown.setText(eElement2.getElementsByTagName("town").item(0).getTextContent());
+                                    tvLicense.setText(eElement2.getElementsByTagName("endOfLicence").item(0).getTextContent());
+                                }
                             }
                         }
                     }
+                } catch (Exception e) {
+                    Log.d("tag", "hij doet het niet in het parsen van XML naar de app lijst");
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                Log.d("tag", "hij doet het niet in het parsen van XML naar de app lijst");
-                e.printStackTrace();
             }
-
 
         }
     }
