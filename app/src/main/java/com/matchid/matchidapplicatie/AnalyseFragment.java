@@ -259,6 +259,7 @@ public class AnalyseFragment extends Fragment {
 
                 // Put file name in Async Http Post Param which will used in Java web app
                 params.put("filename", fileName);
+                params.put("componentid" , componentId);
 
             } else {
                 Toast.makeText(getActivity(), "You haven't picked Image",
