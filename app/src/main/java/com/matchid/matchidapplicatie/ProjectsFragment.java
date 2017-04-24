@@ -105,8 +105,8 @@ public class ProjectsFragment extends Fragment{
 
         //haal alle projecten op (nog niet naar id gekekeken)
 
-        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
-
+        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/id/" + LoginActivity.userId;
+        Log.d(TAG , url);
         new XMLTask().execute(url);
 
         return view;
