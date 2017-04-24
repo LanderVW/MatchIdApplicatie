@@ -383,6 +383,7 @@ public class AnalyseFragment extends Fragment {
             Log.d("tag", etSubset.getText().toString() + "  " + etStepsize.getText().toString());
             fileName = "Tensile_Hole_Unloaded.tif";
             fileName2 = "Tensile_Hole_2177N.tif";
+            //String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/Tensile_Hole_2177N.tif/pic2/Tensile_Hole_Unloaded.tif";
             String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/"+  fileName + "/pic2/" + fileName2;
             new XMLTask().execute(url);
     }
