@@ -137,7 +137,7 @@
         android:id="@+id/btn_StartAnalyse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start analysis" />
+        android:text=" Upload pictures and start analysis" />
 
 
 </LinearLayout>

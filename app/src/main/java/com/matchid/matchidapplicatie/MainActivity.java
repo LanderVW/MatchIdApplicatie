@@ -1,8 +1,10 @@
 package com.matchid.matchidapplicatie;
 
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.matchid.matchidapplicatie.entities.SessionManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
 public class MainActivity extends AppCompatActivity
@@ -29,18 +32,14 @@ public class MainActivity extends AppCompatActivity
             ProjectsFragment.OnFragmentInteractionListener {
 
 
-    Button btn_add_picture, btn_gallery, btn_results, btn_analyse;
-    ImageView img;
-    TextView username_nav_header, companyname_nav_header;
-    GPSTracker gps;
-    private static final int CAMERA_REQUEST = 123;
-    private static final int GALLERY_REQUEST = 124;
-    // a static variable to get a reference of our application context
     public static Context contextOfApplication;
-    public static Context getContextOfApplication()
-    {
-        return contextOfApplication;
+    private static final String TAG = "MainActivity";
+    public ContentResolver getContextOfApplication(){
+        return getContentResolver();
     }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,23 +133,47 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
 
         int id =item.getItemId();
-        //noinspection SimplifiableIfStatement
+        Fragment fragment = null;
+        Class fragmentClass = null;
+        //Log.d(TAG , id + "id van user: " + R.id.action_user_info);
         if (id == R.id.action_user_info) {
-            Log.d("MainActivity", "in account");
-            Toast.makeText(this, "account", Toast.LENGTH_SHORT).show();
-            return true;
-        }else if(id ==R.id.logout){
-            Intent logout = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(logout);
 
-            finish();
-            return true;
+            Log.d(TAG, "userinfo option");
+            Toast.makeText(this, "Show user info", Toast.LENGTH_SHORT).show();
+            fragmentClass = UserFragment.class;
+            try{
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (InstantiationException e) {
+                Log.d("tag" , e.toString());
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (Exception e ){
+                e.printStackTrace();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+            return false;
+
+        }else {
+            if (id == R.id.logout) {
+                //Log.d(TAG, "logout option");
+                Toast.makeText(this, "Goodbye!", Toast.LENGTH_SHORT).show();
+                Intent logout = new Intent(MainActivity.this, LoginActivity.class);
+                SessionManager session = new SessionManager(getApplicationContext());
+                session.logoutUser();
+                startActivity(logout);
+                finish();
+                return false;
+            }
         }
 
-        return super.onOptionsItemSelected(item);
+
+
+        return false;
     }
-
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -162,7 +185,7 @@ public class MainActivity extends AppCompatActivity
 
         if(id==R.id.nav_home){
             fragmentClass = HomeFragment.class;
-        }else if(id ==R.id.nav_projects){
+        }else if(id == R.id.nav_projects){
             fragmentClass = ProjectsFragment.class;
             //fragmentClass = PictureViewFragment.class;
             //fragmentClass = AnalyseFragment.class;

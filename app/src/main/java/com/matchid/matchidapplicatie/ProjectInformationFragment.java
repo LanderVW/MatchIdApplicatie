@@ -101,6 +101,7 @@ public class ProjectInformationFragment extends Fragment {
         tv_location = (TextView) view.findViewById(R.id.tv_location);
         tv_numberAnalysis = (TextView) view.findViewById(R.id.tv_number_analysis);
         cb_active = (android.support.v7.widget.AppCompatCheckBox) view.findViewById(R.id.appCompatCheckBox);
+
         projectNaam = "";
         String description ="";
         String location = "";
@@ -125,6 +126,7 @@ public class ProjectInformationFragment extends Fragment {
 
         url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/components/"+projectID;
         naamList = new ArrayList<>();
+        componentDescriptionList = new ArrayList<>();
         lv_components = (ListView) view.findViewById(R.id.lv_components);
         adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, naamList);
@@ -187,10 +189,10 @@ public class ProjectInformationFragment extends Fragment {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     //ier moeten we nog zorgen dat het ook leeg kan zijn
                     Element eElement = (Element) node;
+                    String naam = getValue("componentNaam",eElement);
                     naamList.add(getValue("componentNaam", eElement));
-                    if(getValue("description",eElement) == null){
-                        componentDescriptionList.add("");
-                    }else componentDescriptionList.add(getValue("description",eElement));
+
+                    componentDescriptionList.add(getValue("description",eElement));
                 }
             }
 
