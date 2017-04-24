@@ -57,12 +57,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp">
+
         <TextView
-            android:text="Location"
-            android:textSize="25dp"
+            android:id="@+id/textView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="Location"
+            android:textSize="25dp" />
+
         <TextView
             android:id="@+id/tv_location"
             android:text="Belgium"
@@ -95,6 +98,35 @@
             android:layout_height="wrap_content" />
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@android:color/darker_gray"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:paddingBottom="10dp">
+        <TextView
+            android:text="Components"
+            android:textSize="25dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/darker_gray"
+        android:paddingBottom="5dp"/>
+    <ListView
+        android:id="@+id/lv_components"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ></ListView>
 
 
 </LinearLayout>

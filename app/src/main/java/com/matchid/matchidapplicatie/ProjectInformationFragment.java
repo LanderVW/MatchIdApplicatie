@@ -3,14 +3,40 @@ package com.matchid.matchidapplicatie;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * @author lander
@@ -20,8 +46,12 @@ public class ProjectInformationFragment extends Fragment {
     //voor upload
     ProgressDialog prgDialog;
 
+    List<String> naamList, componentDescriptionList;
+    String projectNaam, projectID = "";
+    ListView lv_components;
     TextView tv_description, tv_location, tv_numberAnalysis;
     android.support.v7.widget.AppCompatCheckBox cb_active;
+    private static String url;
 
 
 
@@ -49,7 +79,12 @@ public class ProjectInformationFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Project Info");
+        Bundle bundle = this.getArguments();
+
+        if (bundle != null) {
+            getActivity().setTitle(bundle.getString("title"));
+            projectID = bundle.getString("projectID");
+        }
         setHasOptionsMenu(true);
         Log.d("pif", "onCreate");
 
@@ -62,21 +97,22 @@ public class ProjectInformationFragment extends Fragment {
         Log.d("pif", "OncreateView");
 
         view = inflater.inflate(R.layout.fragment_project_info, container, false);
-
         tv_description = (TextView) view.findViewById(R.id.tv_description);
         tv_location = (TextView) view.findViewById(R.id.tv_location);
         tv_numberAnalysis = (TextView) view.findViewById(R.id.tv_number_analysis);
         cb_active = (android.support.v7.widget.AppCompatCheckBox) view.findViewById(R.id.appCompatCheckBox);
+        projectNaam = "";
         String description ="";
         String location = "";
         String numberAnalysis = "";
         Boolean active = false;
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            description = bundle.getString("description", "default");
-            numberAnalysis = bundle.getString("numberAnalysis","default");
-            location = bundle.getString("location", "default");
-            active = bundle.getBoolean("active",false);
+            projectNaam = bundle.getString("title");
+            description = bundle.getString("description");
+            numberAnalysis = bundle.getString("numberAnalysis");
+            location = bundle.getString("location");
+            active = bundle.getBoolean("active");
 
         }
 
@@ -85,10 +121,101 @@ public class ProjectInformationFragment extends Fragment {
         tv_numberAnalysis.setText(numberAnalysis);
         cb_active.setChecked(active);
 
+        //nu kijken we voor de listview
+
+        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/components/"+projectID;
+        naamList = new ArrayList<>();
+        lv_components = (ListView) view.findViewById(R.id.lv_components);
+        adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, naamList);
+        lv_components.setAdapter(adapter);
+
+        Log.d("pif", "start!");
+        new XMLTask().execute(url);
+        Log.d("pif", "na start");
+
+        lv_components.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment = null;
+                Class fragmentClass = ComponentInformationFragment.class;
+                try {
+                    fragment = (Fragment) fragmentClass.newInstance();
+
+                } catch (java.lang.InstantiationException e) {
+                    Log.d("pif", "instantiationException");
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    Log.d("pif", "illegalAccesException");
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    Log.d("pif", "onverwachte fout");
+                    e.printStackTrace();
+                }
+                Bundle bundle = new Bundle();
+                bundle.putString("title",projectNaam);
+                bundle.putString("componentNaam",naamList.get(position));
+                //bundle.putString("description", componentDescriptionList.get(position));
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            }
+
+
+
+        });
+
 
 
         return view;
     }
+
+
+    /**
+     * @param nd
+     */
+    public void updateListview(NodeList nd) {
+        try {
+
+            for (int i = 0; i < nd.getLength(); i++) {
+                Node node = nd.item(i);
+
+
+                Log.d("pif", "current element: " + node.getNodeName());
+
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    //ier moeten we nog zorgen dat het ook leeg kan zijn
+                    Element eElement = (Element) node;
+                    naamList.add(getValue("componentNaam", eElement));
+                    if(getValue("description",eElement) == null){
+                        componentDescriptionList.add("");
+                    }else componentDescriptionList.add(getValue("description",eElement));
+                }
+            }
+
+            adapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.d("pif", "hij doet het niet in het parsen van XML naar de app lijst");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * op basis van een xml tag wordt de waarde terug gegeven in de vorm van een String
+     *
+     * @param tag
+     * @param element
+     * @return String
+     */
+    private static String getValue(String tag, Element element) {
+        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
+        if(nodeList.getLength()!=0) {
+            Node node = nodeList.item(0);
+            return node.getNodeValue();
+        }else return "leeg";
+    }
+
 
     @Override
     public void onDestroy() {
@@ -127,6 +254,122 @@ public class ProjectInformationFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    /**
+     * @author lander
+     */
+    public class XMLTask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+
+            try {
+                java.net.URL url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream stream = connection.getInputStream();
+
+                reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuffer buffer = new StringBuffer();
+
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+
+                return buffer.toString();
+
+            } catch (MalformedURLException e) {
+
+                Log.d("pif", "malformedURL");
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+
+                Log.d("pif", "ioexception");
+                e.printStackTrace();
+
+                return null;
+            } finally {
+                if (connection != null) {
+
+                    Log.d("pif", "disconnect");
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        Log.d("pif", "reader close");
+                        reader.close();
+                    }
+                } catch (IOException e) {
+
+                    Log.d("pif", "ioexception 2");
+                    e.printStackTrace();
+
+                    return null;
+                }
+            }
+
+
+        }
+
+        /**
+         * @param line
+         */
+        @Override
+        protected void onPostExecute(String line) {
+
+
+            if (line == null) {
+                Log.d("pif", "nog keer");
+                new XMLTask().execute(url);
+            } else {
+                super.onPostExecute(line);
+                //deze onPost wordt uitgevoerd als er iets terug gegeven is
+
+                Log.d(TAG, line);
+                //line is een string
+                String[] parts = line.split(("\\?>"));
+                String part1 = parts[0];
+                String part2 = parts[1];
+
+                Log.d(TAG, part1);
+                Log.d(TAG, part2);
+
+                //maak van string een XML file
+
+
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder;
+                Document doc = null;
+                try {
+                    builder = factory.newDocumentBuilder();
+                    doc = builder.parse(new InputSource(new StringReader(part2)));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                //xml doc naar iets dat we kunnen weergeven op de app
+                doc.getDocumentElement().normalize();
+                Log.d("pif", "root element: " + doc.getDocumentElement().getNodeName());
+
+                //xml doc naar iets dat we kunnen weergeven op de app
+                doc.getDocumentElement().normalize();
+                Log.d("pif", "root element: " + doc.getDocumentElement().getNodeName());
+
+                NodeList nList = doc.getElementsByTagName("components");
+
+                updateListview(nList);
+            }
+        }
+
     }
 }
 

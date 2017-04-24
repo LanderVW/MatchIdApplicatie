@@ -56,7 +56,7 @@ public class ProjectsFragment extends Fragment {
     private ListView lv;
     private Button test;
     private List<String> strArr;
-    private List<String> descriptionList, locationList, aAnalysisList;
+    private List<String> descriptionList, locationList, aAnalysisList, projectIDList;
     private List<Boolean> activeList;
     private ArrayAdapter<String> adapter;
     private static final String TAG = "ProjectsFragment";
@@ -105,6 +105,7 @@ public class ProjectsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_projects, container, false);
         lv = (ListView) view.findViewById(R.id.lvproject);
         strArr = new ArrayList<>();
+        projectIDList = new ArrayList<>();
         descriptionList = new ArrayList<>();
         activeList = new ArrayList<>();
         locationList = new ArrayList<>();
@@ -114,34 +115,6 @@ public class ProjectsFragment extends Fragment {
         //haal alle projecten op (nog niet naar id gekekeken)
 
         url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
-
-
-        test = (Button) view.findViewById(R.id.testbutton);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment fragment = null;
-                Class fragmentClass = ProjectInformationFragment.class;
-                //ProjectInformationFragment fragment = new ProjectInformationFragment();
-                try {
-                    fragment = (Fragment) fragmentClass.newInstance();
-                } catch (java.lang.InstantiationException e) {
-                    Log.d(TAG, "instantiationException");
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    Log.d(TAG, "illegalAccesException");
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    Log.d(TAG, "onverwachte fout");
-                    e.printStackTrace();
-                }
-
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-
-            }
-        });
 
         adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, strArr);
@@ -175,6 +148,8 @@ public class ProjectsFragment extends Fragment {
                     e.printStackTrace();
                 }
                 Bundle bundle = new Bundle();
+                bundle.putString("projectID",projectIDList.get(position));
+                bundle.putString("title",strArr.get(position));
                 bundle.putString("description", descriptionList.get(position));
                 bundle.putString("location",locationList.get(position));
                 bundle.putBoolean("active",activeList.get(position));
@@ -208,16 +183,16 @@ public class ProjectsFragment extends Fragment {
                     Element eElement = (Element) node;
                     strArr.add(getValue("title", eElement));
 
+                    projectIDList.add(getValue("projectID", eElement));
+
                     descriptionList.add(getValue("description",eElement));
+
 
                     activeList.add(Boolean.parseBoolean(getValue("active",eElement)));
 
                     locationList.add(getValue("location", eElement));
 
                     aAnalysisList.add(getValue("numberAnalysis",eElement));
-
-
-
 
                     //Log.d(TAG, "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
                 }
@@ -239,8 +214,11 @@ public class ProjectsFragment extends Fragment {
      */
     private static String getValue(String tag, Element element) {
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node = nodeList.item(0);
-        return node.getNodeValue();
+        if(nodeList.getLength()!=0) {
+            Node node = nodeList.item(0);
+            return node.getNodeValue();
+        }else return "leeg";
+
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -381,8 +359,11 @@ public class ProjectsFragment extends Fragment {
          */
         @Override
         protected void onPostExecute(String line) {
+
+
             if (line == null) {
-                new XMLTask().execute();
+                Log.d("ProjectFragment", "nog keer");
+                new XMLTask().execute(url);
             } else {
                 super.onPostExecute(line);
                 //deze onPost wordt uitgevoerd als er iets terug gegeven is
