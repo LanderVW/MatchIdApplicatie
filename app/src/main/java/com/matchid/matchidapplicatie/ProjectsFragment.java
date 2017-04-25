@@ -1,7 +1,6 @@
 package com.matchid.matchidapplicatie;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,9 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -63,12 +59,18 @@ public class ProjectsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Required empty public constructor
+     */
     public ProjectsFragment() {
-        // Required empty public constructor
     }
 
     /**
-     * @return fragment
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     *
+     * @return A new instance of fragment ProjectFragment.
      */
     public static ProjectsFragment newInstance() {
         ProjectsFragment fragment = new ProjectsFragment();
@@ -78,6 +80,9 @@ public class ProjectsFragment extends Fragment {
     }
 
     /**
+     * bij opstart van fragment
+     * hier wordt alles gedeclareerd dat niets met de views te maken hebben
+     *
      * @param savedInstanceState
      */
     @Override
@@ -90,10 +95,17 @@ public class ProjectsFragment extends Fragment {
     }
 
     /**
+     * zorgt voor alles wat het uitzicht bepaald
+     * hier worden de parameters geinitialliseerd
+     * de onclicklisteners worden hier aangemaakt dit zijn de methodes die zorgen dat
+     * items, button, .. kunnen worden geselecteerd en dat er een actie wordt
+     * ondernomen
+     *
+     *
      * @param inflater
      * @param container
      * @param savedInstanceState
-     * @return
+     * @return View
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -109,18 +121,13 @@ public class ProjectsFragment extends Fragment {
         locationList = new ArrayList<>();
         aAnalysisList = new ArrayList<>();
 
-
-        //haal alle projecten op (nog niet naar id gekekeken)
-
         url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
 
         adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, strArr);
         lv.setAdapter(adapter);
 
-        Log.d("ProjectFragment", "start!");
         new XMLTask().execute(url);
-        Log.d("ProjectFragment", "na start");
 
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -163,6 +170,9 @@ public class ProjectsFragment extends Fragment {
 
 
     /**
+     * de lijsten met parameters worden aangevuld en de listview wordt upgedatete naa
+     * de huidige staat
+     *
      * @param nd
      */
     public void updateListview(NodeList nd) {
@@ -207,44 +217,30 @@ public class ProjectsFragment extends Fragment {
      * @return String
      */
     private static String getValue(String tag, Element element) {
-        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-        if(nodeList.getLength()!=0) {
-            Node node = nodeList.item(0);
-            return node.getNodeValue();
-        }else return "leeg";
-
-    }
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Add your menu entries here
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.logout:
-                Log.d("HomeFragment", "Logout");
-                Intent logout = new Intent(getActivity(), LoginActivity.class);
-                startActivity(logout);
-                return true;
-            case R.id.action_user_info:
-                Log.d("HomeFragment", "Action user info");
-                return true;
-
-            default:
-                break;
+        Node nodetest= element.getElementsByTagName(tag).item(0);
+        if(nodetest == null){
+            return "dit invoerveld is leeg";
         }
+        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
 
-        return false;
+        Node node = nodeList.item(0);
+        return node.getNodeValue();
+
     }
-
 
     /**
+     * called to do final cleanup of the fragment's state.
+     *
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+    /**
+     * bepaald wat er gebeurd als op de back knop wordt gedrukt
      * @param uri
      */
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -252,7 +248,9 @@ public class ProjectsFragment extends Fragment {
     }
 
 
+
     /**
+     *called once the fragment is associated with its activity.
      * @param context
      */
     @Override
@@ -265,7 +263,9 @@ public class ProjectsFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
+    /**
+     *called immediately prior to the fragment no longer being associated with its activity.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -277,13 +277,8 @@ public class ProjectsFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -291,7 +286,12 @@ public class ProjectsFragment extends Fragment {
      * @author lander
      */
     public class XMLTask extends AsyncTask<String, String, String> {
-
+        /**
+         * in de achtergrond wordt asyncroon de http link aangemaakt
+         * en de response wordt teruggegeven in string formaat
+         * @param urls
+         * @return string
+         */
         @Override
         protected String doInBackground(String... urls) {
             HttpURLConnection connection = null;
@@ -349,6 +349,13 @@ public class ProjectsFragment extends Fragment {
         }
 
         /**
+         * er wordt gecontroleerd op de parameter
+         * die string bevat een xml pagina die eerst wordt gesplitst in bruikbaar en
+         * onbruikbaar deel
+         * bruikbaar deel wordt gebruikt om via de tags informatie op te halen via een
+         * nodelist
+         *
+         *
          * @param line
          */
         @Override
@@ -356,7 +363,6 @@ public class ProjectsFragment extends Fragment {
 
 
             if (line == null) {
-                Log.d("ProjectFragment", "nog keer");
                 new XMLTask().execute(url);
             } else {
                 super.onPostExecute(line);
@@ -388,11 +394,8 @@ public class ProjectsFragment extends Fragment {
 
                 //xml doc naar iets dat we kunnen weergeven op de app
                 doc.getDocumentElement().normalize();
-                Log.d(TAG, "root element: " + doc.getDocumentElement().getNodeName());
-
                 //xml doc naar iets dat we kunnen weergeven op de app
-                doc.getDocumentElement().normalize();
-                Log.d("ProjectFragment", "root element: " + doc.getDocumentElement().getNodeName());
+                doc.getDocumentElement().normalize();  Log.d("ProjectFragment", "root element: " + doc.getDocumentElement().getNodeName());
 
                 NodeList nList = doc.getElementsByTagName("project");
 

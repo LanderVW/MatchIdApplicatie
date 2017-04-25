@@ -256,8 +256,8 @@ public class ProjectInformationFragment extends Fragment {
         }
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
 
-            Node node = nodeList.item(0);
-            return node.getNodeValue();
+        Node node = nodeList.item(0);
+        return node.getNodeValue();
     }
 
     /**
