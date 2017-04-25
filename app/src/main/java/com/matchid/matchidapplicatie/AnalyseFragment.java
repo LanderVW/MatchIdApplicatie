@@ -109,6 +109,9 @@ public class AnalyseFragment extends Fragment {
     /**
      * zorgt voor alles wat het uitzicht bepaald
      * hier worden de parameters geinitialliseerd
+     * de onclicklisteners worden hier aangemaakt dit zijn de methodes die zorgen dat
+     * items, button, .. kunnen worden geselecteerd en dat er een actie wordt
+     * ondernomen
      *
      *
      * @param inflater
@@ -419,7 +422,7 @@ public class AnalyseFragment extends Fragment {
     }
 
     /**
-     * wordt aangeroepen als het fragment wordt gesloten
+     * called to do final cleanup of the fragment's state.
      *
      */
     @Override
