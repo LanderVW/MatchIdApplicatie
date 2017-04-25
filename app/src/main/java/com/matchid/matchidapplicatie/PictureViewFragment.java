@@ -127,6 +127,10 @@ public class PictureViewFragment extends Fragment {
         }
     }
 
+    /**
+     *called once the fragment is associated with its activity.
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -136,20 +140,34 @@ public class PictureViewFragment extends Fragment {
             Log.d(TAG, "error"+ e.toString());
         }
     }
-
+    /**
+     *called immediately prior to the fragment no longer being associated with its activity.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * This interface must be implemented by activities that contain this fragment
+     * to allow an interaction in this fragment to be communicated to the activity
+     * and potentially other fragments contained in that activity.
+     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * @author lander
+     */
     public class XMLTask extends AsyncTask<String, String, String> {
-
+        /**
+         * in de achtergrond wordt asyncroon de http link aangemaakt
+         * en de response wordt teruggegeven in string formaat
+         * @param urls
+         * @return string
+         */
         @Override
         protected String doInBackground(String... urls) {
             HttpURLConnection connection = null;
@@ -184,11 +202,17 @@ public class PictureViewFragment extends Fragment {
             }
             return null;
         }
-
+        /**
+        * er wordt gecontroleerd op de parameter
+         * als '0' dan is de foto niet gevonden
+         * anders zal een bitmap worden aangemaakt en wordt die bitmap weergegeven
+         * op het scherm
+         *
+         * @param line
+         */
         @Override
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
-            //deze onPost wordt uitgevoerd als er iets terug gegeven is
             Log.d(TAG, line);
             //line is een string
             if(line.equals("0")){
