@@ -11,21 +11,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -40,13 +33,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
-
-import static android.R.attr.fragment;
-import static android.R.attr.id;
-import static com.matchid.matchidapplicatie.R.menu.main;
 
 /**
  * Created by vulst on 19/04/2017.
@@ -84,10 +72,18 @@ public class AnalyseFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public AnalyseFragment() {
-        // Required empty public constructor
+    /**
+     * Required empty public constructor
+     */
+    public AnalyseFragment(){
     }
 
+    /**
+     * bij opstart van fragment wordt nieuw fragment aangemaakt
+     * dit is een vervanger van de constructor
+     *
+     * @return Fragment
+     */
     public static AnalyseFragment newInstance() {
         AnalyseFragment fragment = new AnalyseFragment();
         Bundle args = new Bundle();
@@ -95,15 +91,31 @@ public class AnalyseFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * bij opstart van fragment
+     * hier wordt alles gedeclareerd dat niets met de views te maken hebben
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("Analyse");
         setHasOptionsMenu(true);
-        Log.d(TAG, "onPicture upload Fragment");
+        Log.d(TAG, "onCreate");
 
     }
 
+    /**
+     * zorgt voor alles wat het uitzicht bepaald
+     * hier worden de parameters geinitialliseerd
+     *
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -183,47 +195,36 @@ public class AnalyseFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_user_info) {
-            Log.d("tag", "userinfo option");
-            Toast.makeText(getActivity(), "account", Toast.LENGTH_SHORT).show();
-            return false;
-
-        }else if(id ==R.id.logout){
-            Log.d("tag", "logout option");
-            Intent logout = new Intent(getActivity(), LoginActivity.class);
-            startActivity(logout);
-            return false;
-        }
-        return false;
-    }
-
+    /**
+     * de camera wordt opgestart
+     */
     public void takePicture(){
         Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //opstarten intent
-        startActivityForResult(camera, CAMERA_REQUEST);//getal doet er niet toe maar moet uniek zijn
+        startActivityForResult(camera, CAMERA_REQUEST);
 
     }
 
-
+    /**
+     * galery wordt geopend
+     * indien meerdere gallerijen aanwezig op de smartphone dan wordt de gebruiker
+     * een keuze voorgesteld
+     */
     public void loadImagefromGallery() {
 
-        Log.d(TAG, "in loadimagefrom gallery");
+        Log.d(TAG, "loadimageFromGallery");
         // Create intent to Open Image applications like Gallery, Google Photos
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        // Start the Intent
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
     }
 
+    /**
+     *wordt aangeroepen  na het selecteren van een foto
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -279,6 +280,10 @@ public class AnalyseFragment extends Fragment {
 
     }
 
+
+    /**
+     * een foto wordt upgeload naar de database
+     */
     public void uploadImage() {
         // When Image is selected from Gallery
 
@@ -297,6 +302,9 @@ public class AnalyseFragment extends Fragment {
         }
     }
 
+    /**
+     * een image wordt geconverteerd naar een string
+     */
     public void encodeImagetoString() {
         new AsyncTask<Void, Void, String>() {
 
@@ -330,10 +338,19 @@ public class AnalyseFragment extends Fragment {
         }.execute(null, null, null);
     }
 
+    /**
+     * zorgt dat request wordt verzonden
+     *
+     */
     public void triggerImageUpload() {
         makeHTTPCall();
     }
 
+    /**
+     * stuur een request naar de server en vangt statues codes op
+     * status code 200: de foto is upgeload
+     * status code 404 en 500: er is iets fout gelopen en je moet het nogmaals proberen
+     */
     public void makeHTTPCall() {
         prgDialog.setMessage("Uploading image");
         AsyncHttpClient client = new AsyncHttpClient();
@@ -349,7 +366,6 @@ public class AnalyseFragment extends Fragment {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         Log.d("AnalyseFragment", "on success" + statusCode);
-                        // Hide Progress Dialog
                         prgDialog.hide();
                         Toast.makeText(getActivity(), "Picture uploaded!",
                                 Toast.LENGTH_LONG).show();
@@ -388,7 +404,12 @@ public class AnalyseFragment extends Fragment {
                 });
     }
 
-
+    /**
+     * de analyse op de matchid software wordt gestart met de meegegeven parameters
+     *
+     * @param sub
+     * @param set
+     */
     public void startAnalyse(int sub, int set) {
             Log.d("tag", etSubset.getText().toString() + "  " + etStepsize.getText().toString());
             fileName = "Tensile_Hole_Unloaded.tif";
@@ -397,9 +418,12 @@ public class AnalyseFragment extends Fragment {
             new XMLTask().execute(url);
     }
 
+    /**
+     * wordt aangeroepen als het fragment wordt gesloten
+     *
+     */
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
         // Dismiss the progress bar when application is closed
         if (prgDialog != null) {
@@ -407,14 +431,21 @@ public class AnalyseFragment extends Fragment {
         }
     }
 
+    /**
+     * methode om te kunnen intrageren met de fragment
+     * @param uri
+     */
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
+    /**
+     *called once the fragment is associated with its activity.
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -425,20 +456,34 @@ public class AnalyseFragment extends Fragment {
         }
     }
 
+    /**
+     *called immediately prior to the fragment no longer being associated with its activity.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * This interface must be implemented by activities that contain this fragment
+     * to allow an interaction in this fragment to be communicated to the activity
+     * and potentially other fragments contained in that activity.
+     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
-
+    /**
+     * @author lander
+     */
     public class XMLTask extends AsyncTask<String, String, String> {
-
+        /**
+         * in de achtergrond wordt asyncroon de http link aangemaakt
+         * en de response wordt teruggegeven in string formaat
+         * @param urls
+         * @return string
+         */
         @Override
         protected String doInBackground(String... urls) {
             HttpURLConnection connection = null;
@@ -481,10 +526,16 @@ public class AnalyseFragment extends Fragment {
             return null;
         }
 
+        /**
+         * er wordt gecontroleerd op de parameter
+         * als 'ok' is de analyse het geslaagd
+         * anders niet geslaagd
+         *
+         * @param line
+         */
         @Override
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
-            //deze onPost wordt uitgevoerd als er iets terug gegeven is
 
             if(line.equals("ok")){
                 Toast.makeText(getActivity(),
@@ -495,8 +546,6 @@ public class AnalyseFragment extends Fragment {
                         "Something went wrong with analysis",
                         Toast.LENGTH_SHORT).show();
             }
-            Log.d(TAG, line);
-            //line is een string
 
 
         }
