@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import org.w3c.dom.Document;
@@ -29,7 +28,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,14 +41,6 @@ public class UserFragment extends Fragment {
 
     static final String ipadress = LoginActivity.ipadress;
     static int id = LoginActivity.id;
-    // XML node keys
-    static final String KEY_ITEM = "item"; // parent node
-    static final String KEY_ID = "id";
-    static final String KEY_NAME = "username";
-    static final String KEY_COST = "cost";
-    static final String KEY_DESC = "description";
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     ArrayList<HashMap<String, String>> menuItems;
     String url;
     int tel=0;
@@ -66,33 +56,52 @@ public class UserFragment extends Fragment {
     private View view;
     private ArrayAdapter<String> adapter;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
+    /**
+     *  Required empty public constructor
+     */
     public UserFragment() {
-        // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
-    public static UserFragment newInstance(String param1, String param2) {
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     *
+     * @return A new instance of fragment AnalyseFragment.
+     */
+    public static UserFragment newInstance() {
         UserFragment fragment = new UserFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-
+    /**
+     * bij opstart van fragment
+     * hier wordt alles gedeclareerd dat niets met de views te maken hebben
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("tag", "onCreateUserFragment");
 
     }
-
+    /**
+     * zorgt voor alles wat het uitzicht bepaald
+     * hier worden de parameters geinitialliseerd
+     * de onclicklisteners worden hier aangemaakt dit zijn de methodes die zorgen dat
+     * items, button, .. kunnen worden geselecteerd en dat er een actie wordt
+     * ondernomen
+     *
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -118,14 +127,19 @@ public class UserFragment extends Fragment {
         return view;
     }
 
-
-    // TODO: Rename method, update argument and hook method into UI event
+    /**
+     * methode om te kunnen intrageren met de fragment
+     * @param uri
+     */
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
-
+    /**
+     *called once the fragment is associated with its activity.
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -135,7 +149,9 @@ public class UserFragment extends Fragment {
             Log.d("tag", e.toString());
         }
     }
-
+    /**
+     *called immediately prior to the fragment no longer being associated with its activity.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -147,24 +163,22 @@ public class UserFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * @author lander
+     */
     public class XMLTask extends AsyncTask<String, String, String> {
 
-        private TextView tv;
-        private View view;
-        private ListView lv;
-        private List<String> strArr;
-        private ArrayAdapter<String> adapter;
-
+        /**
+         * in de achtergrond wordt asyncroon de http link aangemaakt
+         * en de response wordt teruggegeven in string formaat
+         * @param urls
+         * @return string
+         */
         @Override
         protected String doInBackground(String... urls) {
             HttpURLConnection connection = null;
@@ -206,7 +220,16 @@ public class UserFragment extends Fragment {
 
             return null;
         }
-
+        /**
+         * er wordt gecontroleerd op de parameter
+         * die string bevat een xml pagina die eerst wordt gesplitst in bruikbaar en
+         * onbruikbaar deel
+         * bruikbaar deel wordt gebruikt om via de tags informatie op te halen via een
+         * nodelist
+         *
+         *
+         * @param line
+         */
         @Override
         protected void onPostExecute(String line) {
             if (line == null && tel<10) {new XMLTask().execute(url); tel++;}
