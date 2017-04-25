@@ -62,7 +62,7 @@ public class AnalyseFragment extends Fragment {
     private static final int CAMERA_REQUEST = 123;
     private static String TAG = "PictureUploadFragment";
     private static int RESULT_LOAD_IMG = 1;
-    String componentId = "4";
+    String componentId = "4"; //moet nog verander wroden!
 
     static final String ipadress = LoginActivity.ipadress;
     static int id = LoginActivity.id;
@@ -253,8 +253,10 @@ public class AnalyseFragment extends Fragment {
                 String fileNameSegments[] = imgPath.split("/");
                 if(getal == 1){
                     fileName = fileNameSegments[fileNameSegments.length - 1];
+                    params.put("undeformed" , 1);
                 }else{
                     fileName2 = fileNameSegments[fileNameSegments.length - 1];
+                    params.put("undeformed" , 0);
                 }
 
                 // Put file name in Async Http Post Param which will used in Java web app
@@ -386,8 +388,8 @@ public class AnalyseFragment extends Fragment {
             Log.d("tag", etSubset.getText().toString() + "  " + etStepsize.getText().toString());
             fileName = "Tensile_Hole_Unloaded.tif";
             fileName2 = "Tensile_Hole_2177N.tif";
-            String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/"+  fileName + "/pic2/" + fileName2
-                    + "/inputfile/" + etInputfile.getText().toString();
+            String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/"+  fileName + "/pic2/" + fileName2;
+                    //+ "/inputfile/" + etInputfile.getText().toString();
             new XMLTask().execute(url);
     }
 

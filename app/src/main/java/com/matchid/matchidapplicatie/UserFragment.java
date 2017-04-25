@@ -102,17 +102,17 @@ public class UserFragment extends Fragment {
         tvRole = (TextView) view.findViewById(R.id.tvRole);
 
         tvRole = (TextView) view.findViewById(R.id.tvRole);
-         tvLicense = (TextView) view.findViewById(R.id.tvLicense);
-         tvCompany = (TextView) view.findViewById(R.id.tvCompany);
-         tvStreet = (TextView) view.findViewById(R.id.tvStreet);
+        tvLicense = (TextView) view.findViewById(R.id.tvLicense);
+        tvCompany = (TextView) view.findViewById(R.id.tvCompany);
+        tvStreet = (TextView) view.findViewById(R.id.tvStreet);
         tvHousenumber = (TextView) view.findViewById(R.id.tvHousenumber);
-         tvPostalCode = (TextView) view.findViewById(R.id.tvPostalCode);
-         tvCountry = (TextView) view.findViewById(R.id.tvCountry);
+        tvPostalCode = (TextView) view.findViewById(R.id.tvPostalCode);
+        tvCountry = (TextView) view.findViewById(R.id.tvCountry);
         tvTown = (TextView) view.findViewById(R.id.tvTown);
         //haal current user op
         //de id staat hier boven maar om te testen gebruik ik gwn 3
-        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/entities.users/id/" + LoginActivity.userId;
-        Log.d("tag", "start van user ophalen!" + url);
+        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/entities.users/id/3";
+        Log.d("tag", "start van user ophalen!");
         // haal het op, er is nu nog niks mee gebeurd!
         new XMLTask().execute(url);
         return view;
@@ -209,7 +209,7 @@ public class UserFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String line) {
-            if (line == null) {new XMLTask().execute(url);}
+            if (line == null && tel<10) {new XMLTask().execute(url); tel++;}
             else {
                 super.onPostExecute(line);
                 //deze onPost wordt uitgevoerd als er iets terug gegeven is

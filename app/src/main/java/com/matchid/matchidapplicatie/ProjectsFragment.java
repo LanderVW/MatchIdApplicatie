@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,8 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,15 +48,18 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * Use the {@link ProjectsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProjectsFragment extends Fragment{
+public class ProjectsFragment extends Fragment {
     static final String ipadress = LoginActivity.ipadress;
     boolean ok = false;
-    String url;
     private View view;
     private ListView lv;
     private List<String> strArr;
+    private List<String> descriptionList, locationList, aAnalysisList, projectIDList;
+    private List<Boolean> activeList;
     private ArrayAdapter<String> adapter;
-    private static final String TAG ="ProjectFragment";
+    private static final String TAG = "ProjectsFragment";
+    private static String url;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -62,7 +68,6 @@ public class ProjectsFragment extends Fragment{
     }
 
     /**
-     *
      * @return fragment
      */
     public static ProjectsFragment newInstance() {
@@ -73,60 +78,96 @@ public class ProjectsFragment extends Fragment{
     }
 
     /**
-     *
      * @param savedInstanceState
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setTitle("Projects");
         setHasOptionsMenu(true);
-        Log.d(TAG,"onCreate");
+        Log.d("ProjectFragment", "onCreate");
 
     }
 
-
     /**
-     *
      * @param inflater
      * @param container
      * @param savedInstanceState
      * @return
      */
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         Log.d(TAG, "OncreateView");
         view = inflater.inflate(R.layout.fragment_projects, container, false);
-
         lv = (ListView) view.findViewById(R.id.lvproject);
-        strArr = new ArrayList<String>();
+        strArr = new ArrayList<>();
+        projectIDList = new ArrayList<>();
+        descriptionList = new ArrayList<>();
+        activeList = new ArrayList<>();
+        locationList = new ArrayList<>();
+        aAnalysisList = new ArrayList<>();
+
 
         //haal alle projecten op (nog niet naar id gekekeken)
 
         url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/id/" + LoginActivity.userId;
-        Log.d(TAG , url);
+
+        adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, strArr);
+        lv.setAdapter(adapter);
+
+        Log.d("ProjectFragment", "start!");
         new XMLTask().execute(url);
+        Log.d("ProjectFragment", "na start");
+
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "naar nieuwe activity", Toast.LENGTH_SHORT).show();
+                Fragment fragment = null;
+
+                Class fragmentClass = ProjectInformationFragment.class;
+                try {
+                    fragment = (Fragment) fragmentClass.newInstance();
+
+                } catch (java.lang.InstantiationException e) {
+                    Log.d(TAG, "instantiationException");
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    Log.d(TAG, "illegalAccesException");
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    Log.d(TAG, "onverwachte fout");
+                    e.printStackTrace();
+                }
+                Bundle bundle = new Bundle();
+                bundle.putString("projectID",projectIDList.get(position));
+                bundle.putString("title",strArr.get(position));
+                bundle.putString("description", descriptionList.get(position));
+                bundle.putString("location",locationList.get(position));
+                bundle.putBoolean("active",activeList.get(position));
+                bundle.putString("numberAnalysis",aAnalysisList.get(position));
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack("tag").commit();
+            }
+
+        });
 
         return view;
     }
 
 
-
-
-
-
     /**
-     *
      * @param nd
      */
-    public void updateListview(NodeList nd){
+    public void updateListview(NodeList nd) {
         try {
 
-            adapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1,strArr);
-            lv.setAdapter(adapter);
             for (int i = 0; i < nd.getLength(); i++) {
                 Node node = nd.item(i);
 
@@ -135,45 +176,27 @@ public class ProjectsFragment extends Fragment{
 
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) node;
-                    strArr.add(getValue("title",eElement));
+                    strArr.add(getValue("title", eElement));
+
+                    projectIDList.add(getValue("projectID", eElement));
+
+                    descriptionList.add(getValue("description",eElement));
 
 
-                    Log.d(TAG, "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
+                    activeList.add(Boolean.parseBoolean(getValue("active",eElement)));
+
+                    locationList.add(getValue("location", eElement));
+
+                    aAnalysisList.add(getValue("numberAnalysis",eElement));
+
                 }
             }
 
             adapter.notifyDataSetChanged();
-        }catch(Exception e) {
-
-            Log.d(TAG,"hij doet het niet in het parsen van XML naar de app lijst");
+        } catch (Exception e) {
+            Log.d(TAG, "hij doet het niet in het parsen van XML naar de app lijst");
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Add your menu entries here
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.logout:
-                Log.d("HomeFragment","Logout");
-                Intent logout = new Intent(getActivity(),LoginActivity.class);
-                startActivity(logout);
-                return true;
-            case R.id.action_user_info:
-                Log.d("HomeFragment","Action user info");
-                return true;
-
-            default:
-                break;
-        }
-
-        return false;
     }
 
     /**
@@ -185,12 +208,40 @@ public class ProjectsFragment extends Fragment{
      */
     private static String getValue(String tag, Element element) {
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node = nodeList.item(0);
-        return node.getNodeValue();
+        if(nodeList.getLength()!=0) {
+            Node node = nodeList.item(0);
+            return node.getNodeValue();
+        }else return "leeg";
+
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Add your menu entries here
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.logout:
+                Log.d("HomeFragment", "Logout");
+                Intent logout = new Intent(getActivity(), LoginActivity.class);
+                startActivity(logout);
+                return true;
+            case R.id.action_user_info:
+                Log.d("HomeFragment", "Action user info");
+                return true;
+
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+
     /**
-     *
      * @param uri
      */
     // TODO: Rename method, update argument and hook method into UI event
@@ -201,10 +252,7 @@ public class ProjectsFragment extends Fragment{
     }
 
 
-
-
     /**
-     *
      * @param context
      */
     @Override
@@ -240,17 +288,16 @@ public class ProjectsFragment extends Fragment{
     }
 
     /**
-     *
      * @author lander
      */
-    public class XMLTask extends AsyncTask<String , String , String> {
+    public class XMLTask extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... urls) {
-            HttpURLConnection connection =null;
+            HttpURLConnection connection = null;
             BufferedReader reader = null;
 
-            try{
+            try {
                 java.net.URL url = new URL(urls[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
@@ -260,49 +307,61 @@ public class ProjectsFragment extends Fragment{
                 reader = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer buffer = new StringBuffer();
 
-                String line = "" ;
-                while((line = reader.readLine())!= null){
+                String line = "";
+                while ((line = reader.readLine()) != null) {
                     buffer.append(line);
                 }
 
                 return buffer.toString();
 
             } catch (MalformedURLException e) {
+
                 Log.d("ProjectFragment", "malformedURL");
                 e.printStackTrace();
+                return null;
             } catch (IOException e) {
 
                 Log.d("ProjectFragment", "ioexception");
                 e.printStackTrace();
-            }finally {
-                if(connection != null){
+
+                return null;
+            } finally {
+                if (connection != null) {
 
                     Log.d("ProjectFragment", "disconnect");
-                    connection.disconnect();}
+                    connection.disconnect();
+                }
                 try {
-                    if(reader != null){
+                    if (reader != null) {
                         Log.d("ProjectFragment", "reader close");
-                        reader.close();}
+                        reader.close();
+                    }
                 } catch (IOException e) {
 
                     Log.d("ProjectFragment", "ioexception 2");
                     e.printStackTrace();
+
+                    return null;
                 }
             }
 
-            return null;
+
         }
 
         /**
-         *
          * @param line
          */
         @Override
         protected void onPostExecute(String line) {
-            if (line == null) {new XMLTask().execute(url);}
-            else {
 
+
+            if (line == null) {
+                Log.d("ProjectFragment", "nog keer");
+                new XMLTask().execute(url);
+            } else {
                 super.onPostExecute(line);
+                //deze onPost wordt uitgevoerd als er iets terug gegeven is
+
                 Log.d(TAG, line);
                 //line is een string
                 String[] parts = line.split(("\\?>"));
@@ -313,6 +372,8 @@ public class ProjectsFragment extends Fragment{
                 Log.d(TAG, part2);
 
                 //maak van string een XML file
+
+
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder;
                 Document doc = null;
@@ -337,7 +398,6 @@ public class ProjectsFragment extends Fragment{
 
                 updateListview(nList);
             }
-
         }
 
     }
