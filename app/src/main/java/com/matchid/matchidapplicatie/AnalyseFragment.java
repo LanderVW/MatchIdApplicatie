@@ -62,7 +62,7 @@ public class AnalyseFragment extends Fragment {
     private static final int CAMERA_REQUEST = 123;
     private static String TAG = "AnalyseFragment";
     private static int RESULT_LOAD_IMG = 1;
-
+    String componentId = "4";
 
     static final String ipadress = LoginActivity.ipadress;
     static int id = LoginActivity.id;
@@ -78,6 +78,7 @@ public class AnalyseFragment extends Fragment {
 
     private EditText etSubset;
     private EditText etStepsize;
+    private EditText etInputfile;
 
     private View view;
 
@@ -162,10 +163,10 @@ public class AnalyseFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.d("tag" , "text: " + etStepsize.getText().toString());
-                if(etStepsize.getText().toString().equals("") | etStepsize.getText().toString().equals("")){
+                if(etStepsize.getText().toString().equals("") | etStepsize.getText().toString().equals("") | etInputfile.getText().toString().equals("")){
                     Toast.makeText(
                             getActivity(),
-                            "Please select subset and stepsize!", Toast.LENGTH_LONG)
+                            "Please select subset and stepsize and inputfile name!", Toast.LENGTH_LONG)
                             .show();
                 }else {
                     startAnalyse(Integer.parseInt(etSubset.getText().toString()), Integer.parseInt(etStepsize.getText().toString()));
@@ -176,6 +177,7 @@ public class AnalyseFragment extends Fragment {
 
         etStepsize = (EditText) view.findViewById(R.id.etStepsize);
         etSubset = (EditText) view.findViewById(R.id.etSubset);
+        etInputfile = (EditText) view.findViewById(R.id.etInputfile);
 
         prgDialog = new ProgressDialog(getActivity());
         // Set Cancelable as False
@@ -267,6 +269,7 @@ public class AnalyseFragment extends Fragment {
 
                 // Put file name in Async Http Post Param which will used in Java web app
                 params.put("filename", fileName);
+                params.put("componentid" , componentId);
 
             } else {
                 Toast.makeText(getActivity(), "You haven't picked Image",
@@ -393,7 +396,8 @@ public class AnalyseFragment extends Fragment {
             Log.d("tag", etSubset.getText().toString() + "  " + etStepsize.getText().toString());
             fileName = "Tensile_Hole_Unloaded.tif";
             fileName2 = "Tensile_Hole_2177N.tif";
-            String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/"+  fileName + "/pic2/" + fileName2;
+            String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/"+  fileName + "/pic2/" + fileName2
+                    + "/inputfile/" + etInputfile.getText().toString();
             new XMLTask().execute(url);
     }
 

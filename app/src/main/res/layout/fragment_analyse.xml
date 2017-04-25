@@ -27,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/upload_picture" />
+                android:text="Upload this picture" />
         </LinearLayout>
 
         <ImageView
@@ -48,7 +48,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="168dp"
+        android:layout_height="158dp"
         android:orientation="horizontal">
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/upload_picture"/>
+                android:text="Upload this picture"/>
         </LinearLayout>
         <ImageView
             android:id="@+id/ivPicure2"
@@ -89,7 +89,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_weight="0.13">
 
         <TextView
             android:id="@+id/tvSubset"
@@ -111,9 +112,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="0.92">
+        android:layout_height="39dp"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tvStepsize"
@@ -133,11 +133,34 @@
             />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:layout_weight="0.57">
+
+        <TextView
+            android:id="@+id/inputFile"
+            android:layout_width="211dp"
+            android:textSize="20dp"
+            android:layout_height="wrap_content"
+            android:text="Inputfile:" />
+
+        <EditText
+            android:id="@+id/etInputfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="no spaces"
+            android:inputType="textPersonName" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/btn_StartAnalyse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=" Upload pictures and start analysis" />
+        android:text="  start analysis" />
 
 
 </LinearLayout>

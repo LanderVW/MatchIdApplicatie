@@ -26,10 +26,11 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
+import com.matchid.matchidapplicatie.entities.SessionManager;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import com.matchid.matchidapplicatie.entities.SessionManager;
 
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -44,10 +45,11 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     TextView matchid_logo, error_message;
     private ProgressBar spinner;
     public static final String KEY_PRIVATE = "USERNAME";
-    static final String ipadress = "192.168.0.234";
+    static final String ipadress = "10.108.16.142";
     String name;
-    String userId;
+    static String userId;
     Boolean logout;
+    private static final String TAG = "LoginActivity";
 
     static int id =0;
 
@@ -103,7 +105,10 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         if(check){
             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
             HashMap<String, String> user = session.getUserDetails();
+                userId = user.get(SessionManager.userId);
+
             Toast.makeText(LoginActivity.this, "Welcome " + user.get(SessionManager.KEY_NAME) , Toast.LENGTH_SHORT).show();
+
             startActivity(goHome);
         }
     }
@@ -114,6 +119,13 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         return node.getNodeValue();
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
     @Override
     public void onBackPressed() {
         showDialog(this.findViewById(R.id.flContent));
@@ -156,9 +168,12 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                     @Override
                     public void onResponse(String response) {
                         // Do something with the response
-                        if(response.equalsIgnoreCase("ok")){
-
                             Log.d("LoginActivity", "login succesvol");
+                        if(!response.equalsIgnoreCase("Error")){
+                            userId = response;
+                            Log.d(TAG , "het userid is: " + userId);
+//                            Log.d(TAG , response);
+//                            Log.d(TAG, "login succesvol");
                         //if(!response.equalsIgnoreCase("nowp")){
                           //id = Integer.parseInt(response);
                             Log.d("LoginActivity" , response);
@@ -169,12 +184,13 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                             //goHome.putExtra("username", etUsername.getText().toString());
                             //goHome.putExtra("ipadres", ipadress);
                             //safeInfo();
-                            session.createLoginSession(etUsername.getText().toString() , 8);
+                            session.createLoginSession(etUsername.getText().toString() , userId);
                             startActivity(goHome);
 
                             spinner.setVisibility(View.GONE);
                         }else{
-                            Log.d("LoginActivity",response);
+                            Log.d(TAG, "tesst " +response);
+                            spinner.setVisibility(View.GONE);
                         }
                     }
                 },
