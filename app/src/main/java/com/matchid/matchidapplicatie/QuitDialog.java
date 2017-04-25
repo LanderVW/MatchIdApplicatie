@@ -17,12 +17,25 @@ public class QuitDialog extends DialogFragment implements View.OnClickListener{
     Button leave, stay;
     Communicator communicator;
 
+    /**
+     * *called once the class is associated with its activity.
+
+     * @param activity
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         communicator = (Communicator) activity;
     }
 
+    /**
+     * declaration of all btns
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return  View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.quit_dialog,null);
@@ -36,6 +49,11 @@ public class QuitDialog extends DialogFragment implements View.OnClickListener{
 
     }
 
+    /**
+     * bepaald wat gebeurd na drukken op een knop
+     *
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.leave){
@@ -48,6 +66,10 @@ public class QuitDialog extends DialogFragment implements View.OnClickListener{
             dismiss();
         }
     }
+
+    /**
+     * interface om message weer te geven
+     */
     interface Communicator{
         public void onDialogMessage(String message);
     }
