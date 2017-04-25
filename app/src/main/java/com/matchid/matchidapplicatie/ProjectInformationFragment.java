@@ -48,7 +48,6 @@ import static android.content.ContentValues.TAG;
  */
 
 public class ProjectInformationFragment extends Fragment {
-    //voor upload
     ProgressDialog prgDialog;
 
     List<String> naamList, componentDescriptionList;
@@ -72,17 +71,32 @@ public class ProjectInformationFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Required empty public constructor
+     */
     public ProjectInformationFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     *
+     * @return A new instance of fragment projectinformationFragment.
+     */
     public static ProjectInformationFragment newInstance() {
         ProjectInformationFragment fragment = new ProjectInformationFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
-
+    /**
+     * bij opstart van fragment
+     * hier wordt alles gedeclareerd dat niets met de views te maken hebben
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +111,21 @@ public class ProjectInformationFragment extends Fragment {
 
     }
 
+    /**
+     * zorgt voor alles wat het uitzicht bepaald
+     * hier worden de parameters geinitialliseerd
+     * de onclicklisteners worden hier aangemaakt dit zijn de methodes die zorgen dat
+     * items, button, .. kunnen worden geselecteerd en dat er een actie wordt
+     * ondernomen
+     * hier worden de parameters die nodig zijn nadat een listitem is geselecteerd
+     * ook gedeclareerd en doorgegeven
+     *
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -184,6 +213,9 @@ public class ProjectInformationFragment extends Fragment {
 
 
     /**
+     * de lijsten met parameters worden aangevuld en de listview wordt upgedatete naa
+     * de huidige staat
+     *
      * @param nd
      */
     public void updateListview(NodeList nd) {
@@ -228,7 +260,11 @@ public class ProjectInformationFragment extends Fragment {
             return node.getNodeValue();
     }
 
-
+    /**
+     * get adres op basis van lengte en breedte maten
+      * @param lat
+     * @param lon
+     */
     public void getAdress(double lat, double lon){
         try {
             Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
@@ -247,7 +283,9 @@ public class ProjectInformationFragment extends Fragment {
         }
     }
 
-
+    /**
+     * krijgt locatie terug na druk op een knop
+     */
     View.OnClickListener getLocation = new View.OnClickListener() {
 
         @Override
@@ -273,10 +311,12 @@ public class ProjectInformationFragment extends Fragment {
 
         }
     };
-
+    /**
+     * called to do final cleanup of the fragment's state.
+     *
+     */
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
         // Dismiss the progress bar when application is closed
         if (prgDialog != null) {
@@ -284,14 +324,19 @@ public class ProjectInformationFragment extends Fragment {
         }
     }
 
-
-    // TODO: Rename method, update argument and hook method into UI event
+    /**
+     * methode om te kunnen intrageren met de fragment
+     * @param uri
+     */
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
-
+    /**
+     *called once the fragment is associated with its activity.
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -301,15 +346,20 @@ public class ProjectInformationFragment extends Fragment {
             Log.d("pif", "error in onAttach" + e.toString());
         }
     }
-
+    /**
+     *called immediately prior to the fragment no longer being associated with its activity.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
-
+    /**
+     * This interface must be implemented by activities that contain this fragment
+     * to allow an interaction in this fragment to be communicated to the activity
+     * and potentially other fragments contained in that activity.
+     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -318,7 +368,12 @@ public class ProjectInformationFragment extends Fragment {
      * @author lander
      */
     public class XMLTask extends AsyncTask<String, String, String> {
-
+        /**
+         * in de achtergrond wordt asyncroon de http link aangemaakt
+         * en de response wordt teruggegeven in string formaat
+         * @param urls
+         * @return string
+         */
         @Override
         protected String doInBackground(String... urls) {
             HttpURLConnection connection = null;
@@ -376,6 +431,13 @@ public class ProjectInformationFragment extends Fragment {
         }
 
         /**
+         * er wordt gecontroleerd op de parameter
+         * die string bevat een xml pagina die eerst wordt gesplitst in bruikbaar en
+         * onbruikbaar deel
+         * bruikbaar deel wordt gebruikt om via de tags informatie op te halen via een
+         * nodelist
+         *
+         *
          * @param line
          */
         @Override
@@ -419,9 +481,7 @@ public class ProjectInformationFragment extends Fragment {
 
                 //xml doc naar iets dat we kunnen weergeven op de app
                 doc.getDocumentElement().normalize();
-                Log.d("pif", "root element: " + doc.getDocumentElement().getNodeName());
-
-                NodeList nList = doc.getElementsByTagName("components");
+               NodeList nList = doc.getElementsByTagName("components");
 
                 updateListview(nList);
                 int i = 0;
