@@ -179,7 +179,6 @@ public class ProjectsFragment extends Fragment {
                 Log.d(TAG, "current element: " + node.getNodeName());
 
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    //ier moeten we nog zorgen dat het ook leeg kan zijn
                     Element eElement = (Element) node;
                     strArr.add(getValue("title", eElement));
 
@@ -194,7 +193,6 @@ public class ProjectsFragment extends Fragment {
 
                     aAnalysisList.add(getValue("numberAnalysis",eElement));
 
-                    //Log.d(TAG, "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
                 }
             }
 

@@ -157,7 +157,7 @@ public class ProjectInformationFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("title",projectNaam);
                 bundle.putString("componentNaam",naamList.get(position));
-                //bundle.putString("description", componentDescriptionList.get(position));
+                bundle.putString("description", componentDescriptionList.get(position));
                 fragment.setArguments(bundle);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -191,12 +191,14 @@ public class ProjectInformationFragment extends Fragment {
                     Element eElement = (Element) node;
                     String naam = getValue("componentNaam",eElement);
                     naamList.add(getValue("componentNaam", eElement));
-
-                    //componentDescriptionList.add(getValue("description",eElement));
+                    String desc = getValue("description",eElement);
+                    componentDescriptionList.add(getValue("description",eElement));
+                    String leeg = "lqsdf";
                 }
             }
 
             adapter.notifyDataSetChanged();
+            String desc = "qmsld";
         } catch (Exception e) {
             Log.d("pif", "hij doet het niet in het parsen van XML naar de app lijst");
             e.printStackTrace();
@@ -211,11 +213,14 @@ public class ProjectInformationFragment extends Fragment {
      * @return String
      */
     private static String getValue(String tag, Element element) {
+        Node nodetest= element.getElementsByTagName(tag).item(0);
+        if(nodetest == null){
+            return "dit invoerveld is leeg";
+        }
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-        if(nodeList.getLength()!=0) {
+
             Node node = nodeList.item(0);
             return node.getNodeValue();
-        }else return "leeg";
     }
 
 
@@ -369,6 +374,7 @@ public class ProjectInformationFragment extends Fragment {
                 NodeList nList = doc.getElementsByTagName("components");
 
                 updateListview(nList);
+                int i = 0;
             }
         }
 
