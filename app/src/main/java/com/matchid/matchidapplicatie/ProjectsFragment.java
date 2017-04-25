@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -54,7 +53,6 @@ public class ProjectsFragment extends Fragment {
     boolean ok = false;
     private View view;
     private ListView lv;
-    private Button test;
     private List<String> strArr;
     private List<String> descriptionList, locationList, aAnalysisList, projectIDList;
     private List<Boolean> activeList;
@@ -129,8 +127,6 @@ public class ProjectsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getActivity(), "naar nieuwe activity", Toast.LENGTH_SHORT).show();
-                /*Intent test = new Intent(getActivity(),LoginActivity.class);
-                startActivity(test);*/
                 Fragment fragment = null;
 
                 Class fragmentClass = ProjectInformationFragment.class;

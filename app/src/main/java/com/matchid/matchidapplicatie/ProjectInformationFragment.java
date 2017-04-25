@@ -2,6 +2,8 @@ package com.matchid.matchidapplicatie;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,8 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,6 +36,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -52,6 +57,8 @@ public class ProjectInformationFragment extends Fragment {
     TextView tv_description, tv_location, tv_numberAnalysis;
     android.support.v7.widget.AppCompatCheckBox cb_active;
     private static String url;
+    Button btn_location;
+    GPSTracker gps;
 
 
 
@@ -99,6 +106,8 @@ public class ProjectInformationFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_project_info, container, false);
         tv_description = (TextView) view.findViewById(R.id.tv_description);
         tv_location = (TextView) view.findViewById(R.id.tv_location);
+        btn_location = (Button) view.findViewById(R.id.btn_set_location);
+        btn_location.setOnClickListener(getLocation);
         tv_numberAnalysis = (TextView) view.findViewById(R.id.tv_number_analysis);
         cb_active = (android.support.v7.widget.AppCompatCheckBox) view.findViewById(R.id.appCompatCheckBox);
 
@@ -189,16 +198,12 @@ public class ProjectInformationFragment extends Fragment {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     //ier moeten we nog zorgen dat het ook leeg kan zijn
                     Element eElement = (Element) node;
-                    String naam = getValue("componentNaam",eElement);
                     naamList.add(getValue("componentNaam", eElement));
-                    String desc = getValue("description",eElement);
                     componentDescriptionList.add(getValue("description",eElement));
-                    String leeg = "lqsdf";
                 }
             }
 
             adapter.notifyDataSetChanged();
-            String desc = "qmsld";
         } catch (Exception e) {
             Log.d("pif", "hij doet het niet in het parsen van XML naar de app lijst");
             e.printStackTrace();
@@ -223,6 +228,51 @@ public class ProjectInformationFragment extends Fragment {
             return node.getNodeValue();
     }
 
+
+    public void getAdress(double lat, double lon){
+        try {
+            Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
+            List<Address> addresses = geo.getFromLocation(lat, lon, 1);
+            if (addresses.isEmpty()) {
+                //placeName.setText("Waiting for Location");
+            }
+            else {
+                if (addresses.size() > 0) {
+                    tv_location.setText(addresses.get(0).getLocality());
+                }
+            }
+        }
+        catch(Exception e){
+            Toast.makeText(getActivity(), "No Location Name Found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    View.OnClickListener getLocation = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View arg0) {
+            // create class object
+            Log.d("home fragment", " get location");
+            gps = new GPSTracker(getActivity());
+
+            // check if GPS enabled
+            if (gps.canGetLocation()) {
+
+                double latitude = gps.getLatitude();
+                double longitude = gps.getLongitude();
+
+                getAdress(latitude,longitude);
+
+            } else {
+                // can't get location
+                // GPS or Network is not enabled
+                // Ask user to enable GPS/network in settings
+                gps.showSettingsAlert();
+            }
+
+        }
+    };
 
     @Override
     public void onDestroy() {

@@ -3,8 +3,6 @@ package com.matchid.matchidapplicatie;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,10 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.List;
-import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -37,8 +31,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     View view;
     Button btn_add_picture, btn_analyse, btn_logout, btn_projects;
-    GPSTracker gps;
-    TextView placename;
+
+    TextView tv_placename;
     private static final int CAMERA_REQUEST = 123;
 
     private OnFragmentInteractionListener mListener;
@@ -80,7 +74,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        placename = (TextView) view.findViewById(R.id.placename);
+        tv_placename = (TextView) view.findViewById(R.id.placename);
         /*
         init de knoppen in de home
          */
@@ -111,7 +105,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
             }
         });
-        btn_add_picture.setOnClickListener(getLocation/*getPicture*/);
+        btn_add_picture.setOnClickListener(getPicture);
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,57 +213,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-public void getAdress(double lat, double lon){
-    try {
-        Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
-        List<Address> addresses = geo.getFromLocation(lat, lon, 1);
-        if (addresses.isEmpty()) {
-            //placeName.setText("Waiting for Location");
-        }
-        else {
-            if (addresses.size() > 0) {
-                placename.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
-            }
-        }
-    }
-    catch(Exception e){
-        Toast.makeText(getActivity(), "No Location Name Found", Toast.LENGTH_SHORT).show();
-    }
-}
 
 
-    View.OnClickListener getLocation = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View arg0) {
-            // create class object
-            Log.d("home fragment", " get location");
-            gps = new GPSTracker(getActivity());
-
-            // check if GPS enabled
-            if (gps.canGetLocation()) {
-
-                double latitude = gps.getLatitude();
-                double longitude = gps.getLongitude();
 
 
-                // \n is for new line
-                Toast.makeText(getActivity(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-                getAdress(latitude,longitude);
-
-            } else {
-                // can't get location
-                // GPS or Network is not enabled
-                // Ask user to enable GPS/network in settings
-                gps.showSettingsAlert();
-            }
-
-
-            //vanaf hier van Axel voor verbinding met mysql
-            //ip niet vergeten te veranderen!
-            //XMLParser xml = new XMLParser();
-            //xml.execute(url);
-        }
-    };
 }
 
