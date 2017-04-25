@@ -42,10 +42,11 @@ public class ComponentInformationFragment extends Fragment {
     }
 
     /**
-     * bij opstart van fragment wordt nieuw fragment aangemaakt
-     * dit is een vervanger van de constructor
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
      *
-     * @return Fragment
+     *
+     * @return A new instance of fragment HomeFragment.
      */
     public static ComponentInformationFragment newInstance() {
         ComponentInformationFragment fragment = new ComponentInformationFragment();

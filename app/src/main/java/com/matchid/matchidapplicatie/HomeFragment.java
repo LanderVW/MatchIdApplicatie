@@ -19,12 +19,7 @@ import static android.app.Activity.RESULT_OK;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * author lander
  */
 public class HomeFragment extends Fragment implements View.OnClickListener{
 
@@ -37,20 +32,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Required empty public constructor
+     */
     public HomeFragment() {
-        // Required empty public constructor
+
     }
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * deze methode is een beetje de vervanger van een deftige constructor want een fragment
-     * moet alleen een default constructor hebben
-     *
      *
      * @return A new instance of fragment HomeFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -58,6 +52,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         return fragment;
     }
 
+    /**
+     * /**
+     * bij opstart van fragment
+     * hier wordt alles gedeclareerd dat niets met de views te maken hebben
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +66,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         Log.d("tag", "onCreate: ");
 
     }
-
+    /**
+     * zorgt voor alles wat het uitzicht bepaald
+     * hier worden de parameters geinitialliseerd
+     *de onclicklisteners worden hier aangemaakt dit zijn de methodes die zorgen dat
+     * items, button, .. kunnen worden geselecteerd en dat er een actie wordt
+     * ondernomen
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -140,14 +152,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
         return view;
     }
-    // TODO: Rename method, update argument and hook method into UI event
+
+    /**
+     * methode om te kunnen intrageren met de fragment
+     * @param uri
+     */
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
-
+    /**
+     *called once the fragment is associated with its activity.
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -158,7 +177,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
+    /**
+     *called immediately prior to the fragment no longer being associated with its activity.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -166,7 +187,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
+    /**
+     * dit wordt aangeroepen om een foto te kunnen trekken met de
+     * camera
+     */
     View.OnClickListener getPicture = new View.OnClickListener(){
         public void onClick(View v){
             Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -175,6 +199,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         }
     };
 
+    /**
+     * nadat een foto wordt getrokken wordt deze methode aangeroepen om te bepalen
+     * wat er mee moet gebeuren
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -192,8 +223,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
-
+    /**
+     * required onclick method
+      * @param v
+     */
     @Override
     public void onClick(View v) {
 
@@ -210,7 +243,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
