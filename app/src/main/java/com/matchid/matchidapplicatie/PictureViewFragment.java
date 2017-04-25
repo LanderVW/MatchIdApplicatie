@@ -36,9 +36,6 @@ public class PictureViewFragment extends Fragment {
 
     private static final String TAG = "PictureViewFragment";
 
-
-//  String url = "http://www.1080x1920wallpapers.com/1080x1920-backgrounds/1080x1920-wallpapers-2/1080x1920-HD-wallpapers-samsung-htc-android-smartphone-642srwg4-1080P.jpg";
-    //het pad is gekend uit de db
     String nameUitDbVanResult = "naam ng komen";
     String nameUitDbVanResultPath = "Tensile_Hole_2177N.tif_u";
     String url = "http://"+ ipadress + ":8080/MatchIDEnterpriseApp-war/rest/getImage/imagepath/"+nameUitDbVanResultPath;
@@ -50,24 +47,50 @@ public class PictureViewFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Required empty public constructor
+     */
     public PictureViewFragment() {
-        // Required empty public constructor
     }
 
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     *
+     * @return A new instance of fragment PictureViewFragment.
+     */
     public static PictureViewFragment newInstance() {
         PictureViewFragment fragment = new PictureViewFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
-
+    /**
+     * bij opstart van fragment
+     * hier wordt alles gedeclareerd dat niets met de views te maken hebben
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onPictureViewFragment");
 
     }
-
+    /**
+     * zorgt voor alles wat het uitzicht bepaald
+     * hier worden de parameters geinitialliseerd
+     * de onclicklisteners worden hier aangemaakt dit zijn de methodes die zorgen dat
+     * items, button, .. kunnen worden geselecteerd en dat er een actie wordt
+     * ondernomen
+     *
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,15 +109,18 @@ public class PictureViewFragment extends Fragment {
         return view;
     }
 
+    /**
+     * laadt een foto in
+     * @param url
+     */
     private void loadImageFromURL(String url) {
-        //ImageView ivFoto = (ImageView) findViewById(R.id.chart_image);
         new XMLTask().execute(url);
     }
 
-
-
-
-    // TODO: Rename method, update argument and hook method into UI event
+    /**
+     * methode om te kunnen intrageren met de fragment
+     * @param uri
+     */
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
