@@ -217,12 +217,7 @@ public class ProjectsFragment extends Fragment {
      * @return String
      */
     private static String getValue(String tag, Element element) {
-        Node nodetest= element.getElementsByTagName(tag).item(0);
-        if(nodetest == null){
-            return "dit invoerveld is leeg";
-        }
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-
         Node node = nodeList.item(0);
         return node.getNodeValue();
 

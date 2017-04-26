@@ -170,9 +170,7 @@ public class ProjectInformationFragment extends Fragment {
                 android.R.layout.simple_list_item_1, naamList);
         lv_components.setAdapter(adapter);
 
-        Log.d("pif", "start!");
         new XMLTask().execute(url);
-        Log.d("pif", "na start");
 
         lv_components.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -228,7 +226,6 @@ public class ProjectInformationFragment extends Fragment {
                 Log.d("pif", "current element: " + node.getNodeName());
 
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    //ier moeten we nog zorgen dat het ook leeg kan zijn
                     Element eElement = (Element) node;
                     naamList.add(getValue("componentNaam", eElement));
                     componentDescriptionList.add(getValue("description",eElement));
@@ -250,10 +247,7 @@ public class ProjectInformationFragment extends Fragment {
      * @return String
      */
     private static String getValue(String tag, Element element) {
-        Node nodetest= element.getElementsByTagName(tag).item(0);
-        if(nodetest == null){
-            return "dit invoerveld is leeg";
-        }
+
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
 
         Node node = nodeList.item(0);
