@@ -47,7 +47,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
 
     static int id =0;
 
-    static final String ipadress = "10.108.16.142";
+    static final String ipadress = "192.168.0.249";
     SessionManager session;
 
 
