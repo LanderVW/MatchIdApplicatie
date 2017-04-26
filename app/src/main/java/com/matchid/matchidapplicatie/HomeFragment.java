@@ -3,8 +3,6 @@ package com.matchid.matchidapplicatie;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -47,9 +45,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+<<<<<<< HEAD
      *
      * deze methode is een beetje de vervanger van een deftige constructor want een fragment
      * moet alleen een default constructor hebben
+=======
+>>>>>>> 90ccf5ae2638fb82e8673232e0114d4dea3c04de
      *
      *
      * @return A new instance of fragment HomeFragment.
@@ -234,7 +235,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     /**
      * required onclick method
-     * @param v
+      * @param v
      */
     @Override
     public void onClick(View v) {
@@ -250,6 +251,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
+
 
 
 }

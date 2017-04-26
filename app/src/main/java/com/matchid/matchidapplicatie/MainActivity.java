@@ -18,9 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.matchid.matchidapplicatie.entities.SessionManager;
@@ -32,7 +29,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
         ProjectsFragment.OnFragmentInteractionListener {
-
 
     public static Context contextOfApplication;
     private static final String TAG = "MainActivity";
@@ -102,14 +98,15 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * bepaald wat er gebeurd als op de terugknop wordt gedrukt
+     * gaat naar laatste fragement dat is bezocht
      */
     @Override
     public void onBackPressed() {
+
         Log.d("tag" , "on back pressed");
         int count = getFragmentManager().getBackStackEntryCount();
         if (count == 0) {
             super.onBackPressed();
-            //additional code
         } else {
             getFragmentManager().popBackStack();
         }
@@ -135,6 +132,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         int id =item.getItemId();
         Fragment fragment = null;
         Class fragmentClass = null;

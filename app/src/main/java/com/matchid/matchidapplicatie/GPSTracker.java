@@ -42,13 +42,24 @@ public class GPSTracker extends Service implements LocationListener{
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
+    /**
+     * constructor
+     * @param context
+     */
     public GPSTracker(Context context) {
         this.mContext = context;
         getLocation();
     }
 
 
-
+    /**
+     * getter voor de locatie
+     * controleer de gps status en netwerk status
+     * als ze niet actief zijn wordt gevraagd om die te activeren
+     *
+     *
+     * @return Location
+     */
     public Location getLocation() {
         try {
             locationManager = (LocationManager) mContext
@@ -185,18 +196,36 @@ public class GPSTracker extends Service implements LocationListener{
         alertDialog.show();
     }
 
+    /**
+     * wordt aangeroepen als locatie zou gewijzigd zijn
+     * @param location
+     */
     @Override
     public void onLocationChanged(Location location) {
     }
 
+    /**
+     * wordt aangeroepen als de provider is geblokkeerd
+     * @param provider
+     */
     @Override
     public void onProviderDisabled(String provider) {
     }
 
+    /**
+     * wordt aangeroepen als de provider wordt toegelaten
+     * @param provider
+     */
     @Override
     public void onProviderEnabled(String provider) {
     }
 
+    /**
+     * wordt aangeroepen als de status veranderd
+     * @param provider
+     * @param status
+     * @param extras
+     */
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
