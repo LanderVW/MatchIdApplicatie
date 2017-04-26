@@ -254,14 +254,14 @@ public class AnalyseFragment extends Fragment {
                 if(getal == 1){
                     fileName = fileNameSegments[fileNameSegments.length - 1];
                     params.put("undeformed" , 1);
+                    params.put("filename", fileName);
                 }else{
                     fileName2 = fileNameSegments[fileNameSegments.length - 1];
                     params.put("undeformed" , 0);
+                    params.put("filename", fileName2);
                 }
 
                 // Put file name in Async Http Post Param which will used in Java web app
-                params.put("filename", fileName);
-                params.put("componentid" , componentId);
 
             } else {
                 Toast.makeText(getActivity(), "You haven't picked Image",
@@ -386,8 +386,10 @@ public class AnalyseFragment extends Fragment {
 
     public void startAnalyse(int sub, int set) {
             Log.d("tag", etSubset.getText().toString() + "  " + etStepsize.getText().toString());
-            fileName = "Tensile_Hole_Unloaded.tif";
-            fileName2 = "Tensile_Hole_2177N.tif";
+//            fileName = "Tensile_Hole_Unloaded.tif";
+//            fileName2 = "Tensile_Hole_2177N.tif";
+            Log.d("tag" , fileName);
+            Log.d("tag" , fileName2);
             String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/"+  fileName + "/pic2/" + fileName2;
                     //+ "/inputfile/" + etInputfile.getText().toString();
             new XMLTask().execute(url);
