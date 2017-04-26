@@ -155,16 +155,6 @@ public class AnalyseFragment extends Fragment {
         });
 
 
-
-
-        btn_select_picture1 = (Button) view.findViewById(R.id.PicPicture1);
-        btn_select_picture1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                uploadImage();
-            }
-        });
-
         btn_upload_picture2 = (Button) view.findViewById(R.id.uploadPicture2);
         btn_upload_picture2.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -51,7 +51,9 @@ public class ProjectInformationFragment extends Fragment {
     ProgressDialog prgDialog;
 
     List<String> naamList, componentDescriptionList;
+    List<Integer> componentIdList;
     String projectNaam, projectID = "";
+    Integer componentID;
     ListView lv_components;
     TextView tv_description, tv_location, tv_numberAnalysis;
     android.support.v7.widget.AppCompatCheckBox cb_active;
@@ -166,6 +168,8 @@ public class ProjectInformationFragment extends Fragment {
         url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/components/"+projectID;
         naamList = new ArrayList<>();
         componentDescriptionList = new ArrayList<>();
+        componentIdList = new ArrayList<>();
+        componentID = -1;
         lv_components = (ListView) view.findViewById(R.id.lv_components);
         adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, naamList);
@@ -193,7 +197,9 @@ public class ProjectInformationFragment extends Fragment {
                 }
                 Bundle bundle = new Bundle();
                 bundle.putString("title",projectNaam);
+                bundle.putString("projectID", projectID);
                 bundle.putString("componentNaam",naamList.get(position));
+                bundle.putInt("componentID", componentIdList.get(position));
                 bundle.putString("description", componentDescriptionList.get(position));
                 fragment.setArguments(bundle);
 
@@ -229,6 +235,7 @@ public class ProjectInformationFragment extends Fragment {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) node;
                     naamList.add(getValue("componentNaam", eElement));
+                    componentIdList.add(Integer.parseInt(getValue("componentID",eElement)));
                     componentDescriptionList.add(getValue("description",eElement));
                 }
             }

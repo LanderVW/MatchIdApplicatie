@@ -6,8 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +13,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author lander
@@ -27,6 +29,12 @@ public class ComponentInformationFragment extends Fragment {
     TextView tv_component_description,tv_projectNaam;
     Button btn_ganaaranalyse;
     Button btn_toonresultaten;
+
+    List<Integer> componentIDList, projectIDList;
+    List<String> componentNaamList, descriptionList;
+    
+    String componentNaam, componentDescription, projectNaam;
+    Integer componentID, projectID;
 
 
     static final String ipadress = LoginActivity.ipadress;
@@ -70,7 +78,8 @@ public class ComponentInformationFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            getActivity().setTitle(bundle.getString("componentNaam"));
+            componentNaam = bundle.getString("componentNaam");
+            getActivity().setTitle(componentNaam);
         }else getActivity().setTitle("ProjectInfo");
         setHasOptionsMenu(true);
         Log.d("cif", "onCreate");
@@ -101,6 +110,30 @@ public class ComponentInformationFragment extends Fragment {
         btn_ganaaranalyse = (Button) view.findViewById(R.id.btn_ganaaranalyse);
         btn_toonresultaten = (Button) view.findViewById(R.id.btn_zieResultaten);
 
+        componentIDList = new ArrayList<>();
+        projectIDList = new ArrayList<>();
+        componentNaamList = new ArrayList<>();
+        descriptionList = new ArrayList<>();
+
+        projectID = -1;
+        componentID = -1;
+        componentDescription ="";
+        projectNaam = "";
+
+        //haal info op van de meegekregen bundle
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            projectNaam = bundle.getString("title");
+            tv_projectNaam.setText(bundle.getString("title"));
+            componentDescription = bundle.getString("description");
+            componentID = bundle.getInt("componentID");
+            projectID = Integer.parseInt(bundle.getString("projectID"));
+            Toast.makeText(getActivity(), "componentID= "+componentID, Toast.LENGTH_SHORT).show();
+        }
+
+        tv_component_description.setText(componentDescription);
+        
+        
         btn_ganaaranalyse.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -133,34 +166,30 @@ public class ComponentInformationFragment extends Fragment {
                 try{
                     fragment = (Fragment) fragmentClass.newInstance();
                 } catch (java.lang.InstantiationException e) {
-                    Log.d("HomeFragment", "instantiationException");
+                    Log.d("cif", "instantiationException");
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
-                    Log.d("HomeFragment", "illegalAccesException");
+                    Log.d("cif", "illegalAccesException");
                     e.printStackTrace();
                 } catch(Exception e){
-                    Log.d("HomeFragment", "onverwachte fout");
+                    Log.d("cif", "onverwachte fout");
                     e.printStackTrace();
                 }
+                //geef info mee voor pictureviewfragment
+                Bundle bundle = new Bundle();
+                bundle.putString("componentNaam",componentNaam);
+                bundle.putString("title", projectNaam);
+                bundle.putInt("projectID",projectID);
+                bundle.putInt("componentID", componentID);
+                bundle.putString("description", componentDescription);
 
+                fragment.setArguments(bundle);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.flContent,fragment).addToBackStack("tag").commit();
 
             }
         });
-                String description ="";
-
-
-
-
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            tv_projectNaam.setText(bundle.getString("title"));
-            description = bundle.getString("description");
-
-        }
-
-        tv_component_description.setText(description);
+        
 
         return view;
     }
@@ -170,7 +199,6 @@ public class ComponentInformationFragment extends Fragment {
      */
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
         // Dismiss the progress bar when application is closed
         if (prgDialog != null) {
