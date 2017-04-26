@@ -4,7 +4,6 @@ package com.matchid.matchidapplicatie;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -27,20 +26,31 @@ import android.widget.Toast;
 import com.matchid.matchidapplicatie.entities.SessionManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
+/**
+ * @author lander
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
-            ProjectsFragment.OnFragmentInteractionListener {
+        ProjectsFragment.OnFragmentInteractionListener {
 
 
     public static Context contextOfApplication;
     private static final String TAG = "MainActivity";
+
+    /**
+     * get contextOfApplication
+     * @return context
+     */
     public ContentResolver getContextOfApplication(){
         return getContentResolver();
     }
 
 
-
-
+    /**
+     * wordt aangeroepen bij de aanmaak van de activity
+     * alles declaraties gebeuren hier
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +80,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack("tag").commit();
         }
 
         /*
@@ -90,48 +100,41 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    /*de onclicklistener voor de location
-    * er wordt momenteel gewoon een toast getoond op het scherm
+    /**
+     * bepaald wat er gebeurd als op de terugknop wordt gedrukt
      */
-
-    View.OnClickListener getLocation = new View.OnClickListener(){
-        @Override
-        public void onClick(View arg0) {
-            Log.d("MainActivity" , "in de imageview ding");
-        }
-    };
-
-
     @Override
     public void onBackPressed() {
-        //dit is als op de ingebouwde terugknop wordt gedrukt
-        //als je er in zit, terug naar hoofdmenu
-        //indien niet uit de app
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            finish();
+        Log.d("tag" , "on back pressed");
+        int count = getFragmentManager().getBackStackEntryCount();
+        if (count == 0) {
             super.onBackPressed();
+            //additional code
+        } else {
+            getFragmentManager().popBackStack();
         }
+
     }
 
+    /**
+     * wordt aangeroepen als het options menu wordt aangemaakt
+     * @param menu
+     * @return boolean
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //bij opstarten van mainActivity
-        //Toast.makeText(this, "create options", Toast.LENGTH_SHORT).show();
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
+    /**
+     *  Handle action bar item clicks here. The action bar will
+     * automatically handle clicks
+     * @param item
+     * @return boolean
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         int id =item.getItemId();
         Fragment fragment = null;
         Class fragmentClass = null;
@@ -151,7 +154,7 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.flContent,fragment).addToBackStack("tag").commit();
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
@@ -175,6 +178,11 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
+    /**
+     * als een item wordt aangeroepen in de navigation drawer
+     * @param item
+     * @return boolean
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -204,7 +212,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.flContent,fragment).addToBackStack("tag").commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -212,6 +220,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * This interface must be implemented by activities that contain this fragment
+     * to allow an interaction in this fragment to be communicated to the activity
+     * and potentially other fragments contained in that activity.
+     * @param uri
+     */
     @Override
     public void onFragmentInteraction(Uri uri) {
 

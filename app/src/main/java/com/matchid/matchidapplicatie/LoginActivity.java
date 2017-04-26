@@ -45,7 +45,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     TextView matchid_logo, error_message;
     private ProgressBar spinner;
     public static final String KEY_PRIVATE = "USERNAME";
-    static final String ipadress = "10.108.16.142";
+    static final String ipadress = "192.168.0.249";
     String name;
     static String userId;
     Boolean logout;
@@ -56,6 +56,12 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     SessionManager session;
 
 
+    /**
+     * bij opstart van fragment
+     * hier wordt alles gedeclareerd dat niets met de views te maken hebben
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,19 +124,34 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         Node node = nodeList.item(0);
         return node.getNodeValue();
     }
-
+    /**
+     * get userId
+     * @return userId
+     */
     public String getUserId() {
         return userId;
     }
 
+    /**
+     * set userId
+     * @param userId
+     */
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+    /**
+     * defines what to do when the back button is pressed
+     */
     @Override
     public void onBackPressed() {
         showDialog(this.findViewById(R.id.flContent));
     }
 
+    /**
+     * shows a dialog view
+     * @param v
+     */
     public void showDialog(View v){
         FragmentManager manager = getFragmentManager();
         QuitDialog dialog = new QuitDialog();
@@ -139,12 +160,24 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
 
     }
 
+    /**
+     * get username die is opgeslagen in de sharedpreferences
+     * @return
+     */
     public String getUsername(){
         SharedPreferences sp = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
-
         return sp.getString("name", "fout");
     }
 
+    /**
+     * methode word aangeroepen als login knop wordt gedrukt
+     * en behandeld dan de login
+     *
+     * als login slaagt dan wordt naar de HomeFragment gegaan
+     * anders wordt een foutbericht getoond
+     *
+     * @throws UnknownHostException
+     */
     public void login() throws UnknownHostException{
         RequestQueue mRequestQueue;
         // Instantiate the cache
@@ -174,9 +207,6 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
                             Log.d(TAG , "het userid is: " + userId);
 //                            Log.d(TAG , response);
 //                            Log.d(TAG, "login succesvol");
-                        //if(!response.equalsIgnoreCase("nowp")){
-                          //id = Integer.parseInt(response);
-                            Log.d("LoginActivity" , response);
 
                             Intent goHome = new Intent(getApplicationContext(), MainActivity.class);
                             spinner.setVisibility(View.GONE);
@@ -213,7 +243,11 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     }
 
 
-
+    /**
+     * required with quitdialog
+     *
+     * @param message
+     */
     @Override
     public void onDialogMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -221,4 +255,3 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
 
 
 }
-

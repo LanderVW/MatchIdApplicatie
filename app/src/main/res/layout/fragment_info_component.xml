@@ -38,4 +38,24 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="312dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_ganaaranalyse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Do analysis" />
+
+        <Button
+            android:id="@+id/btn_zieResultaten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Show all results" />
+    </LinearLayout>
+
 </LinearLayout>

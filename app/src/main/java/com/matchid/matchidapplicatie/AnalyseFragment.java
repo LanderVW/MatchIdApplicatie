@@ -11,21 +11,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -40,13 +34,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
-
-import static android.R.attr.fragment;
-import static android.R.attr.id;
-import static com.matchid.matchidapplicatie.R.menu.main;
 
 /**
  * Created by vulst on 19/04/2017.
@@ -62,7 +51,7 @@ public class AnalyseFragment extends Fragment {
     private static final int CAMERA_REQUEST = 123;
     private static String TAG = "AnalyseFragment";
     private static int RESULT_LOAD_IMG = 1;
-    String componentId = "4";
+    String componentId = "4"; //moet nog verander wroden!
 
     static final String ipadress = LoginActivity.ipadress;
     static int id = LoginActivity.id;
@@ -138,16 +127,6 @@ public class AnalyseFragment extends Fragment {
             }
         });
 
-
-
-
-        btn_select_picture1 = (Button) view.findViewById(R.id.PicPicture1);
-        btn_select_picture1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                uploadImage();
-            }
-        });
 
         btn_upload_picture2 = (Button) view.findViewById(R.id.uploadPicture2);
         btn_upload_picture2.setOnClickListener(new View.OnClickListener() {
@@ -263,8 +242,10 @@ public class AnalyseFragment extends Fragment {
                 String fileNameSegments[] = imgPath.split("/");
                 if(getal == 1){
                     fileName = fileNameSegments[fileNameSegments.length - 1];
+                    params.put("undeformed" , 1);
                 }else{
                     fileName2 = fileNameSegments[fileNameSegments.length - 1];
+                    params.put("undeformed" , 0);
                 }
 
                 // Put file name in Async Http Post Param which will used in Java web app
@@ -396,8 +377,8 @@ public class AnalyseFragment extends Fragment {
             Log.d("tag", etSubset.getText().toString() + "  " + etStepsize.getText().toString());
             fileName = "Tensile_Hole_Unloaded.tif";
             fileName2 = "Tensile_Hole_2177N.tif";
-            String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/"+  fileName + "/pic2/" + fileName2
-                    + "/inputfile/" + etInputfile.getText().toString();
+            String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/"+  fileName + "/pic2/" + fileName2;
+                    //+ "/inputfile/" + etInputfile.getText().toString();
             new XMLTask().execute(url);
     }
 

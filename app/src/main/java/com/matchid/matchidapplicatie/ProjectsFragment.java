@@ -120,7 +120,12 @@ public class ProjectsFragment extends Fragment {
 
         Log.d("ProjectFragment", "start!");
         url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/id/" + LoginActivity.userId;
-        Log.d(TAG , url);
+
+        adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, strArr);
+        lv.setAdapter(adapter);
+
+        Log.d("ProjectFragment", "start!");
         new XMLTask().execute(url);
         Log.d("ProjectFragment", "na start");
 
@@ -129,8 +134,7 @@ public class ProjectsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getActivity(), "naar nieuwe activity", Toast.LENGTH_SHORT).show();
-                /*Intent test = new Intent(getActivity(),LoginActivity.class);
-                startActivity(test);*/
+
                 Fragment fragment = null;
 
                 Class fragmentClass = ProjectInformationFragment.class;
@@ -157,7 +161,7 @@ public class ProjectsFragment extends Fragment {
                 fragment.setArguments(bundle);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack("tag").commit();
             }
 
         });
@@ -194,7 +198,6 @@ public class ProjectsFragment extends Fragment {
 
                     aAnalysisList.add(getValue("numberAnalysis",eElement));
 
-                    //Log.d(TAG, "title : " + eElement.getElementsByTagName("title").item(0).getTextContent());
                 }
             }
 
@@ -220,31 +223,7 @@ public class ProjectsFragment extends Fragment {
         }else return "leeg";
 
     }
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Add your menu entries here
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.logout:
-                Log.d("HomeFragment", "Logout");
-                Intent logout = new Intent(getActivity(), LoginActivity.class);
-                startActivity(logout);
-                return true;
-            case R.id.action_user_info:
-                Log.d("HomeFragment", "Action user info");
-                return true;
-
-            default:
-                break;
-        }
-
-        return false;
-    }
 
 
     /**

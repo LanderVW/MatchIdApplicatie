@@ -25,26 +25,24 @@ import static android.app.Activity.RESULT_OK;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * author lander
  */
 public class HomeFragment extends Fragment implements View.OnClickListener{
 
 
     View view;
     Button btn_add_picture, btn_analyse, btn_logout, btn_projects;
-    GPSTracker gps;
-    TextView placename;
+
+    TextView tv_placename;
     private static final int CAMERA_REQUEST = 123;
 
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Required empty public constructor
+     */
     public HomeFragment() {
-        // Required empty public constructor
+
     }
     /**
      * Use this factory method to create a new instance of
@@ -56,7 +54,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
      *
      * @return A new instance of fragment HomeFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -64,6 +61,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         return fragment;
     }
 
+    /**
+     * /**
+     * bij opstart van fragment
+     * hier wordt alles gedeclareerd dat niets met de views te maken hebben
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +75,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         Log.d("tag", "onCreate: ");
 
     }
-
+    /**
+     * zorgt voor alles wat het uitzicht bepaald
+     * hier worden de parameters geinitialliseerd
+     *de onclicklisteners worden hier aangemaakt dit zijn de methodes die zorgen dat
+     * items, button, .. kunnen worden geselecteerd en dat er een actie wordt
+     * ondernomen
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,7 +95,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        placename = (TextView) view.findViewById(R.id.placename);
+        tv_placename = (TextView) view.findViewById(R.id.placename);
         /*
         init de knoppen in de home
          */
@@ -108,10 +123,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 }
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).addToBackStack("tag").commit();
             }
         });
-        btn_add_picture.setOnClickListener(getLocation/*getPicture*/);
+        btn_add_picture.setOnClickListener(getPicture);
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,7 +153,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 }
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).addToBackStack("tag").commit();
 
             }
         });
@@ -146,14 +161,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
         return view;
     }
-    // TODO: Rename method, update argument and hook method into UI event
+
+    /**
+     * methode om te kunnen intrageren met de fragment
+     * @param uri
+     */
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
-
+    /**
+     *called once the fragment is associated with its activity.
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -164,7 +186,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
+    /**
+     *called immediately prior to the fragment no longer being associated with its activity.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -172,7 +196,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
+    /**
+     * dit wordt aangeroepen om een foto te kunnen trekken met de
+     * camera
+     */
     View.OnClickListener getPicture = new View.OnClickListener(){
         public void onClick(View v){
             Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -181,6 +208,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         }
     };
 
+    /**
+     * nadat een foto wordt getrokken wordt deze methode aangeroepen om te bepalen
+     * wat er mee moet gebeuren
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -198,8 +232,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
-
+    /**
+     * required onclick method
+     * @param v
+     */
     @Override
     public void onClick(View v) {
 
@@ -210,66 +246,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-public void getAdress(double lat, double lon){
-    try {
-        Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
-        List<Address> addresses = geo.getFromLocation(lat, lon, 1);
-        if (addresses.isEmpty()) {
-            //placeName.setText("Waiting for Location");
-        }
-        else {
-            if (addresses.size() > 0) {
-                placename.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
-            }
-        }
-    }
-    catch(Exception e){
-        Toast.makeText(getActivity(), "No Location Name Found", Toast.LENGTH_SHORT).show();
-    }
-}
 
 
-    View.OnClickListener getLocation = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View arg0) {
-            // create class object
-            Log.d("home fragment", " get location");
-            gps = new GPSTracker(getActivity());
-
-            // check if GPS enabled
-            if (gps.canGetLocation()) {
-
-                double latitude = gps.getLatitude();
-                double longitude = gps.getLongitude();
-
-
-                // \n is for new line
-                Toast.makeText(getActivity(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-                getAdress(latitude,longitude);
-
-            } else {
-                // can't get location
-                // GPS or Network is not enabled
-                // Ask user to enable GPS/network in settings
-                gps.showSettingsAlert();
-            }
-
-
-            //vanaf hier van Axel voor verbinding met mysql
-            //ip niet vergeten te veranderen!
-            //XMLParser xml = new XMLParser();
-            //xml.execute(url);
-        }
-    };
 }
 
