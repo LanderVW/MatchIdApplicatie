@@ -134,7 +134,6 @@ public class ProjectsFragment extends Fragment {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "naar nieuwe activity", Toast.LENGTH_SHORT).show();
                 Fragment fragment = null;
                 Class fragmentClass = ProjectInformationFragment.class;
                 try {

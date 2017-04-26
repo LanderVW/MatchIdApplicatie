@@ -131,7 +131,7 @@ public class ComponentInformationFragment extends Fragment {
             componentDescription = bundle.getString("description");
             componentID = bundle.getInt("componentID");
             projectID = Integer.parseInt(bundle.getString("projectID"));
-            Toast.makeText(getActivity(), "componentID= "+componentID, Toast.LENGTH_SHORT).show();
+
         }
 
         tv_component_description.setText(componentDescription);

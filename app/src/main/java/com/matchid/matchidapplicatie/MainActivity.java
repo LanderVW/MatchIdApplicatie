@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity
                 .cacheOnDisk(true)
                 .build();
 
-        Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

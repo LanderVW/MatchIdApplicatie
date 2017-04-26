@@ -120,7 +120,7 @@ public class UserFragment extends Fragment {
         tvTown = (TextView) view.findViewById(R.id.tvTown);
         //haal current user op
         //de id staat hier boven maar om te testen gebruik ik gwn 3
-        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/entities.users/id/3";
+        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/entities.users/id/" + LoginActivity.userId;
         Log.d("tag", "start van user ophalen!");
         // haal het op, er is nu nog niks mee gebeurd!
         new XMLTask().execute(url);

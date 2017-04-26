@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:textSize="24dp"
             android:layout_weight="1"
-            android:text="hallo" />
+            android:text="" />
     </LinearLayout>
 
     <LinearLayout
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:textSize="24dp"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:text="" />
     </LinearLayout>
 
     <LinearLayout
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:textSize="24dp"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:text="" />
     </LinearLayout>
 
     <LinearLayout
@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:textSize="24dp"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:text="" />
     </LinearLayout>
 
     <LinearLayout
@@ -122,7 +122,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="24dp"
-            android:text="TextView" />
+            android:text="" />
 
         <TextView
             android:id="@+id/tvHousenumber"
@@ -130,7 +130,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="24dp"
-            android:text="TextView" />
+            android:text="" />
     </LinearLayout>
 
     <LinearLayout
@@ -144,7 +144,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="24dp"
-            android:text="TextView" />
+            android:text="" />
 
         <TextView
             android:id="@+id/tvTown"
@@ -166,7 +166,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="24dp"
-            android:text="TextView" />
+            android:text="" />
 
     </LinearLayout>
 

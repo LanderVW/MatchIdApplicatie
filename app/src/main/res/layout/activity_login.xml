@@ -91,14 +91,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
-    <Button
-        android:id="@+id/skip_login"
-        android:text="skip login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/progressLogin"
-        android:layout_alignEnd="@+id/progressLogin"
-        android:layout_marginBottom="65dp" />
+
 
 </RelativeLayout>

@@ -113,7 +113,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="39dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_weight="0.79">
 
         <TextView
             android:id="@+id/tvStepsize"
@@ -131,29 +132,6 @@
             android:inputType="textPersonName"
             android:hint="Stepsize"
             />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:orientation="horizontal"
-        android:layout_weight="0.57">
-
-        <TextView
-            android:id="@+id/inputFile"
-            android:layout_width="211dp"
-            android:textSize="20dp"
-            android:layout_height="wrap_content"
-            android:text="Inputfile:" />
-
-        <EditText
-            android:id="@+id/etInputfile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="no spaces"
-            android:inputType="textPersonName" />
     </LinearLayout>
 
     <Button

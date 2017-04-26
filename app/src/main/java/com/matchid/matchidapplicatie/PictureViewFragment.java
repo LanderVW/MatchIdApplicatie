@@ -57,7 +57,7 @@ public class PictureViewFragment extends Fragment {
 
     String nameUitDbVanResult = "naam ng komen";
     String nameUitDbVanResultPath = "Tensile_Hole_2177N.tif_u";
-    String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/getImage/imagepath/" + nameUitDbVanResultPath;
+    String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/getImage/imagepath/" ;
 
     //die url moet je nog aanpassen om de query op te roepen die alle results teruggeeft
     String urlGetResults = "";
@@ -114,7 +114,7 @@ public class PictureViewFragment extends Fragment {
         if (bundle != null) {
             componentNaam = bundle.getString("componentNaam");
             projectNaam = bundle.getString("title");
-            getActivity().setTitle(componentNaam + ": resultatenlijst");
+            getActivity().setTitle(componentNaam + ": results");
         } else getActivity().setTitle("ProjectInfo");
         Log.d(TAG, "onPictureViewFragment");
 
@@ -142,10 +142,8 @@ public class PictureViewFragment extends Fragment {
         view = inflater.inflate(R.layout.picture, container, false);
         tvName = (TextView) view.findViewById(R.id.tvName);
         ivFoto = (ImageView) view.findViewById(R.id.fotoweertegeven);
-        prgDialog.setMessage("Downloading image");
-        prgDialog.show();
 
-
+        tvName.setText(componentNaam);
         componentDescription = "";
         resultnaam = "";
         projectID = componentID = -1;
@@ -164,10 +162,10 @@ public class PictureViewFragment extends Fragment {
         adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, resultnaamList);
         lv_results.setAdapter(adapter);
-        loadImageFromURL(url);
+        //loadImageFromURL(url);
         //get data from url
         //deze xmltask laadt de namen van de result in in de lijst 'resultnaamList'
-        urlGetResults = "http://"+ ipadress + ":8080/MatchIDEnterpriseApp-war/rest/entities.image/" + componentID;
+        urlGetResults = "http://"+ ipadress + ":8080/MatchIDEnterpriseApp-war/rest/result/" + componentID;
         new XMLTask2().execute(urlGetResults);
         Log.d("picture","test");
 
@@ -186,6 +184,11 @@ public class PictureViewFragment extends Fragment {
                 //(laat et mij weten)
                 //je mag dit commentaar wegdoen indien niet meer nodig
                 //
+                url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/getImage/imagepath/" + resultnaamList.get(position) ;
+                loadImageFromURL(url);
+                prgDialog.setMessage("Downloading image");
+                prgDialog.show();
+
 
 
                 lv_results.setVisibility(view.GONE);
@@ -376,9 +379,10 @@ public class PictureViewFragment extends Fragment {
             Log.d(TAG, line);
             //line is een string
             if (line.equals("0")) {
-                tvName.setText("The image is not found");
+                tvName.setText("This result was not a bitmap export");
                 prgDialog.hide();
             } else {
+                tvName.setText(componentNaam);
                 byte[] imageByteArray = Base64.decode(line, Base64.DEFAULT);
                 try {
                     Bitmap bmp = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
@@ -480,7 +484,7 @@ public class PictureViewFragment extends Fragment {
 
                 //xml doc naar iets dat we kunnen weergeven op de app
                 doc.getDocumentElement().normalize();
-                NodeList nList = doc.getElementsByTagName("image");
+                NodeList nList = doc.getElementsByTagName("results");
 
                 updateListview(nList);
             }

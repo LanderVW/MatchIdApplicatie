@@ -71,12 +71,5 @@
         android:layout_alignParentRight="true"
         android:layout_alignLeft="@id/centerShim"
         android:layout_below="@id/btn_camera"/>
-    <TextView
-        android:id="@+id/placename"
-        android:text="location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:paddingBottom="20dp"/>
 
 </RelativeLayout>

@@ -43,9 +43,9 @@ import cz.msebera.android.httpclient.Header;
 public class AnalyseFragment extends Fragment {
     //voor upload
     ProgressDialog prgDialog;
-    String encodedString;
+    String encodedString1 , encodedString2;
     RequestParams params = new RequestParams();
-    String imgPath, fileName , fileName2;
+    String imgPath1, imgPath2, fileName, fileName2;
     Bitmap bitmap;
     private static final int CAMERA_REQUEST = 123;
     private static String TAG = "AnalyseFragment";
@@ -66,7 +66,6 @@ public class AnalyseFragment extends Fragment {
 
     private EditText etSubset;
     private EditText etStepsize;
-    private EditText etInputfile;
 
     private View view;
 
@@ -76,13 +75,12 @@ public class AnalyseFragment extends Fragment {
     /**
      * Required empty public constructor
      */
-    public AnalyseFragment(){
+    public AnalyseFragment() {
     }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      *
      * @return A new instance of fragment AnalyseFragment.
      */
@@ -114,7 +112,6 @@ public class AnalyseFragment extends Fragment {
      * de onclicklisteners worden hier aangemaakt dit zijn de methodes die zorgen dat
      * items, button, .. kunnen worden geselecteerd en dat er een actie wordt
      * ondernomen
-     *
      *
      * @param inflater
      * @param container
@@ -168,13 +165,13 @@ public class AnalyseFragment extends Fragment {
         btn_analyse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("tag" , "text: " + etStepsize.getText().toString());
-                if(etStepsize.getText().toString().equals("") | etStepsize.getText().toString().equals("") | etInputfile.getText().toString().equals("")){
+                Log.d("tag", "text: " + etStepsize.getText().toString());
+                if (etStepsize.getText().toString().equals("") | etStepsize.getText().toString().equals(""))  {
                     Toast.makeText(
                             getActivity(),
-                            "Please select subset and stepsize and inputfile name!", Toast.LENGTH_LONG)
+                            "Please select subset and stepsize!", Toast.LENGTH_LONG)
                             .show();
-                }else {
+                } else {
                     startAnalyse(Integer.parseInt(etSubset.getText().toString()), Integer.parseInt(etStepsize.getText().toString()));
                 }
 
@@ -183,7 +180,6 @@ public class AnalyseFragment extends Fragment {
 
         etStepsize = (EditText) view.findViewById(R.id.etStepsize);
         etSubset = (EditText) view.findViewById(R.id.etSubset);
-        etInputfile = (EditText) view.findViewById(R.id.etInputfile);
 
         prgDialog = new ProgressDialog(getActivity());
         // Set Cancelable as False
@@ -194,7 +190,7 @@ public class AnalyseFragment extends Fragment {
     /**
      * de camera wordt opgestart
      */
-    public void takePicture(){
+    public void takePicture() {
         Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(camera, CAMERA_REQUEST);
 
@@ -215,7 +211,7 @@ public class AnalyseFragment extends Fragment {
     }
 
     /**
-     *wordt aangeroepen  na het selecteren van een foto
+     * wordt aangeroepen  na het selecteren van een foto
      *
      * @param requestCode
      * @param resultCode
@@ -233,38 +229,44 @@ public class AnalyseFragment extends Fragment {
                     && null != data) {
                 // Get the Image from data
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                Log.d("tag" ,"gwn test");
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
                 // Get the cursor troubles for getting application context
                 Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(selectedImage,
                         filePathColumn, null, null, null);
 
                 // Move to first row
                 cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                imgPath = cursor.getString(columnIndex);
-                cursor.close();
-                ImageView imgView;
                 if (getal == 1) {
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    imgPath1 = cursor.getString(columnIndex);
+                    cursor.close();
+                    ImageView imgView;
                     imgView = (ImageView) view.findViewById(R.id.ivPicure1);
-                } else {
-                    imgView = (ImageView) view.findViewById(R.id.ivPicure2);
-                }
-                // Set the Image in ImageView
-                imgView.setImageBitmap(BitmapFactory
-                        .decodeFile(imgPath));
-                // Get the Image's file name
-                String fileNameSegments[] = imgPath.split("/");
-                if(getal == 1){
+                    // Set the Image in ImageView
+                    imgView.setImageBitmap(BitmapFactory
+                            .decodeFile(imgPath1));
+                    // Get the Image's file name
+                    String fileNameSegments[] = imgPath1.split("/");
                     fileName = fileNameSegments[fileNameSegments.length - 1];
-                    params.put("undeformed" , 1);
+                    params.put("undeformed", 1);
                     params.put("filename", fileName);
-                }else{
+                } else {
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    imgPath2 = cursor.getString(columnIndex);
+                    cursor.close();
+                    ImageView imgView;
+                    imgView = (ImageView) view.findViewById(R.id.ivPicure2);
+                    // Set the Image in ImageView
+                    imgView.setImageBitmap(BitmapFactory
+                            .decodeFile(imgPath2));
+                    // Get the Image's file name
+                    String fileNameSegments[] = imgPath2.split("/");
                     fileName2 = fileNameSegments[fileNameSegments.length - 1];
-                    params.put("undeformed" , 0);
+                    params.put("undeformed", 0);
                     params.put("filename", fileName2);
+
                 }
+
 
                 // Put file name in Async Http Post Param which will used in Java web app
 
@@ -287,18 +289,34 @@ public class AnalyseFragment extends Fragment {
         // When Image is selected from Gallery
 
         Log.d(TAG, "in upload Image");
-        if (imgPath != null && !imgPath.isEmpty()) {
-            prgDialog.setMessage("Converting Image to Binary Data");
-            prgDialog.show();
-            // Convert image to String using Base64
-            encodeImagetoString();
-            // When Image is not selected from Gallery
-        } else {
-            Toast.makeText(
-                    getActivity(),
-                    "You must select image from gallery before you try to upload",
-                    Toast.LENGTH_LONG).show();
+        if(getal == 1){
+            if (imgPath1 != null && !imgPath1.isEmpty()) {
+                prgDialog.setMessage("Converting Image to Binary Data");
+                prgDialog.show();
+                // Convert image to String using Base64
+                encodeImagetoString();
+                // When Image is not selected from Gallery
+            } else {
+                Toast.makeText(
+                        getActivity(),
+                        "You must select image from gallery before you try to upload",
+                        Toast.LENGTH_LONG).show();
+            }
+        }else{
+            if (imgPath2 != null && !imgPath2.isEmpty()) {
+                prgDialog.setMessage("Converting Image to Binary Data");
+                prgDialog.show();
+                // Convert image to String using Base64
+                encodeImagetoString();
+                // When Image is not selected from Gallery
+            } else {
+                Toast.makeText(
+                        getActivity(),
+                        "You must select image from gallery before you try to upload",
+                        Toast.LENGTH_LONG).show();
+            }
         }
+
     }
 
     /**
@@ -308,29 +326,52 @@ public class AnalyseFragment extends Fragment {
         new AsyncTask<Void, Void, String>() {
 
             protected void onPreExecute() {
-            };
+            }
+
+            ;
 
             @Override
             protected String doInBackground(Void... params) {
-                BitmapFactory.Options options = null;
-                options = new BitmapFactory.Options();
-                options.inSampleSize = 3;
-                bitmap = BitmapFactory.decodeFile(imgPath,
-                        options);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                // Must compress the Image to reduce image size to make upload easy
-                bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
-                byte[] byte_arr = stream.toByteArray();
-                // Encode Image to String
-                encodedString = Base64.encodeToString(byte_arr, 0);
-                return "";
+                if(getal == 1){
+                    BitmapFactory.Options options = null;
+                    options = new BitmapFactory.Options();
+                    options.inSampleSize = 3;
+                    bitmap = BitmapFactory.decodeFile(imgPath1,
+                            options);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    // Must compress the Image to reduce image size to make upload easy
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
+                    byte[] byte_arr = stream.toByteArray();
+                    // Encode Image to String
+                    encodedString1 = Base64.encodeToString(byte_arr, 0);
+                    return "";
+                }else{
+                    BitmapFactory.Options options = null;
+                    options = new BitmapFactory.Options();
+                    options.inSampleSize = 3;
+                    bitmap = BitmapFactory.decodeFile(imgPath2,
+                            options);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    // Must compress the Image to reduce image size to make upload easy
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
+                    byte[] byte_arr = stream.toByteArray();
+                    // Encode Image to String
+                    encodedString2 = Base64.encodeToString(byte_arr, 0);
+                    return "";
+                }
+
             }
 
             @Override
             protected void onPostExecute(String msg) {
                 prgDialog.setMessage("Calling Upload");
                 // Put converted Image string into Async Http Post param
-                params.put("image", encodedString);
+                if(getal==1){
+                    params.put("image", encodedString1);
+                }else{
+                    params.put("image", encodedString2);
+                }
+
                 // Trigger Image upload
                 triggerImageUpload();
             }
@@ -339,7 +380,6 @@ public class AnalyseFragment extends Fragment {
 
     /**
      * zorgt dat request wordt verzonden
-     *
      */
     public void triggerImageUpload() {
         makeHTTPCall();
@@ -410,19 +450,18 @@ public class AnalyseFragment extends Fragment {
      * @param set
      */
     public void startAnalyse(int sub, int set) {
-            Log.d("tag", etSubset.getText().toString() + "  " + etStepsize.getText().toString());
+        Log.d("tag", etSubset.getText().toString() + "  " + etStepsize.getText().toString());
 //            fileName = "Tensile_Hole_Unloaded.tif";
 //            fileName2 = "Tensile_Hole_2177N.tif";
-            Log.d("tag" , fileName);
-            Log.d("tag" , fileName2);
-            String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/"+  fileName + "/pic2/" + fileName2;
-                    //+ "/inputfile/" + etInputfile.getText().toString();
-            new XMLTask().execute(url);
+        Log.d("tag", fileName);
+        Log.d("tag", fileName2);
+        String url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/analyse/subset/" + etSubset.getText().toString() + "/stepsize/" + etStepsize.getText().toString() + "/pic1/" + fileName + "/pic2/" + fileName2;
+        //+ "/inputfile/" + etInputfile.getText().toString();
+        new XMLTask().execute(url);
     }
 
     /**
      * called to do final cleanup of the fragment's state.
-     *
      */
     @Override
     public void onDestroy() {
@@ -435,6 +474,7 @@ public class AnalyseFragment extends Fragment {
 
     /**
      * methode om te kunnen intrageren met de fragment
+     *
      * @param uri
      */
 
@@ -445,7 +485,8 @@ public class AnalyseFragment extends Fragment {
     }
 
     /**
-     *called once the fragment is associated with its activity.
+     * called once the fragment is associated with its activity.
+     *
      * @param context
      */
     @Override
@@ -459,7 +500,7 @@ public class AnalyseFragment extends Fragment {
     }
 
     /**
-     *called immediately prior to the fragment no longer being associated with its activity.
+     * called immediately prior to the fragment no longer being associated with its activity.
      */
     @Override
     public void onDetach() {
@@ -483,6 +524,7 @@ public class AnalyseFragment extends Fragment {
         /**
          * in de achtergrond wordt asyncroon de http link aangemaakt
          * en de response wordt teruggegeven in string formaat
+         *
          * @param urls
          * @return string
          */
@@ -539,11 +581,11 @@ public class AnalyseFragment extends Fragment {
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
 
-            if(line.equals("ok")){
+            if (line.equals("ok")) {
                 Toast.makeText(getActivity(),
                         "Analysis is done",
                         Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 Toast.makeText(getActivity(),
                         "Something went wrong with analysis",
                         Toast.LENGTH_SHORT).show();
