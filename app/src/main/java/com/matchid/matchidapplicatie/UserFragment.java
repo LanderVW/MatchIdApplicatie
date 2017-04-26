@@ -111,12 +111,12 @@ public class UserFragment extends Fragment {
         tvRole = (TextView) view.findViewById(R.id.tvRole);
 
         tvRole = (TextView) view.findViewById(R.id.tvRole);
-         tvLicense = (TextView) view.findViewById(R.id.tvLicense);
-         tvCompany = (TextView) view.findViewById(R.id.tvCompany);
-         tvStreet = (TextView) view.findViewById(R.id.tvStreet);
+        tvLicense = (TextView) view.findViewById(R.id.tvLicense);
+        tvCompany = (TextView) view.findViewById(R.id.tvCompany);
+        tvStreet = (TextView) view.findViewById(R.id.tvStreet);
         tvHousenumber = (TextView) view.findViewById(R.id.tvHousenumber);
-         tvPostalCode = (TextView) view.findViewById(R.id.tvPostalCode);
-         tvCountry = (TextView) view.findViewById(R.id.tvCountry);
+        tvPostalCode = (TextView) view.findViewById(R.id.tvPostalCode);
+        tvCountry = (TextView) view.findViewById(R.id.tvCountry);
         tvTown = (TextView) view.findViewById(R.id.tvTown);
         //haal current user op
         //de id staat hier boven maar om te testen gebruik ik gwn 3

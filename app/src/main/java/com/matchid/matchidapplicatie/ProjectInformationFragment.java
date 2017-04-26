@@ -84,6 +84,7 @@ public class ProjectInformationFragment extends Fragment {
      *
      *
      * @return A new instance of fragment projectinformationFragment.
+     *
      */
     public static ProjectInformationFragment newInstance() {
         ProjectInformationFragment fragment = new ProjectInformationFragment();
@@ -197,7 +198,7 @@ public class ProjectInformationFragment extends Fragment {
                 fragment.setArguments(bundle);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack("tag").commit();
             }
 
 
@@ -247,9 +248,7 @@ public class ProjectInformationFragment extends Fragment {
      * @return String
      */
     private static String getValue(String tag, Element element) {
-
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-
         Node node = nodeList.item(0);
         return node.getNodeValue();
     }

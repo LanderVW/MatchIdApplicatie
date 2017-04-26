@@ -114,7 +114,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 }
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).addToBackStack("tag").commit();
             }
         });
         btn_add_picture.setOnClickListener(getPicture);
@@ -144,7 +144,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 }
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).addToBackStack("tag").commit();
 
             }
         });

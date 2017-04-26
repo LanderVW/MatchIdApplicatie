@@ -38,24 +38,25 @@ public class SessionManager {
     public static final String userId = "id";
 
     // Constructor
-    public SessionManager(Context context){
+    public SessionManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
-        Log.d("tag" , "in sessionmanager context maker");
+        Log.d("tag", "in sessionmanager context maker");
     }
+
 
     /**
      * Create login session
-     * */
-    public void createLoginSession(String name, String  id){
+     */
+    public void createLoginSession(String name, String id) {
         // Storing login value as TRUE
 
         editor.putBoolean(IS_LOGIN, true);
         // Storing name in pref
         editor.putString(KEY_NAME, name);
         // Storing email in pref
-        editor.putString(userId , id);
+        editor.putString(userId, id);
         // commit changes
         editor.commit();
     }
@@ -64,30 +65,32 @@ public class SessionManager {
      * Check login method wil check user login status
      * If false it will redirect user to login page
      * Else won't do anything
-     * */
-    public boolean checkLogin(){
+     */
+    public boolean checkLogin() {
         //check login status
-        boolean back =false;
-        if(this.isLoggedIn()) {
-            back =true;
-        }
-        else{
+        boolean back = false;
+        if (this.isLoggedIn()) {
+            back = true;
+
+        } else {
         }
         return back;
     }
 
     // Get Login State
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         return pref.getBoolean(IS_LOGIN, false);
     }
+
+
     /**
      * Get stored session data
-     * */
-    public HashMap<String, String> getUserDetails(){
+     */
+    public HashMap<String, String> getUserDetails() {
         HashMap<String, String> user = new HashMap<String, String>();
         // user name
         user.put(KEY_NAME, pref.getString(KEY_NAME, null));
-        user.put(userId , pref.getString(userId  ,null));
+        user.put(userId, pref.getString(userId, null));
 
         // return user
         return user;
@@ -95,8 +98,8 @@ public class SessionManager {
 
     /**
      * Clear session details
-     * */
-    public void logoutUser(){
+     */
+    public void logoutUser() {
         // Clearing all data from Shared Preferences
         editor.clear();
         editor.commit();

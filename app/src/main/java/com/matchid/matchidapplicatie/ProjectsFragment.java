@@ -66,11 +66,15 @@ public class ProjectsFragment extends Fragment {
     }
 
     /**
+<<<<<<< HEAD
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      *
      * @return A new instance of fragment ProjectFragment.
+=======
+     * @return fragment
+>>>>>>> refs/remotes/origin/master
      */
     public static ProjectsFragment newInstance() {
         ProjectsFragment fragment = new ProjectsFragment();
@@ -80,9 +84,12 @@ public class ProjectsFragment extends Fragment {
     }
 
     /**
+<<<<<<< HEAD
      * bij opstart van fragment
      * hier wordt alles gedeclareerd dat niets met de views te maken hebben
      *
+=======
+>>>>>>> refs/remotes/origin/master
      * @param savedInstanceState
      */
     @Override
@@ -95,6 +102,7 @@ public class ProjectsFragment extends Fragment {
     }
 
     /**
+<<<<<<< HEAD
      * zorgt voor alles wat het uitzicht bepaald
      * hier worden de parameters geinitialliseerd
      * de onclicklisteners worden hier aangemaakt dit zijn de methodes die zorgen dat
@@ -102,6 +110,8 @@ public class ProjectsFragment extends Fragment {
      * ondernomen
      *
      *
+=======
+>>>>>>> refs/remotes/origin/master
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -121,7 +131,7 @@ public class ProjectsFragment extends Fragment {
         locationList = new ArrayList<>();
         aAnalysisList = new ArrayList<>();
 
-        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/";
+        url = "http://" + ipadress + ":8080/MatchIDEnterpriseApp-war/rest/project/id/" + LoginActivity.userId;
 
         adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, strArr);
@@ -135,7 +145,6 @@ public class ProjectsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getActivity(), "naar nieuwe activity", Toast.LENGTH_SHORT).show();
                 Fragment fragment = null;
-
                 Class fragmentClass = ProjectInformationFragment.class;
                 try {
                     fragment = (Fragment) fragmentClass.newInstance();
@@ -160,7 +169,7 @@ public class ProjectsFragment extends Fragment {
                 fragment.setArguments(bundle);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack("tag").commit();
             }
 
         });
@@ -220,7 +229,6 @@ public class ProjectsFragment extends Fragment {
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
         Node node = nodeList.item(0);
         return node.getNodeValue();
-
     }
 
     /**
@@ -246,6 +254,7 @@ public class ProjectsFragment extends Fragment {
 
     /**
      *called once the fragment is associated with its activity.
+     *
      * @param context
      */
     @Override

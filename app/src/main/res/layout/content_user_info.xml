@@ -22,7 +22,7 @@
         >
         <TextView
             android:id="@+id/username"
-            android:text="username"
+            android:text=""
             android:width="120dp"/>
 
         <ViewSwitcher

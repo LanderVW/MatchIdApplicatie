@@ -5,11 +5,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 /**
@@ -21,7 +25,8 @@ public class ComponentInformationFragment extends Fragment {
     ProgressDialog prgDialog;
 
     TextView tv_component_description,tv_projectNaam;
-
+    Button btn_ganaaranalyse;
+    Button btn_toonresultaten;
 
 
     static final String ipadress = LoginActivity.ipadress;
@@ -93,7 +98,57 @@ public class ComponentInformationFragment extends Fragment {
 
         tv_component_description = (TextView) view.findViewById(R.id.tv_component_description);
         tv_projectNaam = (TextView) view.findViewById(R.id.tv_projectNaam);
-        String description ="";
+        btn_ganaaranalyse = (Button) view.findViewById(R.id.btn_ganaaranalyse);
+        btn_toonresultaten = (Button) view.findViewById(R.id.btn_zieResultaten);
+
+        btn_ganaaranalyse.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = null;
+                Class fragmentClass = AnalyseFragment.class;
+                try{
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (java.lang.InstantiationException e) {
+                    Log.d("cif", "instantiationException");
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    Log.d("cif", "illegalAccesException");
+                    e.printStackTrace();
+                } catch(Exception e){
+                    Log.d("cif", "onverwachte fout");
+                    e.printStackTrace();
+                }
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).addToBackStack("tag").commit();
+
+            }
+        });
+
+        btn_toonresultaten.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = null;
+                Class fragmentClass = PictureViewFragment.class;
+                try{
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (java.lang.InstantiationException e) {
+                    Log.d("HomeFragment", "instantiationException");
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    Log.d("HomeFragment", "illegalAccesException");
+                    e.printStackTrace();
+                } catch(Exception e){
+                    Log.d("HomeFragment", "onverwachte fout");
+                    e.printStackTrace();
+                }
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent,fragment).addToBackStack("tag").commit();
+
+            }
+        });
+                String description ="";
 
 
 
