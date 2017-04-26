@@ -45,7 +45,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     TextView matchid_logo, error_message;
     private ProgressBar spinner;
     public static final String KEY_PRIVATE = "USERNAME";
-    static final String ipadress = "192.168.0.249";
+    static final String ipadress = "192.168.0.191";
     String name;
     static String userId;
     Boolean logout;

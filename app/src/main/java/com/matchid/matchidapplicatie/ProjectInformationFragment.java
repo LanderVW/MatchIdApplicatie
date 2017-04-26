@@ -15,8 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -168,7 +166,6 @@ public class ProjectInformationFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("title",projectNaam);
                 bundle.putString("componentNaam",naamList.get(position));
-
                 bundle.putString("description", componentDescriptionList.get(position));
                 fragment.setArguments(bundle);
 
@@ -201,7 +198,6 @@ public class ProjectInformationFragment extends Fragment {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     //ier moeten we nog zorgen dat het ook leeg kan zijn
                     Element eElement = (Element) node;
-
                     naamList.add(getValue("componentNaam", eElement));
                     componentDescriptionList.add(getValue("description",eElement));
                 }
@@ -222,7 +218,10 @@ public class ProjectInformationFragment extends Fragment {
      * @return String
      */
     private static String getValue(String tag, Element element) {
-
+        Node nodetest= element.getElementsByTagName(tag).item(0);
+        if(nodetest == null){
+            return "dit invoerveld is leeg";
+        }
         NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
 
         Node node = nodeList.item(0);
