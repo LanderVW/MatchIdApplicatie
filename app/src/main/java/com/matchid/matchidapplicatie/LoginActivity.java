@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,7 +29,11 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.matchid.matchidapplicatie.entities.SessionManager;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import static android.graphics.Typeface.BOLD;
@@ -47,7 +52,7 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
 
     static int id =0;
 
-    static final String ipadress = "192.168.0.191";
+    static final String ipadress = "10.128.48.16";
     SessionManager session;
 
 
@@ -168,10 +173,10 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
         mRequestQueue = new RequestQueue(cache, network);
         // Start the queue
         mRequestQueue.start();
-
+        String hash = hashPassword(etPassword.getText().toString());
         //ip adres aanpassen naar local ip adres   (command prompt : ipconfig    ->   ipv4adres
         String url ="http://"+ipadress+":8080/MatchIDEnterpriseApp-war/LoginServlet?username="+ etUsername.getText()+
-                "&password="+ etPassword.getText()+"&android=true";
+                "&password="+ hash+"&android=true";
 
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -234,6 +239,28 @@ public class LoginActivity extends Activity implements QuitDialog.Communicator{
     @Override
     public void onDialogMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * methode voor het hashen van het ingegeven passwoord
+     * @param pass
+     * @return gehashte versie van password
+     */
+    public String hashPassword(String pass){
+        String hash = null;
+        try {
+            byte[] byteHash = MessageDigest.getInstance("SHA-256").digest(pass.getBytes("UTF-8"));
+            hash = String.format("%0" + (byteHash.length*2) + "X", new BigInteger(1, byteHash));
+
+            Log.d("LoginActiccxcvcxvity",hash);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+        return hash;
     }
 
 
