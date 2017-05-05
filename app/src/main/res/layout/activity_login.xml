@@ -40,7 +40,6 @@
         android:layout_height = "wrap_content"
         android:id = "@+id/username"
         android:hint = "@string/enter_username"
-        android:text="user"
         android:focusable = "true"
         android:textColorHighlight = "#DE2A00"
         android:textColorHint = "#DE2A00"
@@ -58,7 +57,6 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/password"
-        android:text="1"
         android:layout_below="@+id/username"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -89,8 +87,9 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_cancel"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_marginTop="29dp" />
 
 
 </RelativeLayout>

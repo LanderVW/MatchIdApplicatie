@@ -14,7 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+
+import com.matchid.matchidapplicatie.entities.SessionManager;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -128,7 +131,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent logout = new Intent(getActivity(),LoginActivity.class);
+                Intent logout = new Intent(getActivity(), LoginActivity.class);
+                SessionManager session = new SessionManager(getActivity());
+                session.logoutUser();
                 startActivity(logout);
             }
         });
